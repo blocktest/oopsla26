@@ -6,10 +6,10 @@ You can find the 218 fragments that we evaluate [here](data/fragment), time data
 ## Repository structure
 | Directory               | Purpose                                       |
 | ------------------------| --------------------------------------------- |
-| blcktest                | block-test development kit (BDK)              |
+| blocktest               | block-test development kit (BDK)              |
 | data                    | raw data (see section above)                  |
 | Docker                  | scripts to run our experiments in Docker      |
-| extensions              | BDK's Maven extensions                        |
+| extension               | BDK's Maven extension                         |
 | scripts                 | our experimental infrastructure               |
 
 
