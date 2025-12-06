@@ -1,5 +1,7 @@
 # Block Tests
 
+Note: We have now extended our dataset to 200 code fragments *and* 200 lambda expressions. You can find the new block tests we wrote [here](data/extended_dataset).
+
 ## Projects and data
 You can find the 218 fragments that we evaluate [here](data/fragment), time data [here](data/time), coverage and mutation data [here](data/coverage), case study data [here](data/rv), and the block tests we wrote [here](data/test)
 
