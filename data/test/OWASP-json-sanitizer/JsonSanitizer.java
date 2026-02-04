@@ -229,10 +229,10 @@ public final class JsonSanitizer {
         char ch = jsonish.charAt(i);
         if (SUPER_VERBOSE_AND_SLOW_LOGGING) {
           String sanitizedJsonStr =
-            (sanitizedJson == null ? "" : sanitizedJson)
-            + jsonish.substring(cleaned, i);
+                  (sanitizedJson == null ? "" : sanitizedJson)
+                          + jsonish.substring(cleaned, i);
           System.err.println("i=" + i + ", ch=" + ch + ", state=" + state
-                             + ", sanitized=" + sanitizedJsonStr);
+                  + ", sanitized=" + sanitizedJsonStr);
         }
         switch (ch) {
           case '\t': case '\n': case '\r': case ' ':
@@ -293,7 +293,7 @@ public final class JsonSanitizer {
               replace(i, i + 1, closeBracket);
             }
             state = bracketDepth == 0 || !isMap[bracketDepth - 1]
-                ? State.AFTER_ELEMENT : State.AFTER_VALUE;
+                    ? State.AFTER_ELEMENT : State.AFTER_VALUE;
             break;
           case ',':
             if (bracketDepth == 0) { throw UNBRACKETED_COMMA; }
@@ -345,37 +345,37 @@ public final class JsonSanitizer {
               switch (jsonish.charAt(i + 1)) {
                 case '/':
                   // BLOCKTEST EVAL: https://github.com/OWASP/json-sanitizer/blob/fc612ab374de73d03864d56fb87b6a103b234489/src/main/java/com/google/json/JsonSanitizer.java#L342C2-L350C20
-                  blocktest().given(i, 1).given(jsonish, "abcdef").checkEq(end, 6);
-                  blocktest().given(i, 1).given(jsonish, "abcdef\n").checkEq(end, 7);
-                  blocktest().given(i, 1).given(jsonish, "abcd\nf").checkEq(end, 5);
-                  blocktest().given(i, 1).given(jsonish, "\nbcd\nf").checkEq(end, 5);
-                  blocktest().given(i, 1).given(jsonish, "\nbcd\rf").checkEq(end, 5);
-                  blocktest().given(i, 1).given(jsonish, "\nbcd\u2028f").checkEq(end, 5);
-                  blocktest().given(i, 1).given(jsonish, "\nbcd\u2029f").checkEq(end, 5);
-                  blocktest().given(i, 1).given(jsonish, "\nbcd\tf").checkEq(end, 6);
-                  blocktest().given(i, 0).given(jsonish, "ab\nd\nf").checkEq(end, 3);
+                  blocktest().given(i, 1).given(jsonish, "abcdef").given(n, jsonish.length()).checkEq(end, 6);
+                  blocktest().given(i, 1).given(jsonish, "abcdef\n").given(n, jsonish.length()).checkEq(end, 7);
+                  blocktest().given(i, 1).given(jsonish, "abcd\nf").given(n, jsonish.length()).checkEq(end, 5);
+                  blocktest().given(i, 1).given(jsonish, "\nbcd\nf").given(n, jsonish.length()).checkEq(end, 5);
+                  blocktest().given(i, 1).given(jsonish, "\nbcd\rf").given(n, jsonish.length()).checkEq(end, 5);
+                  blocktest().given(i, 1).given(jsonish, "\nbcd\u2028f").given(n, jsonish.length()).checkEq(end, 5);
+                  blocktest().given(i, 1).given(jsonish, "\nbcd\u2029f").given(n, jsonish.length()).checkEq(end, 5);
+                  blocktest().given(i, 1).given(jsonish, "\nbcd\tf").given(n, jsonish.length()).checkEq(end, 6);
+                  blocktest().given(i, 0).given(jsonish, "ab\nd\nf").given(n, jsonish.length()).checkEq(end, 3);
                   end = n;  // Worst case.
                   for (int j = i + 2; j < n; ++j) {
                     char cch = jsonish.charAt(j);
                     if (cch == '\n' || cch == '\r'
-                        || cch == '\u2028' || cch == '\u2029') {
+                            || cch == '\u2028' || cch == '\u2029') {
                       end = j + 1;
                       break;
                     }
                   }
                   break;
                 case '*':
-                    // BLOCKTEST EVAL: https://github.com/OWASP/json-sanitizer/blob/fc612ab374de73d03864d56fb87b6a103b234489/src/main/java/com/google/json/JsonSanitizer.java#L353C1-L362C20
-                    blocktest().given(end, 0).given(jsonish, "/*comment*/rest").given(i, 0)
-                            .checkEq(end, 11);
-                    blocktest().given(end, 0).given(jsonish, "/*text/more*/data").given(i, 0)
-                            .checkEq(end, 13);
-                    blocktest().given(end, 0).given(jsonish, "/*comment/no/end").given(i, 0)
-                            .checkEq(end, 16);
-                    blocktest().given(end, 0).given(jsonish, "/*").given(i, 0)
-                            .checkEq(end, 2);
-                    blocktest().given(end, 0).given(jsonish, "//*text/end/here*/").given(i, 1)
-                            .checkEq(end, 18);
+                  // BLOCKTEST EVAL: https://github.com/OWASP/json-sanitizer/blob/fc612ab374de73d03864d56fb87b6a103b234489/src/main/java/com/google/json/JsonSanitizer.java#L353C1-L362C20
+                  blocktest().given(end, 0).given(jsonish, "/*comment*/rest").given(n, jsonish.length()).given(i, 0)
+                          .checkEq(end, 11);
+                  blocktest().given(end, 0).given(jsonish, "/*text/more*/data").given(n, jsonish.length()).given(i, 0)
+                          .checkEq(end, 13);
+                  blocktest().given(end, 0).given(jsonish, "/*comment/no/end").given(n, jsonish.length()).given(i, 0)
+                          .checkEq(end, 16);
+                  blocktest().given(end, 0).given(jsonish, "/*").given(n, jsonish.length()).given(i, 0)
+                          .checkEq(end, 2);
+                  blocktest().given(end, 0).given(jsonish, "//*text/end/here*/").given(n, jsonish.length()).given(i, 1)
+                          .checkEq(end, 18);
                   end = n;
                   if (i + 3 < n) {
                     for (int j = i + 2;
@@ -410,8 +410,8 @@ public final class JsonSanitizer {
             for (runEnd = i; runEnd < n; ++runEnd) {
               char tch = jsonish.charAt(runEnd);
               if (('a' <= tch && tch <= 'z') || ('0' <= tch && tch <= '9')
-                  || tch == '+' || tch == '-' || tch == '.'
-                  || ('A' <= tch && tch <= 'Z') || tch == '_' || tch == '$') {
+                      || tch == '+' || tch == '-' || tch == '.'
+                      || ('A' <= tch && tch <= 'Z') || tch == '_' || tch == '$') {
                 continue;
               }
               break;
@@ -425,7 +425,7 @@ public final class JsonSanitizer {
             state = requireValueState(i, state, true);
 
             boolean isNumber = ('0' <= ch && ch <= '9')
-               || ch == '.' || ch == '+' || ch == '-';
+                    || ch == '.' || ch == '+' || ch == '-';
             boolean isKeyword = !isNumber && isKeyword(i, runEnd);
 
             if (!(isNumber || isKeyword)) {
@@ -488,12 +488,12 @@ public final class JsonSanitizer {
 
     if (SUPER_VERBOSE_AND_SLOW_LOGGING) {
       System.err.println(
-          "state=" + state + ", sanitizedJson=" + sanitizedJson
-          + ", cleaned=" + cleaned + ", bracketDepth=" + bracketDepth);
+              "state=" + state + ", sanitizedJson=" + sanitizedJson
+                      + ", cleaned=" + cleaned + ", bracketDepth=" + bracketDepth);
     }
 
     if ((sanitizedJson != null && sanitizedJson.length() != 0)
-        || cleaned != 0 || bracketDepth != 0) {
+            || cleaned != 0 || bracketDepth != 0) {
       if (sanitizedJson == null) {
         sanitizedJson = new StringBuilder(n + bracketDepth);
       }
@@ -621,12 +621,12 @@ public final class JsonSanitizer {
             int cm1AndDelta = unescapedCharRev(jsonish, lb);
             char cm1 = (char) cm1AndDelta;
             if ('-' == cm1) {
-                lb -= cm1AndDelta >>> 16;
-                int cm2AndDelta = unescapedCharRev(jsonish, lb);
-                char cm2 = (char) cm2AndDelta;
-                if ('-' == cm2) {
-                    replace(i, i + 1, "\\u003e"); // Escaped >
-                }
+              lb -= cm1AndDelta >>> 16;
+              int cm2AndDelta = unescapedCharRev(jsonish, lb);
+              char cm2 = (char) cm2AndDelta;
+              if ('-' == cm2) {
+                replace(i, i + 1, "\\u003e"); // Escaped >
+              }
             }
           }
           break;
@@ -669,7 +669,7 @@ public final class JsonSanitizer {
               break;
             case 'u':
               if (i + 6 < end && isHexAt(i + 2) && isHexAt(i + 3)
-                  && isHexAt(i + 4) && isHexAt(i + 5)) {
+                      && isHexAt(i + 4) && isHexAt(i + 5)) {
                 i += 5;
                 break;
               }
@@ -711,14 +711,14 @@ public final class JsonSanitizer {
           //     Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD]
           //            | [#x10000-#x10FFFF]
           if (ch < 0x20) {
-             // Proceed to hex-escape below since control characters are
-             // disallowed by ECMA-404 which governs JavaScript's `JSON.parse`.
-             // Common ones like CR, LF, and TAB are given short escape sequences above.
+            // Proceed to hex-escape below since control characters are
+            // disallowed by ECMA-404 which governs JavaScript's `JSON.parse`.
+            // Common ones like CR, LF, and TAB are given short escape sequences above.
           } else if (ch < 0xd800) {  // Not a surrogate.
             continue;
           } else if (ch < 0xe000) {  // A surrogate
             if (Character.isHighSurrogate(ch) && i+1 < end
-                && Character.isLowSurrogate(jsonish.charAt(i+1))) {
+                    && Character.isLowSurrogate(jsonish.charAt(i+1))) {
               ++i;  // Skip over low surrogate since we have already vetted it.
               continue;
             }
@@ -736,7 +736,7 @@ public final class JsonSanitizer {
   }
 
   private State requireValueState(int pos, State state, boolean canBeKey)
-    throws UnbracketedComma {
+          throws UnbracketedComma {
     switch (state) {
       case START_MAP: case BEFORE_KEY:
         if (canBeKey) {
@@ -843,7 +843,7 @@ public final class JsonSanitizer {
       }
     }
     throw new AssertionError(
-        "Trailing comma not found in " + jsonish + " or " + sanitizedJson);
+            "Trailing comma not found in " + jsonish + " or " + sanitizedJson);
   }
 
   /**
@@ -1001,7 +1001,7 @@ public final class JsonSanitizer {
    * @return true when the number could be canonicalized.
    */
   private static boolean canonicalizeNumber(
-      StringBuilder sanitizedJson, int sanStart, int sanEnd) {
+          StringBuilder sanitizedJson, int sanStart, int sanEnd) {
     // Now we perform several steps.
     // 1. Convert from scientific notation to regular or vice-versa based on
     //    normalized exponent.
@@ -1037,11 +1037,11 @@ public final class JsonSanitizer {
     }
 
     assert
-         intStart      <= intEnd
-      && intEnd        <= fractionStart
-      && fractionStart <= fractionEnd
-      && fractionEnd   <= expStart
-      && expStart      <= expEnd;
+            intStart      <= intEnd
+                    && intEnd        <= fractionStart
+                    && fractionStart <= fractionEnd
+                    && fractionEnd   <= expStart
+                    && expStart      <= expEnd;
 
     int exp;
     if (expEnd == expStart) {
@@ -1142,17 +1142,17 @@ public final class JsonSanitizer {
         sanitizedJson.append('0');
       }
 
-    // 7. If 0 < n <= 21, return the String consisting of the most significant n
-    // digits of the decimal representation of s, followed by a decimal point
-    // '.', followed by the remaining k-n digits of the decimal representation
-    // of s.
+      // 7. If 0 < n <= 21, return the String consisting of the most significant n
+      // digits of the decimal representation of s, followed by a decimal point
+      // '.', followed by the remaining k-n digits of the decimal representation
+      // of s.
     } else if (0 < n && n <= 21) {
       sanitizedJson.insert(intStart + n, '.');
 
-    // 8. If -6 < n <= 0, return the String consisting of the character '0',
-    // followed by a decimal point '.', followed by -n occurrences of the
-    // character '0', followed by the k digits of the decimal representation of
-    // s.
+      // 8. If -6 < n <= 0, return the String consisting of the character '0',
+      // followed by a decimal point '.', followed by -n occurrences of the
+      // character '0', followed by the k digits of the decimal representation of
+      // s.
     } else if (-6 < n && n <= 0) {
       sanitizedJson.insert(intStart, "0.000000".substring(0, 2 - n));
 
@@ -1166,19 +1166,19 @@ public final class JsonSanitizer {
       if (k == 1) {
         // Sole digit already on sanitizedJson.
 
-      // 10. Return the String consisting of the most significant digit of the
-      // decimal representation of s, followed by a decimal point '.', followed
-      // by the remaining k-1 digits of the decimal representation of s,
-      // followed by the lowercase character 'e', followed by a plus sign '+'
-      // or minus sign '-' according to whether n-1 is positive or negative,
-      // followed by the decimal representation of the integer abs(n-1) (with
-      // no leading zeros).
+        // 10. Return the String consisting of the most significant digit of the
+        // decimal representation of s, followed by a decimal point '.', followed
+        // by the remaining k-1 digits of the decimal representation of s,
+        // followed by the lowercase character 'e', followed by a plus sign '+'
+        // or minus sign '-' according to whether n-1 is positive or negative,
+        // followed by the decimal representation of the integer abs(n-1) (with
+        // no leading zeros).
       } else {
         sanitizedJson.insert(intStart + 1, '.');
       }
       int nLess1 = n-1;
       sanitizedJson.append('e').append(nLess1 < 0 ? '-' : '+')
-          .append(Math.abs(nLess1));
+              .append(Math.abs(nLess1));
     }
     return true;
   }
@@ -1189,7 +1189,7 @@ public final class JsonSanitizer {
       return "false".regionMatches(0, jsonish, start, n);
     } else if (n == 4) {
       return "null".regionMatches(0, jsonish, start, n)
-          || "true".regionMatches(0, jsonish, start, n);
+              || "true".regionMatches(0, jsonish, start, n);
     }
     return false;
   }
@@ -1258,7 +1258,7 @@ public final class JsonSanitizer {
    */
   @SuppressWarnings("synthetic-access")
   private static final UnbracketedComma UNBRACKETED_COMMA
-    = new UnbracketedComma();
+          = new UnbracketedComma();
   static {
     UNBRACKETED_COMMA.setStackTrace(new StackTraceElement[0]);
   }
@@ -1273,8 +1273,8 @@ public final class JsonSanitizer {
   }
 
   private static final char[] HEX_DIGITS = new char[] {
-    '0', '1', '2', '3', '4', '5', '6', '7',
-    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+          '0', '1', '2', '3', '4', '5', '6', '7',
+          '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
   };
 
   private static final int[] DIGITS_BY_BASE_THAT_FIT_IN_63B = {

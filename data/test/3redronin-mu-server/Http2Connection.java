@@ -357,7 +357,7 @@ final class Http2Connection extends Http2ConnectionFlowControl implements HttpCo
                     doneCallback.onComplete(error);
                 } else {
                     // BLOCKTEST EVAL: https://github.com/3redronin/mu-server/blob/69683cf8009d7a0ac52452fd4b0abe06ffd0bf87/src/main/java/io/muserver/Http2Connection.java#L354-L360
-                    // @lambdatest().given(error, new Throwable("foo"), "Throwable").given(doneCallback, error2 -> { System.out.println("OK"); System.out.println("Expect " + error2 + " 1/0 is " + (1/0)); });
+                    // @lambdatest().given(error, new Throwable("foo")).given(doneCallback, error2 -> { System.out.println("OK"); System.out.println("Expect " + error2 + " 1/0 is " + (1/0)); });
                     ctx.executor().execute(() -> {
                         try {
                             doneCallback.onComplete(error);

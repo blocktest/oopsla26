@@ -360,16 +360,16 @@ public class CompletableFutureTest {
                 completableFuture.handle((s, t) -> {
                     // BLOCKTEST EVAL: https://github.com/spullara/java-future-jdk8/blob/5925719802af19ccc6602651fc243b2ff3726b4b/src/test/java/spullara/util/concurrent/CompletableFutureTest.java#L355-L365
                     blocktest().given(result, new CompletableFuture<>())
-                            .given(t, null, "Throwable")
+                            .given(t, new Throwable())
+                            .given(list, new ArrayList<>())
+                            .checkEq(list.size(), 0).given(s, "bar").given(size, 1).checkReturnEq("bar").checkTrue(result.toString().contains("Completed exceptionally"));
+                    blocktest().given(result, new CompletableFuture<>())
+                            .given(t, null)
                             .given(list, new ArrayList<>())
                             .given(s, "foo").given(size, 1).checkReturnEq("foo")
                             .checkEq(list.size(), 1).checkEq(list.iterator().next(), "foo").checkTrue(result.toString().contains("Completed normally"));
                     blocktest().given(result, new CompletableFuture<>())
-                            .given(t, new Throwable(), "Throwable")
-                            .given(list, new ArrayList<>())
-                            .checkEq(list.size(), 0).given(s, "bar").given(size, 1).checkReturnEq("bar").checkTrue(result.toString().contains("Completed exceptionally"));
-                    blocktest().given(result, new CompletableFuture<>())
-                            .given(t, null, "Throwable")
+                            .given(t, null)
                             .given(list, new ArrayList<>())
                             .given(s, "foo").given(size, 2).checkReturnEq("foo")
                             .checkEq(list.size(), 1).checkEq(list.iterator().next(), "foo").checkTrue(result.toString().contains("Not completed"));

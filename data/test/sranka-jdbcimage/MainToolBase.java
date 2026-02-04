@@ -390,7 +390,7 @@ public abstract class MainToolBase implements AutoCloseable {
 						final File file = f;
 						entries.stream().sorted().forEach( x -> {
 							// BLOCKTEST EVAL: https://github.com/sranka/jdbcimage/blob/4b16de3a349a30e5d69633a0fea6e08d486392b9/src/main/java/io/github/sranka/jdbcimage/main/MainToolBase.java#L386-L391
-								// @blocktest().given(x, "foo", "String").given(os, new java.io.ByteArrayOutputStream(), "java.io.ByteArrayOutputStream").given(out, new PrintStream(os)).given(file, new File("fun")).checkEq(new String(os.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), " fun#foo\n");
+								// @blocktest().given(x, "foo").given(os, new java.io.ByteArrayOutputStream()).given(out, new PrintStream(os)).given(file, new File("fun")).checkEq(new String(os.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), " fun#foo\n");
 								out.print(" ");
 								out.print(file);
 								out.print("#");

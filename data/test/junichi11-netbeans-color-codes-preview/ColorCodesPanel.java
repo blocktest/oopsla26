@@ -98,6 +98,7 @@ public class ColorCodesPanel extends JComponent {
                             // replace a color value
                             NbDocument.runAtomicAsUser((StyledDocument) document, () -> {
                                 // BLOCKTEST EVAL: https://github.com/junichi11/netbeans-color-codes-preview/blob/97a0262a3c15ab5842c43b68019e1e355ad7d3a8/src/main/java/com/junichi11/netbeans/modules/color/codes/preview/ui/ColorCodesPanel.java#L101-L109
+                                // MUST PROVIDE TYPE
                                 /*
                                 @blocktest().given(document, new javax.swing.text.DefaultStyledDocument(), "StyledDocument").setup(() -> {
                                     try {

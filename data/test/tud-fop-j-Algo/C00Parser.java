@@ -1149,9 +1149,9 @@ public class C00Parser extends DebugParser {
 																					alt1 = 3;
 																				} else {
 																					// BLOCKTEST EVAL: https://github.com/tud-fop/j-Algo/blob/f59fbbd9ccc3f41d6866fda44324622e2b47eef2/src/main/java/c00/parser/C00Parser.java#L1146C1-L1155C31
-																					blocktest().given(backtracking, 0, "int")
+																					blocktest().given(backtracking, 0)
 																							.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD"))))
-																							.given(failed, false, "boolean")
+																							.given(failed, false)
 																							.mock("dbg.recognitionException(nvae)")
 																							.expect(NoViableAltException.class)
 																							.end(FIRST_THROW);
@@ -2621,16 +2621,16 @@ public class C00Parser extends DebugParser {
 								int LA5_3 = input.LA(3);
 								if ((LA5_3 == Number)) {
 									// BLOCKTEST EVAL: https://github.com/tud-fop/j-Algo/blob/f59fbbd9ccc3f41d6866fda44324622e2b47eef2/src/main/java/c00/parser/C00Parser.java#L2611C9-L2627C10
-									blocktest().mock("input.LA(4)", 20).mock("dbg.recognitionException(nvae)").given(backtracking, 0, "int")
-											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null, "String").given(failed, false, "boolean").checkEq(alt5, 6);
-									blocktest().mock("input.LA(4)", -1).mock("dbg.recognitionException(nvae)").given(backtracking, 0, "int")
-											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null, "String").given(failed, false, "boolean").checkEq(alt5, 3);
-									blocktest().mock("input.LA(4)", 17).mock("dbg.recognitionException(nvae)").given(backtracking, 0, "int")
-											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null, "String").given(failed, false, "boolean").checkEq(alt5, 3);
-									blocktest().mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 0, "int")
-											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null, "String").given(failed, false, "boolean").expect(NoViableAltException.class);
-									blocktest().mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 1, "int")
-											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, "foo").given(failed, false, "boolean").checkTrue(failed).checkReturnEq("foo");
+									blocktest().mock("input.LA(4)", 20).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).checkEq(alt5, 6);
+									blocktest().mock("input.LA(4)", -1).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).checkEq(alt5, 3);
+									blocktest().mock("input.LA(4)", 17).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).checkEq(alt5, 3);
+									blocktest().mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).expect(NoViableAltException.class);
+									blocktest().mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 1)
+											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, new varDeclarations_return()).given(failed, false).checkTrue(failed).checkTrue(methodReturn != null);
 									int LA5_7 = input.LA(4);
 									if ((LA5_7 == 20)) {
 										alt5 = 6;
@@ -3671,6 +3671,12 @@ public class C00Parser extends DebugParser {
 								} else if ((LA9_4 == EOF || LA9_4 == 16)) {
 									alt9 = 2;
 								} else {
+									// BLOCKTEST EVAL: https://github.com/tud-fop/j-Algo/blob/f59fbbd9ccc3f41d6866fda44324622e2b47eef2/src/main/java/c00/parser/C00Parser.java#L3663C2-L3671C40
+									blocktest().given(failed, false).given(backtracking, 1)
+											.given(retval, null)
+											.given(input, new CommonTokenStream(new C00Lexer(), 0))
+											.mock("dbg.recognitionException(nvae)")
+											.checkTrue(failed).checkReturnEq(null);
 									if (backtracking > 0) {
 										failed = true;
 										return retval;
@@ -4517,9 +4523,9 @@ public class C00Parser extends DebugParser {
 										alt11 = 14;
 									} else {
 										// BLOCKTEST EVAL: https://github.com/tud-fop/j-Algo/blob/f59fbbd9ccc3f41d6866fda44324622e2b47eef2/src/main/java/c00/parser/C00Parser.java#L4496-L4505
-										blocktest().given(backtracking, 0, "int")
+										blocktest().given(backtracking, 0)
 												.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD"))))
-												.given(failed, false, "boolean")
+												.given(failed, false)
 												.mock("dbg.recognitionException(nvae)")
 												.expect(NoViableAltException.class)
 												.end(FIRST_THROW);

@@ -36,11 +36,11 @@ public class DoubleFormatter
             this.decimalFormat = new DecimalFormat(pattern);
             this.doubleParser = s -> {
                 // BLOCKTEST EVAL: https://github.com/vmzakharov/dataframe-ec/blob/b5cef516c1f02207399f751ba922f9e5347f8f3c/src/main/java/io/github/vmzakharov/ecdataframe/dataset/DoubleFormatter.java#L32-L43
-                blocktest().given(this.decimalFormat, new DecimalFormat("#000.000##E0"), "DecimalFormat").given(s, "12.0000E0", "String")
+                blocktest().given(this.decimalFormat, new DecimalFormat("#000.000##E0")).given(s, "12.0000E0")
                         .checkReturnEq(12, 0.01);
-                blocktest().given(this.decimalFormat, new DecimalFormat("#000.000##E0"), "DecimalFormat").given(s, "  1.23456789E8  ", "String")
+                blocktest().given(this.decimalFormat, new DecimalFormat("#000.000##E0")).given(s, "  1.23456789E8  ")
                         .checkReturnEq(123456789, 0.01);
-                blocktest().given(this.decimalFormat, new DecimalFormat("#000.000##E0"), "DecimalFormat").given(s, "funny", "String")
+                blocktest().given(this.decimalFormat, new DecimalFormat("#000.000##E0")).given(s, "funny")
                         .checkReturnEq(null).expect(RuntimeException.class);
                 try
                 {

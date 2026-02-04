@@ -97,9 +97,9 @@ public class JsTypeAntiInliningExtension implements IOCExtensionConfigurator {
               findJsTypeIfaces(type)
               .forEach(iface -> {
                 // BLOCKTEST EVAL: https://github.com/errai/errai/blob/d2edc4632373096f8d81c93f18cd874fa5501b90/errai-ioc/src/main/java/org/jboss/errai/ioc/rebind/ioc/extension/builtin/JsTypeAntiInliningExtension.java#L93-L96
-                blocktest().given(jsTypeIfaces, new HashSet<>(), "Set<MetaClass>")
-                        .given(jsTypeIfaceImpls, HashMultimap.create(), "Multimap<MetaClass, MetaClass>")
-                        .given(iface, org.jboss.errai.codegen.meta.MetaClassFactory.get(elemental2.dom.Element.class), "MetaClass").given(type, org.jboss.errai.codegen.meta.MetaClassFactory.get(elemental2.dom.Element.class), "MetaClass")
+                blocktest().given(jsTypeIfaces, new HashSet<MetaClass>())
+                        .given(jsTypeIfaceImpls, HashMultimap.create())
+                        .given(iface, org.jboss.errai.codegen.meta.MetaClassFactory.get(elemental2.dom.Element.class), "MetaClass").given(type, org.jboss.errai.codegen.meta.MetaClassFactory.get(elemental2.dom.Element.class))
                         .checkFalse(jsTypeIfaces.isEmpty()).checkEq(jsTypeIfaceImpls.get(org.jboss.errai.codegen.meta.MetaClassFactory.get(elemental2.dom.Element.class)).iterator().next().getName(), org.jboss.errai.codegen.meta.MetaClassFactory.get(elemental2.dom.Element.class).getName());
                 jsTypeIfaces.add(iface);
                 jsTypeIfaceImpls.put(iface, type);

@@ -2,33 +2,33 @@
 /*
  * Zettelkasten - nach Luhmann
  * Copyright (C) 2001-2015 by Daniel Lüdecke (http://www.danielluedecke.de)
- * 
+ *
  * Homepage: http://zettelkasten.danielluedecke.de
- * 
- * 
+ *
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation; either version 3 of 
+ * GNU General Public License as published by the Free Software Foundation; either version 3 of
  * the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program;
  * if not, see <http://www.gnu.org/licenses/>.
- * 
- * 
+ *
+ *
  * Dieses Programm ist freie Software. Sie können es unter den Bedingungen der GNU
  * General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben
  * und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (wenn Sie möchten)
  * jeder späteren Version.
- * 
- * Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein 
- * wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder 
- * der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. Details finden Sie in der 
+ *
+ * Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, daß es Ihnen von Nutzen sein
+ * wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne die implizite Garantie der MARKTREIFE oder
+ * der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. Details finden Sie in der
  * GNU General Public License.
- * 
- * Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm 
+ *
+ * Sie sollten ein Exemplar der GNU General Public License zusammen mit diesem Programm
  * erhalten haben. Falls nicht, siehe <http://www.gnu.org/licenses/>.
  */
 
@@ -144,7 +144,7 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 			.getResourceMap(ImportTask.class);
 
 	/**
-	 * 
+	 *
 	 * @param app
 	 * @param parent
 	 * @param label
@@ -160,8 +160,8 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 	 * @param dts
 	 */
 	public ImportFromZkn(org.jdesktop.application.Application app, javax.swing.JDialog parent, javax.swing.JLabel label,
-			TasksData td, Daten d, Bookmarks bm, DesktopData dt, SearchRequests sr, Settings s, File fp, boolean a2u,
-			boolean appendit, String dts) {
+						 TasksData td, Daten d, Bookmarks bm, DesktopData dt, SearchRequests sr, Settings s, File fp, boolean a2u,
+						 boolean appendit, String dts) {
 		super(app);
 		// init of the variable either passed as parameters or initiated the first time
 		dataObj = d;
@@ -343,7 +343,7 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 							buffer.append(chr);
 						}
 					} // otherweise, transfer the buffer to the metainformation-xml-file
-						// and leave the loop
+					// and leave the loop
 					else {
 						try {
 							if (!append) {
@@ -418,8 +418,8 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 						if (13 == c) {
 							buffer.append("[br]");
 						} // in windows-ascii, each new line command consists of two bytes:
-							// 13 and 10. If a 13 was found, the new line tag (<br>) is already
-							// set, so we skip the second bye here.
+						// 13 and 10. If a 13 was found, the new line tag (<br>) is already
+						// set, so we skip the second bye here.
 						else if (10 == c) {
 						} // else append the char to the buffer
 						else if (Tools.isLegalJDOMChar(c)) {
@@ -445,88 +445,88 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 							// now we have to create a new XML element to copy the content
 							// of the buffer to the temporary XML structure
 							switch (dataIndicator) {
-							// the content of the string buffer is the MAINTEXT (CONTENT)
-							// of an entry. copy string buffer to related XML child element
-							case 0:
-								content = new Element("content");
-								zettel.addContent(content);
-								// we have to update the list-format-elements from the
-								// old format. while in the old format a list was just surrounded
-								// by [l]-tags and each line was a new bullet point, we
-								// now surround <li>-elements arround each line. So from
-								// now on, a bullet point may contain several lines.
-								content.addContent(replaceListElements(buffer.toString()));
-								// increase dataIndicator, so next time buffer content
-								// is regarded as the next element, i.e. keyword infos
-								dataIndicator++;
-								break;
-							// the content of the string buffer are the KEYWORDS
-							// of an entry. copy string buffer to related XML child element
-							case 1:
-								keywords = new Element(Daten.ELEMENT_KEYWORD);
-								zettel.addContent(keywords);
-								keywords.addContent(buffer.toString().trim());
-								// increase dataIndicator, so next time buffer content
-								// is regarded as the next element, i.e. author infos
-								dataIndicator++;
-								break;
-							// the content of the string buffer are the AUTHOR INFOS
-							// of an entry. copy string buffer to related XML child element
-							case 2:
-								author = new Element(Daten.ELEMENT_AUTHOR);
-								zettel.addContent(author);
-								author.addContent(buffer.toString().trim());
-								// increase dataIndicator, so next time buffer content
-								// is regarded as the next element, i.e. RELATIONS/LINKS infos
-								dataIndicator++;
-								break;
-							// the content of the string buffer are the RELATIONS/LINK INFOS
-							// of an entry. These are NOT NEEDED, so skip them
-							case 3: // increase dataIndicator, so next time buffer content
-								// is regarded as the next element, i.e. OTHER REMARKS infos
-								dataIndicator++;
-								// reset buffer
-								buffer.setLength(0);
-								break;
-							// the content of the string buffer are the OTHER REMARKS
-							// of an entry. copy string buffer to related XML child element
-							case 4:
-								remarks = new Element("remarks");
-								zettel.addContent(remarks);
-								remarks.addContent(buffer.toString());
-								// increase dataIndicator, so next time buffer content
-								// is regarded as the next element, i.e. TIMESTAMP infos
-								dataIndicator++;
-								break;
-							// the content of the string buffer is the TIME STAMP
-							// of an entry. copy string buffer to related XML child element
-							case 5:
-								timestamp = new Element("timestamp");
-								zettel.addContent(timestamp);
-								timestamp.addContent(buffer.toString());
-								// increase dataIndicator, so next time buffer content
-								// is regarded as the next element, i.e. HYPERLINKS
-								dataIndicator++;
-								break;
-							// the content of the string buffer is the entry's HYPERLINKS
-							// of an entry. copy string buffer to related XML child element
-							case 6:
-								hyperlinks = new Element("hyperlinks");
-								zettel.addContent(hyperlinks);
-								hyperlinks.addContent(buffer.toString());
-								// increase dataIndicator, so next time buffer content
-								// is regarded as the next element, i.e. TITLE
-								dataIndicator++;
-								break;
-							// the content of the string buffer is the entry's TITLE
-							// of an entry. copy string buffer to related XML child element
-							case 7:
-								title = new Element("title");
-								zettel.addContent(title);
-								title.addContent(buffer.toString().trim());
-								// RESET the dataIndicator, because now starts the next entry
-								dataIndicator = 0;
-								break;
+								// the content of the string buffer is the MAINTEXT (CONTENT)
+								// of an entry. copy string buffer to related XML child element
+								case 0:
+									content = new Element("content");
+									zettel.addContent(content);
+									// we have to update the list-format-elements from the
+									// old format. while in the old format a list was just surrounded
+									// by [l]-tags and each line was a new bullet point, we
+									// now surround <li>-elements arround each line. So from
+									// now on, a bullet point may contain several lines.
+									content.addContent(replaceListElements(buffer.toString()));
+									// increase dataIndicator, so next time buffer content
+									// is regarded as the next element, i.e. keyword infos
+									dataIndicator++;
+									break;
+								// the content of the string buffer are the KEYWORDS
+								// of an entry. copy string buffer to related XML child element
+								case 1:
+									keywords = new Element(Daten.ELEMENT_KEYWORD);
+									zettel.addContent(keywords);
+									keywords.addContent(buffer.toString().trim());
+									// increase dataIndicator, so next time buffer content
+									// is regarded as the next element, i.e. author infos
+									dataIndicator++;
+									break;
+								// the content of the string buffer are the AUTHOR INFOS
+								// of an entry. copy string buffer to related XML child element
+								case 2:
+									author = new Element(Daten.ELEMENT_AUTHOR);
+									zettel.addContent(author);
+									author.addContent(buffer.toString().trim());
+									// increase dataIndicator, so next time buffer content
+									// is regarded as the next element, i.e. RELATIONS/LINKS infos
+									dataIndicator++;
+									break;
+								// the content of the string buffer are the RELATIONS/LINK INFOS
+								// of an entry. These are NOT NEEDED, so skip them
+								case 3: // increase dataIndicator, so next time buffer content
+									// is regarded as the next element, i.e. OTHER REMARKS infos
+									dataIndicator++;
+									// reset buffer
+									buffer.setLength(0);
+									break;
+								// the content of the string buffer are the OTHER REMARKS
+								// of an entry. copy string buffer to related XML child element
+								case 4:
+									remarks = new Element("remarks");
+									zettel.addContent(remarks);
+									remarks.addContent(buffer.toString());
+									// increase dataIndicator, so next time buffer content
+									// is regarded as the next element, i.e. TIMESTAMP infos
+									dataIndicator++;
+									break;
+								// the content of the string buffer is the TIME STAMP
+								// of an entry. copy string buffer to related XML child element
+								case 5:
+									timestamp = new Element("timestamp");
+									zettel.addContent(timestamp);
+									timestamp.addContent(buffer.toString());
+									// increase dataIndicator, so next time buffer content
+									// is regarded as the next element, i.e. HYPERLINKS
+									dataIndicator++;
+									break;
+								// the content of the string buffer is the entry's HYPERLINKS
+								// of an entry. copy string buffer to related XML child element
+								case 6:
+									hyperlinks = new Element("hyperlinks");
+									zettel.addContent(hyperlinks);
+									hyperlinks.addContent(buffer.toString());
+									// increase dataIndicator, so next time buffer content
+									// is regarded as the next element, i.e. TITLE
+									dataIndicator++;
+									break;
+								// the content of the string buffer is the entry's TITLE
+								// of an entry. copy string buffer to related XML child element
+								case 7:
+									title = new Element("title");
+									zettel.addContent(title);
+									title.addContent(buffer.toString().trim());
+									// RESET the dataIndicator, because now starts the next entry
+									dataIndicator = 0;
+									break;
 							}
 							// reset buffer
 							buffer.setLength(0);
@@ -625,7 +625,7 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 						// split author-values at line separator, in case we have several authors
 						// in one entry...
 						// BLOCKTEST EVAL: https://github.com/Zettelkasten-Team/Zettelkasten/blob/b68dc7638b9f9287c9528d4171a9014e8ba3eed3/src/main/java/de/danielluedecke/zettelkasten/tasks/importtasks/ImportFromZkn.java#L621-L638
-						blocktest().mock("dataObj.addAuthor(..)", 1).given(dummyString, "abc[br]   test   [br]   def[br] [br]ghi ").checkEq(newau.toString(), "1,1,1,1,").end(FIRST_BLOCK);
+						blocktest().mock("dataObj.addAuthor(..)", 1).given(newau, new StringBuilder("")).given(dummyString, "abc[br]   test   [br]   def[br] [br]ghi ").checkEq(newau.toString(), "1,1,1,1,").end(FIRST_BLOCK);
 						String[] authorparts = dummyString.split("\\[br\\]");
 						// iterate array
 						for (String ap : authorparts) {
@@ -813,19 +813,19 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 										tsMonth = "12";
 									}
 									// BLOCKTEST EVAL: https://github.com/Zettelkasten-Team/Zettelkasten/blob/b68dc7638b9f9287c9528d4171a9014e8ba3eed3/src/main/java/de/danielluedecke/zettelkasten/tasks/importtasks/ImportFromZkn.java#L770C10-L806C11
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh12; Januar foo", "idc"}).checkEq(tsDay, "12").checkEq(tsMonth, "01").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh13; februaR foo", "idc"}).checkEq(tsDay, "13").checkEq(tsMonth, "02").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh14; märZ foo", "idc"}).checkEq(tsDay, "14").checkEq(tsMonth, "03").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh15; APRIL foo", "idc"}).checkEq(tsDay, "15").checkEq(tsMonth, "04").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh01; mai foo", "idc"}).checkEq(tsDay, "01").checkEq(tsMonth, "05").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh02; juni foo", "idc"}).checkEq(tsDay, "02").checkEq(tsMonth, "06").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh03; juli foo", "idc"}).checkEq(tsDay, "03").checkEq(tsMonth, "07").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh04; augusT foo", "idc"}).checkEq(tsDay, "04").checkEq(tsMonth, "08").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh05; SeptembeR foo", "idc"}).checkEq(tsDay, "05").checkEq(tsMonth, "09").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh06; oktober foo", "idc"}).checkEq(tsDay, "06").checkEq(tsMonth, "10").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh07; november foo", "idc"}).checkEq(tsDay, "07").checkEq(tsMonth, "11").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh30; dezember foo", "idc"}).checkEq(tsDay, "30").checkEq(tsMonth, "12").start(FIRST_BLOCK, 2);
-									blocktest().given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh31; idk foo", "idc"}).checkEq(tsDay, "31").checkEq(tsMonth, "").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh12; Januar foo", "idc"}).checkEq(tsDay, "12").checkEq(tsMonth, "01").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh13; februaR foo", "idc"}).checkEq(tsDay, "13").checkEq(tsMonth, "02").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh14; märZ foo", "idc"}).checkEq(tsDay, "14").checkEq(tsMonth, "03").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh15; APRIL foo", "idc"}).checkEq(tsDay, "15").checkEq(tsMonth, "04").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh01; mai foo", "idc"}).checkEq(tsDay, "01").checkEq(tsMonth, "05").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh02; juni foo", "idc"}).checkEq(tsDay, "02").checkEq(tsMonth, "06").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh03; juli foo", "idc"}).checkEq(tsDay, "03").checkEq(tsMonth, "07").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh04; augusT foo", "idc"}).checkEq(tsDay, "04").checkEq(tsMonth, "08").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh05; SeptembeR foo", "idc"}).checkEq(tsDay, "05").checkEq(tsMonth, "09").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh06; oktober foo", "idc"}).checkEq(tsDay, "06").checkEq(tsMonth, "10").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh07; november foo", "idc"}).checkEq(tsDay, "07").checkEq(tsMonth, "11").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh30; dezember foo", "idc"}).checkEq(tsDay, "30").checkEq(tsMonth, "12").start(FIRST_BLOCK, 2);
+									blocktest().given(tsMonth, "").given(tscount, 2).given(start, 2).given(tsParts, new String[]{"idc", "idc", "abcdefgh31; idk foo", "idc"}).checkEq(tsDay, "31").checkEq(tsMonth, "").start(FIRST_BLOCK, 2);
 									// now check out the year
 									// exactly 3 chars after the end-value we shoukd have the lower two digits of
 									// the year, i.e. "07" for "2007" and so on
@@ -984,7 +984,7 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 						char chr = (char) c;
 						buffer.append(chr);
 					} // otherweise, transfer the buffer to the metainformation-xml-file
-						// and leave the loop
+					// and leave the loop
 					else {
 						skip = true;
 					}
@@ -1200,7 +1200,7 @@ public class ImportFromZkn extends org.jdesktop.application.Task<Object, Void> {
 					// next turn, we start looking for a l-sequence at the index "pos"
 					pos = l_close + 4;
 				} // else remove tags, since user did not properly use
-					// them and return the original content, with list-tags removed
+				// them and return the original content, with list-tags removed
 				else {
 					s = s.replace(Constants.FORMAT_LIST_OPEN, "");
 					s = s.replace(Constants.FORMAT_LIST_CLOSE, "");

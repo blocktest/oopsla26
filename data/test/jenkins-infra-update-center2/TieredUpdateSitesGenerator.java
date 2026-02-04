@@ -112,8 +112,8 @@ public class TieredUpdateSitesGenerator extends WithoutSignature {
                 LOGGER.log(Level.INFO, "Did not find declared core dependency version among all core releases: " + dependencyVersion.toString() + ". It is used by " + allPluginReleases.stream().filter( p -> {
                     try {
                         // BLOCKTEST EVAL: https://github.com/jenkins-infra/update-center2/blob/5b1203f26470aa07d226974b599e53315a270a92/src/main/java/io/jenkins/update_center/json/TieredUpdateSitesGenerator.java#L107-L114
-                        blocktest().given(p, null, "HPI").given(dependencyVersion, new VersionNumber("2.1.1")).mock("p.getRequiredJenkinsVersion()", "2.1.1").checkReturnTrue();
-                        blocktest().given(p, null, "HPI").given(dependencyVersion, new VersionNumber("2.0.1")).mock("p.getRequiredJenkinsVersion()", "2.1.1").checkReturnFalse();
+                        blocktest().given(p, null).given(dependencyVersion, new VersionNumber("2.1.1")).mock("p.getRequiredJenkinsVersion()", "2.1.1").checkReturnTrue();
+                        blocktest().given(p, null).given(dependencyVersion, new VersionNumber("2.0.1")).mock("p.getRequiredJenkinsVersion()", "2.1.1").checkReturnFalse();
                         return p.getRequiredJenkinsVersion().equals(dependencyVersion.toString());
                     } catch (IOException e) {
                         // ignore

@@ -366,16 +366,16 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
             formatDetails = "Jpeg/JFIF v." + jfifSegment.jfifMajorVersion + "." + jfifSegment.jfifMinorVersion;
 
             switch (densityUnits) {
-            case 0:
-                break;
-            case 1: // inches
-                unitsPerInch = 1.0;
-                break;
-            case 2: // cms
-                unitsPerInch = 2.54;
-                break;
-            default:
-                break;
+                case 0:
+                    break;
+                case 1: // inches
+                    unitsPerInch = 1.0;
+                    break;
+                case 2: // cms
+                    unitsPerInch = 2.54;
+                    break;
+                default:
+                    break;
             }
         } else {
             final JpegImageMetadata metadata = (JpegImageMetadata) getMetadata(byteSource, params);
@@ -395,29 +395,29 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
                 }
                 {
                     // BLOCKTEST EVAL: https://github.com/apache/commons-imaging/blob/d3b3b534198d2b0b631379515e2b53905b425e70/src/main/java/org/apache/commons/imaging/formats/jpeg/JpegImageParser.java#L391C1-L407C22
-                    blocktest().noInit(metadata).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{1,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1), "TiffField")
+                    blocktest().noInit(metadata).given(unitsPerInch, -1.0).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{1,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1))
                             .checkEq(unitsPerInch, -1, 0.001);
-                    blocktest().noInit(metadata).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{2,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1), "TiffField")
+                    blocktest().noInit(metadata).given(unitsPerInch, -1.0).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{2,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1))
                             .checkEq(unitsPerInch, 1, 0.001);
-                    blocktest().noInit(metadata).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{3,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1), "TiffField")
+                    blocktest().noInit(metadata).given(unitsPerInch, -1.0).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{3,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1))
                             .checkEq(unitsPerInch, 2.54, 0.001);
-                    blocktest().noInit(metadata).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{4,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1), "TiffField")
+                    blocktest().noInit(metadata).given(unitsPerInch, -1.0).given("field", new TiffField(296, 0, new  org.apache.commons.imaging.formats.tiff.fieldtypes.FieldTypeShort(3, "Short"), 1L, 2, new byte[]{4,0,0,0}, java.nio.ByteOrder.LITTLE_ENDIAN, 1))
                             .checkEq(unitsPerInch, -1, 0.001);
                     final TiffField field = metadata.findExifValue(TiffTagConstants.TIFF_TAG_RESOLUTION_UNIT);
                     if (field != null) {
                         final int densityUnits = ((Number) field.getValue()).intValue();
 
                         switch (densityUnits) {
-                        case 1:
-                            break;
-                        case 2: // inches
-                            unitsPerInch = 1.0;
-                            break;
-                        case 3: // cms
-                            unitsPerInch = 2.54;
-                            break;
-                        default:
-                            break;
+                            case 1:
+                                break;
+                            case 2: // inches
+                                unitsPerInch = 1.0;
+                                break;
+                            case 3: // cms
+                                unitsPerInch = 2.54;
+                                break;
+                            default:
+                                break;
                         }
                     }
 
@@ -469,21 +469,21 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
         if (app14Segment != null && app14Segment.isAdobeJpegSegment()) {
             final int colorTransform = app14Segment.getAdobeColorTransform();
             switch (colorTransform) {
-            case App14Segment.ADOBE_COLOR_TRANSFORM_UNKNOWN:
-                if (numberOfComponents == 3) {
-                    colorType = ImageInfo.ColorType.RGB;
-                } else if (numberOfComponents == 4) {
-                    colorType = ImageInfo.ColorType.CMYK;
-                }
-                break;
-            case App14Segment.ADOBE_COLOR_TRANSFORM_YCbCr:
-                colorType = ImageInfo.ColorType.YCbCr;
-                break;
-            case App14Segment.ADOBE_COLOR_TRANSFORM_YCCK:
-                colorType = ImageInfo.ColorType.YCCK;
-                break;
-            default:
-                break;
+                case App14Segment.ADOBE_COLOR_TRANSFORM_UNKNOWN:
+                    if (numberOfComponents == 3) {
+                        colorType = ImageInfo.ColorType.RGB;
+                    } else if (numberOfComponents == 4) {
+                        colorType = ImageInfo.ColorType.CMYK;
+                    }
+                    break;
+                case App14Segment.ADOBE_COLOR_TRANSFORM_YCbCr:
+                    colorType = ImageInfo.ColorType.YCbCr;
+                    break;
+                case App14Segment.ADOBE_COLOR_TRANSFORM_YCCK:
+                    colorType = ImageInfo.ColorType.YCCK;
+                    break;
+                default:
+                    break;
             }
         } else if (jfifSegment != null) {
             if (numberOfComponents == 1) {
@@ -493,130 +493,130 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
             }
         } else {
             switch (numberOfComponents) {
-            case 1:
-                colorType = ImageInfo.ColorType.GRAYSCALE;
-                break;
-            case 2:
-                colorType = ImageInfo.ColorType.GRAYSCALE;
-                transparent = true;
-                break;
-            case 3:
-            case 4:
-                boolean have1 = false;
-                boolean have2 = false;
-                boolean have3 = false;
-                boolean have4 = false;
-                boolean haveOther = false;
-                for (final SofnSegment.Component component : fSOFNSegment.getComponents()) {
-                    final int id = component.componentIdentifier;
-                    switch (id) {
-                    case 1:
-                        have1 = true;
-                        break;
-                    case 2:
-                        have2 = true;
-                        break;
-                    case 3:
-                        have3 = true;
-                        break;
-                    case 4:
-                        have4 = true;
-                        break;
-                    default:
-                        haveOther = true;
-                        break;
-                    }
-                }
-                if (numberOfComponents == 3 && have1 && have2 && have3 && !have4 && !haveOther) {
-                    colorType = ImageInfo.ColorType.YCbCr;
-                } else if (numberOfComponents == 4 && have1 && have2 && have3 && have4 && !haveOther) {
-                    colorType = ImageInfo.ColorType.YCbCr;
+                case 1:
+                    colorType = ImageInfo.ColorType.GRAYSCALE;
+                    break;
+                case 2:
+                    colorType = ImageInfo.ColorType.GRAYSCALE;
                     transparent = true;
-                } else {
-                    boolean haveR = false;
-                    boolean haveG = false;
-                    boolean haveB = false;
-                    boolean haveA = false;
-                    boolean haveC = false;
-                    boolean havec = false;
-                    boolean haveY = false;
+                    break;
+                case 3:
+                case 4:
+                    boolean have1 = false;
+                    boolean have2 = false;
+                    boolean have3 = false;
+                    boolean have4 = false;
+                    boolean haveOther = false;
                     for (final SofnSegment.Component component : fSOFNSegment.getComponents()) {
                         final int id = component.componentIdentifier;
                         switch (id) {
-                        case 'R':
-                            haveR = true;
-                            break;
-                        case 'G':
-                            haveG = true;
-                            break;
-                        case 'B':
-                            haveB = true;
-                            break;
-                        case 'A':
-                            haveA = true;
-                            break;
-                        case 'C':
-                            haveC = true;
-                            break;
-                        case 'c':
-                            havec = true;
-                            break;
-                        case 'Y':
-                            haveY = true;
-                            break;
-                        default:
-                            break;
+                            case 1:
+                                have1 = true;
+                                break;
+                            case 2:
+                                have2 = true;
+                                break;
+                            case 3:
+                                have3 = true;
+                                break;
+                            case 4:
+                                have4 = true;
+                                break;
+                            default:
+                                haveOther = true;
+                                break;
                         }
                     }
-                    if (haveR && haveG && haveB && !haveA && !haveC && !havec && !haveY) {
-                        colorType = ImageInfo.ColorType.RGB;
-                    } else if (haveR && haveG && haveB && haveA && !haveC && !havec && !haveY) {
-                        colorType = ImageInfo.ColorType.RGB;
-                        transparent = true;
-                    } else if (haveY && haveC && havec && !haveR && !haveG && !haveB && !haveA) {
-                        colorType = ImageInfo.ColorType.YCC;
-                    } else if (haveY && haveC && havec && haveA && !haveR && !haveG && !haveB) {
-                        colorType = ImageInfo.ColorType.YCC;
+                    if (numberOfComponents == 3 && have1 && have2 && have3 && !have4 && !haveOther) {
+                        colorType = ImageInfo.ColorType.YCbCr;
+                    } else if (numberOfComponents == 4 && have1 && have2 && have3 && have4 && !haveOther) {
+                        colorType = ImageInfo.ColorType.YCbCr;
                         transparent = true;
                     } else {
-                        int minHorizontalSamplingFactor = Integer.MAX_VALUE;
-                        int maxHorizontalSmaplingFactor = Integer.MIN_VALUE;
-                        int minVerticalSamplingFactor = Integer.MAX_VALUE;
-                        int maxVerticalSamplingFactor = Integer.MIN_VALUE;
+                        boolean haveR = false;
+                        boolean haveG = false;
+                        boolean haveB = false;
+                        boolean haveA = false;
+                        boolean haveC = false;
+                        boolean havec = false;
+                        boolean haveY = false;
                         for (final SofnSegment.Component component : fSOFNSegment.getComponents()) {
-                            if (minHorizontalSamplingFactor > component.horizontalSamplingFactor) {
-                                minHorizontalSamplingFactor = component.horizontalSamplingFactor;
-                            }
-                            if (maxHorizontalSmaplingFactor < component.horizontalSamplingFactor) {
-                                maxHorizontalSmaplingFactor = component.horizontalSamplingFactor;
-                            }
-                            if (minVerticalSamplingFactor > component.verticalSamplingFactor) {
-                                minVerticalSamplingFactor = component.verticalSamplingFactor;
-                            }
-                            if (maxVerticalSamplingFactor < component.verticalSamplingFactor) {
-                                maxVerticalSamplingFactor = component.verticalSamplingFactor;
+                            final int id = component.componentIdentifier;
+                            switch (id) {
+                                case 'R':
+                                    haveR = true;
+                                    break;
+                                case 'G':
+                                    haveG = true;
+                                    break;
+                                case 'B':
+                                    haveB = true;
+                                    break;
+                                case 'A':
+                                    haveA = true;
+                                    break;
+                                case 'C':
+                                    haveC = true;
+                                    break;
+                                case 'c':
+                                    havec = true;
+                                    break;
+                                case 'Y':
+                                    haveY = true;
+                                    break;
+                                default:
+                                    break;
                             }
                         }
-                        final boolean isSubsampled = minHorizontalSamplingFactor != maxHorizontalSmaplingFactor
-                                || minVerticalSamplingFactor != maxVerticalSamplingFactor;
-                        if (numberOfComponents == 3) {
-                            if (isSubsampled) {
-                                colorType = ImageInfo.ColorType.YCbCr;
-                            } else {
-                                colorType = ImageInfo.ColorType.RGB;
+                        if (haveR && haveG && haveB && !haveA && !haveC && !havec && !haveY) {
+                            colorType = ImageInfo.ColorType.RGB;
+                        } else if (haveR && haveG && haveB && haveA && !haveC && !havec && !haveY) {
+                            colorType = ImageInfo.ColorType.RGB;
+                            transparent = true;
+                        } else if (haveY && haveC && havec && !haveR && !haveG && !haveB && !haveA) {
+                            colorType = ImageInfo.ColorType.YCC;
+                        } else if (haveY && haveC && havec && haveA && !haveR && !haveG && !haveB) {
+                            colorType = ImageInfo.ColorType.YCC;
+                            transparent = true;
+                        } else {
+                            int minHorizontalSamplingFactor = Integer.MAX_VALUE;
+                            int maxHorizontalSmaplingFactor = Integer.MIN_VALUE;
+                            int minVerticalSamplingFactor = Integer.MAX_VALUE;
+                            int maxVerticalSamplingFactor = Integer.MIN_VALUE;
+                            for (final SofnSegment.Component component : fSOFNSegment.getComponents()) {
+                                if (minHorizontalSamplingFactor > component.horizontalSamplingFactor) {
+                                    minHorizontalSamplingFactor = component.horizontalSamplingFactor;
+                                }
+                                if (maxHorizontalSmaplingFactor < component.horizontalSamplingFactor) {
+                                    maxHorizontalSmaplingFactor = component.horizontalSamplingFactor;
+                                }
+                                if (minVerticalSamplingFactor > component.verticalSamplingFactor) {
+                                    minVerticalSamplingFactor = component.verticalSamplingFactor;
+                                }
+                                if (maxVerticalSamplingFactor < component.verticalSamplingFactor) {
+                                    maxVerticalSamplingFactor = component.verticalSamplingFactor;
+                                }
                             }
-                        } else if (numberOfComponents == 4) {
-                            if (isSubsampled) {
-                                colorType = ImageInfo.ColorType.YCCK;
-                            } else {
-                                colorType = ImageInfo.ColorType.CMYK;
+                            final boolean isSubsampled = minHorizontalSamplingFactor != maxHorizontalSmaplingFactor
+                                    || minVerticalSamplingFactor != maxVerticalSamplingFactor;
+                            if (numberOfComponents == 3) {
+                                if (isSubsampled) {
+                                    colorType = ImageInfo.ColorType.YCbCr;
+                                } else {
+                                    colorType = ImageInfo.ColorType.RGB;
+                                }
+                            } else if (numberOfComponents == 4) {
+                                if (isSubsampled) {
+                                    colorType = ImageInfo.ColorType.YCCK;
+                                } else {
+                                    colorType = ImageInfo.ColorType.CMYK;
+                                }
                             }
                         }
                     }
-                }
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -720,7 +720,7 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
             // return false to exit traversal.
             @Override
             public boolean visitSegment(final int marker, final byte[] markerBytes, final int markerLength, final byte[] markerLengthBytes,
-                    final byte[] segmentData) throws ImagingException {
+                                        final byte[] segmentData) throws ImagingException {
                 if (marker == 0xffd9) {
                     return false;
                 }
@@ -764,7 +764,7 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
             // return false to exit traversal.
             @Override
             public boolean visitSegment(final int marker, final byte[] markerBytes, final int markerLength, final byte[] markerLengthBytes,
-                    final byte[] segmentData) {
+                                        final byte[] segmentData) {
                 if (marker == 0xffd9) {
                     return false;
                 }
@@ -803,7 +803,7 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
             // return false to exit traversal.
             @Override
             public boolean visitSegment(final int marker, final byte[] markerBytes, final int markerLength, final byte[] markerLengthBytes,
-                    final byte[] segmentData) {
+                                        final byte[] segmentData) {
                 if (marker == 0xffd9) {
                     return false;
                 }
@@ -842,7 +842,7 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
             // return false to exit traversal.
             @Override
             public boolean visitSegment(final int marker, final byte[] markerBytes, final int markerLength, final byte[] markerLengthBytes,
-                    final byte[] segmentData) {
+                                        final byte[] segmentData) {
                 if (marker == 0xffd9) {
                     return false;
                 }
@@ -900,7 +900,7 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
             // return false to exit traversal.
             @Override
             public boolean visitSegment(final int marker, final byte[] markerBytes, final int markerLength, final byte[] markerLengthBytes,
-                    final byte[] segmentData) throws ImagingException, IOException {
+                                        final byte[] segmentData) throws ImagingException, IOException {
                 if (marker == JpegConstants.EOI_MARKER) {
                     return false;
                 }
@@ -916,30 +916,30 @@ public class JpegImageParser extends AbstractImageParser<JpegImagingParameters> 
                 }
 
                 switch (marker) {
-                case JpegConstants.JPEG_APP13_MARKER:
-                    // Debug.debug("app 13 segment data", segmentData.length);
-                    result.add(new App13Segment(marker, segmentData));
-                    break;
-                case JpegConstants.JPEG_APP14_MARKER:
-                    result.add(new App14Segment(marker, segmentData));
-                    break;
-                case JpegConstants.JPEG_APP2_MARKER:
-                    result.add(new App2Segment(marker, segmentData));
-                    break;
-                case JpegConstants.JFIF_MARKER:
-                    result.add(new JfifSegment(marker, segmentData));
-                    break;
-                default:
-                    if (Arrays.binarySearch(sofnSegments, marker) >= 0) {
-                        result.add(new SofnSegment(marker, segmentData));
-                    } else if (marker == JpegConstants.DQT_MARKER) {
-                        result.add(new DqtSegment(marker, segmentData));
-                    } else if (marker >= JpegConstants.JPEG_APP1_MARKER && marker <= JpegConstants.JPEG_APP15_MARKER) {
-                        result.add(new UnknownSegment(marker, segmentData));
-                    } else if (marker == JpegConstants.COM_MARKER) {
-                        result.add(new ComSegment(marker, segmentData));
-                    }
-                    break;
+                    case JpegConstants.JPEG_APP13_MARKER:
+                        // Debug.debug("app 13 segment data", segmentData.length);
+                        result.add(new App13Segment(marker, segmentData));
+                        break;
+                    case JpegConstants.JPEG_APP14_MARKER:
+                        result.add(new App14Segment(marker, segmentData));
+                        break;
+                    case JpegConstants.JPEG_APP2_MARKER:
+                        result.add(new App2Segment(marker, segmentData));
+                        break;
+                    case JpegConstants.JFIF_MARKER:
+                        result.add(new JfifSegment(marker, segmentData));
+                        break;
+                    default:
+                        if (Arrays.binarySearch(sofnSegments, marker) >= 0) {
+                            result.add(new SofnSegment(marker, segmentData));
+                        } else if (marker == JpegConstants.DQT_MARKER) {
+                            result.add(new DqtSegment(marker, segmentData));
+                        } else if (marker >= JpegConstants.JPEG_APP1_MARKER && marker <= JpegConstants.JPEG_APP15_MARKER) {
+                            result.add(new UnknownSegment(marker, segmentData));
+                        } else if (marker == JpegConstants.COM_MARKER) {
+                            result.add(new ComSegment(marker, segmentData));
+                        }
+                        break;
                 }
 
                 return !returnAfterFirst;

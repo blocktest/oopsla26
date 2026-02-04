@@ -190,7 +190,9 @@ public class TestConverter {
             if (varType == null) {
                 // Try to find the type in global symbol table
                 HashSet<Type> tmp = globalSymbolTable.getOrDefault(var, null);
-                if (tmp.size() == 1) { varType = tmp.iterator().next(); }
+                if (tmp.size() == 1) {
+                    varType = tmp.iterator().next();
+                }
             } else {
                 initValue = blockTest.localAssignments.get(var);
             }
@@ -209,9 +211,12 @@ public class TestConverter {
             // Original condition: (initValue != null && !initValue.isNullLiteralExpr())
             // Even if the initializer is null, we still need to declare the variable and assign it to null
             // Otherwise compiler will complain that "XXX might not have been initialized"
-            if (initValue != null) {
+            if (initValue != null && Util.predictValue) {
                 // We have an initializer for this variable (var is init before the block test)
                 varDec.setInitializer(initValue);
+                System.out.println("Predicting variables value for " + var);
+            } else if (initValue != null && !Util.predictValue) {
+                System.out.println("Will not predict value for " + var);
             }
             VariableDeclarationExpr decl = new VariableDeclarationExpr(new NodeList<>(varDec));
             body.addStatement(decl);

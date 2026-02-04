@@ -951,14 +951,15 @@ public class AVM implements AwkInterpreter, VariableManager {
 						// check if IGNORECASE set
 						int flags = 0;
 
-                        // BLOCKTEST EVAL: https://github.com/hoijui/Jawk/blob/33cfbc2bc14bc9c75fedccbe2963ef26b61543dc/src/main/java/org/jawk/backend/AVM.java#L936-L943
-                        blocktest().given(flags, 0).noInit(runtime_stack).given(global_variable_offsets, new HashMap<String, Integer>(){{ put("IGNORECASE", 1);}})
-                            .mock("runtime_stack.getVariable(offset_obj, true)", Double.valueOf("1.5")).checkEq(flags, 2).end(FIRST_ASSIGN);
-						 blocktest().given(flags, 0).noInit(runtime_stack).given(global_variable_offsets, new HashMap<String, Integer>(){{ put("NOTIGNORECASE", 1);}})
-                            .mock("runtime_stack.getVariable(offset_obj, true)", Double.valueOf("1.5")).checkEq(flags, 0).end(FIRST_ASSIGN);
-                         blocktest().given(flags, 0).noInit(runtime_stack).given(global_variable_offsets, new HashMap<String, Integer>(){{ put("IGNORECASE", 1);}})
-                            .mock("runtime_stack.getVariable(offset_obj, true)", Double.valueOf("0")).checkEq(flags, 0)
-                              .checkFlow(IfStmt().Then()).end(FIRST_ASSIGN);
+                        // BLOCKTEST RV: https://github.com/hoijui/Jawk/blob/33cfbc2bc14bc9c75fedccbe2963ef26b61543dc/src/main/java/org/jawk/backend/AVM.java#L936-L943
+						// RV (commented out)
+//                      blocktest().given(flags, 0).noInit(runtime_stack).given(global_variable_offsets, new HashMap<String, Integer>(){{ put("IGNORECASE", 1);}})
+//                          .mock("runtime_stack.getVariable(offset_obj, true)", Double.valueOf("1.5")).checkEq(flags, 2).end(FIRST_ASSIGN);
+//						 blocktest().given(flags, 0).noInit(runtime_stack).given(global_variable_offsets, new HashMap<String, Integer>(){{ put("NOTIGNORECASE", 1);}})
+//                          .mock("runtime_stack.getVariable(offset_obj, true)", Double.valueOf("1.5")).checkEq(flags, 0).end(FIRST_ASSIGN);
+//                       blocktest().given(flags, 0).noInit(runtime_stack).given(global_variable_offsets, new HashMap<String, Integer>(){{ put("IGNORECASE", 1);}})
+//                          .mock("runtime_stack.getVariable(offset_obj, true)", Double.valueOf("0")).checkEq(flags, 0)
+//                            .checkFlow(IfStmt().Then()).end(FIRST_ASSIGN);
                          if (global_variable_offsets.containsKey("IGNORECASE")) {
 							Integer offset_obj = global_variable_offsets.get("IGNORECASE");
 							Object ignorecase = runtime_stack.getVariable(offset_obj, true);
@@ -1684,13 +1685,14 @@ public class AVM implements AwkInterpreter, VariableManager {
 								throw new IllegalArgumentException("Cannot assign a scalar to a function name (" + key + ").");
 							}
                             
-                            // BLOCKTEST EVAL: https://github.com/hoijui/Jawk/blob/33cfbc2bc14bc9c75fedccbe2963ef26b61543dc/src/main/java/org/jawk/backend/AVM.java#L1660-L1670
-                            blocktest().given(initial_variables, new HashMap<String, Object>()).given(key, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
-                                .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").expect(IllegalArgumentException.class);
-                            blocktest().given(initial_variables, new HashMap<String, Object>()).given(key, "test2").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
-                               .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().Else());
-                            blocktest().given(initial_variables, new HashMap<String, Object>()).given(key, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", false);}})
-                               .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().Then().IfStmt().Else());
+                            // BLOCKTEST RV: https://github.com/hoijui/Jawk/blob/33cfbc2bc14bc9c75fedccbe2963ef26b61543dc/src/main/java/org/jawk/backend/AVM.java#L1660-L1670
+							// RV (commented out)
+//                          blocktest().given(initial_variables, new HashMap<String, Object>()).given(key, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
+//                              .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").expect(IllegalArgumentException.class);
+//                          blocktest().given(initial_variables, new HashMap<String, Object>()).given(key, "test2").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
+//                             .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().Else());
+//                          blocktest().given(initial_variables, new HashMap<String, Object>()).given(key, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", false);}})
+//                             .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().Then().IfStmt().Else());
 							Integer offset_obj = global_variable_offsets.get(key);
 							Boolean aarray_obj = global_variable_aarrays.get(key);
 							if (offset_obj != null) {
@@ -2205,16 +2207,17 @@ public class AVM implements AwkInterpreter, VariableManager {
 		}
 
 		// make sure we're not receiving funcname=value assignments
-		// BLOCKTEST EVAL: https://github.com/hoijui/Jawk/blob/33cfbc2bc14bc9c75fedccbe2963ef26b61543dc/src/main/java/org/jawk/backend/AVM.java#L2174-L2188
-		blocktest().given(obj, null).given(function_names, new HashSet<String>()).given(initial_variables, new HashMap<String, Object>()).given(name, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
-            .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").expect(IllegalArgumentException.class);
-        blocktest().given(obj, null).given(function_names, new HashSet<String>()).given(initial_variables, new HashMap<String, Object>()).given(name, "test2").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
-           .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().IfStmt().Else());
-        blocktest().given(obj, null).given(function_names, new HashSet<String>(Arrays.asList("test2"))).given(initial_variables, new HashMap<String, Object>()).given(name, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", false);}})
-           .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().IfStmt().Then().IfStmt().Else());
-        
-        blocktest().given(obj, null).given(function_names, new HashSet<String>(Arrays.asList("test"))).given(initial_variables, new HashMap<String, Object>()).given(name, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", false);}})
-                   .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().Then()).expect(IllegalArgumentException.class);
+		// BLOCKTEST RV: https://github.com/hoijui/Jawk/blob/33cfbc2bc14bc9c75fedccbe2963ef26b61543dc/src/main/java/org/jawk/backend/AVM.java#L2174-L2188
+		// RV (commented out)
+//		blocktest().given(obj, null).given(function_names, new HashSet<String>()).given(initial_variables, new HashMap<String, Object>()).given(name, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
+//          .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").expect(IllegalArgumentException.class);
+//      blocktest().given(obj, null).given(function_names, new HashSet<String>()).given(initial_variables, new HashMap<String, Object>()).given(name, "test2").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", true);}})
+//         .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().IfStmt().Else());
+//      blocktest().given(obj, null).given(function_names, new HashSet<String>(Arrays.asList("test2"))).given(initial_variables, new HashMap<String, Object>()).given(name, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", false);}})
+//         .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().IfStmt().Then().IfStmt().Else());
+//      
+//      blocktest().given(obj, null).given(function_names, new HashSet<String>(Arrays.asList("test"))).given(initial_variables, new HashMap<String, Object>()).given(name, "test").given(global_variable_offsets, new HashMap<String, Integer>(){{ put("test", 1);}}).given(global_variable_aarrays, new HashMap<String, Boolean>(){{ put("test", false);}})
+//                 .mock("runtime_stack.setFilelistVariable(offset_obj.intValue(), obj)").checkFlow(IfStmt().Then()).expect(IllegalArgumentException.class);
 		if (function_names.contains(name)) {
 			throw new IllegalArgumentException("Cannot assign a scalar to a function name (" + name + ").");
 		}

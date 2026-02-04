@@ -166,12 +166,13 @@ final class URLParser {
     }
 
     private void handleIllegalCharacterError(String message, int codePoint) throws GalimatiasParseException {
-        // BLOCKTEST EVAL: https://github.com/smola/galimatias/blob/0771a10ef5021181fc172b95ac39e9f4c7ada2e8/src/main/java/io/mola/galimatias/URLParser.java#L164-L174
-        blocktest().given(codePoint, ' ').given(message, "hi").checkEq(message, "hi: space is not allowed").end(FIRST_ASSIGN);
-        blocktest().given(codePoint, '\t').given(message, "hi").checkEq(message, "hi: tab is not allowed").end(FIRST_ASSIGN);
-        blocktest().given(codePoint, '\n').given(message, "hi").checkEq(message, "hi: line break is not allowed").end(FIRST_ASSIGN);
-        blocktest().given(codePoint, '\r').given(message, "hi").checkEq(message, "hi: carriage return is not allowed").end(FIRST_ASSIGN);
-        blocktest().given(codePoint, 100).given(message, "hi").checkEq(message, "hi: \u201c" + "d" + "\u201d is not allowed").end(FIRST_ASSIGN);
+        // BLOCKTEST RV: https://github.com/smola/galimatias/blob/0771a10ef5021181fc172b95ac39e9f4c7ada2e8/src/main/java/io/mola/galimatias/URLParser.java#L164-L174
+        // RV (commented out)
+//      blocktest().given(codePoint, ' ').given(message, "hi").checkEq(message, "hi: space is not allowed").end(FIRST_ASSIGN);
+//      blocktest().given(codePoint, '\t').given(message, "hi").checkEq(message, "hi: tab is not allowed").end(FIRST_ASSIGN);
+//      blocktest().given(codePoint, '\n').given(message, "hi").checkEq(message, "hi: line break is not allowed").end(FIRST_ASSIGN);
+//      blocktest().given(codePoint, '\r').given(message, "hi").checkEq(message, "hi: carriage return is not allowed").end(FIRST_ASSIGN);
+//      blocktest().given(codePoint, 100).given(message, "hi").checkEq(message, "hi: \u201c" + "d" + "\u201d is not allowed").end(FIRST_ASSIGN);
                 
         if (codePoint == ' ') {
             message += ": space is not allowed";

@@ -81,8 +81,8 @@ final class SparqlResultsParser implements StreamParser<Response> {
                             if ("vars".equals(headField) && headToken == JsonToken.START_ARRAY) {
                                 ElementParser.parseArray(parser, (JsonToken token) -> {
                                     // BLOCKTEST EVAL: https://github.com/datadotworld/dw-jdbc/blob/ac4f7d8a457dce89cbaa9eb33994304e5504fda1/src/main/java/world/data/jdbc/internal/transport/SparqlResultsParser.java#L69-L73
-                                    blocktest().given(token, JsonToken.VALUE_TRUE).given(parser.getText(), "fun", "String").checkEq(variables.get(0), "fun");
-                                    blocktest().given(token, JsonToken.START_OBJECT).given(parser.getText(), "fun", "String").checkTrue(variables.isEmpty());
+                                    blocktest().given(token, JsonToken.VALUE_TRUE).given(parser.getText(), "fun").given(variables, new ArrayList<>()).checkEq(variables.get(0), "fun");
+                                    blocktest().given(token, JsonToken.START_OBJECT).given(parser.getText(), "fun").given(variables, new ArrayList<>()).checkTrue(variables.isEmpty());
                                     if (token.isScalarValue()) {
                                         variables.add(parser.getText());
                                     }

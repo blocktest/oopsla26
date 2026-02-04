@@ -736,8 +736,8 @@ public class SimpleAsyncManager implements AsyncManager {
             for (TransactionMemoriesProvider provider : providerList) {
                 provider.provide().ifPresent(result -> {
                     // BLOCKTEST EVAL: https://github.com/lastaflute/lastaflute/blob/01201e2eee995053bf6f9febcf58ace01ed38c30/src/main/java/org/lastaflute/core/magic/async/SimpleAsyncManager.java#L732-L737
-                    blocktest().given(txSb, new StringBuilder()).given(result, "100", "String").checkEq(txSb.toString(), "\n  ; transactionMemories=wholeShow:" + Srl.indent(EX_IND.length(), LF + "*" + "100"));
-                    blocktest().given(txSb, new StringBuilder("hello")).given(result, "100", "String").checkEq(txSb.toString(), "hello" + Srl.indent(EX_IND.length(), LF + "*" + "100"));
+                    blocktest().given(txSb, new StringBuilder()).given(result, "100").checkEq(txSb.toString(), "\n  ; transactionMemories=wholeShow:" + Srl.indent(EX_IND.length(), LF + "*" + "100"));
+                    blocktest().given(txSb, new StringBuilder("hello")).given(result, "100").checkEq(txSb.toString(), "hello" + Srl.indent(EX_IND.length(), LF + "*" + "100"));
                     if (txSb.length() == 0) {
                         txSb.append(LF).append(EX_IND).append("; transactionMemories=wholeShow:");
                     }

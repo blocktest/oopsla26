@@ -728,8 +728,8 @@ public class Hessian2Input
 
             case BC_LONG_INT:
                 // BLOCKTEST EVAL: https://github.com/apache/dubbo-hessian-lite/blob/ca001b4658227d5122f85bcb45032a0dac4faf0d/src/main/java/com/alibaba/com/caucho/hessian/io/Hessian2Input.java#L725C3-L728C40
-                blocktest().given("a", 0, "int").mock("read()", 0).checkReturnFalse();
-                blocktest().given("a", 0, "int").mock("read()", 5, 10, 15, 20).checkReturnTrue();
+                blocktest().given("a", 0).mock("read()", 0).checkReturnFalse();
+                blocktest().given("a", 0).mock("read()", 5, 10, 15, 20).checkReturnTrue();
                 return (0x1000000L * read()
                         + 0x10000L * read()
                         + 0x100 * read()
@@ -2874,8 +2874,9 @@ public class Hessian2Input
         _isLastChunk = true;
         _chunkLength = len;
 
-        // BLOCKTEST EVAL: https://github.com/apache/dubbo-hessian-lite/blob/ca001b4658227d5122f85bcb45032a0dac4faf0d/src/main/java/com/alibaba/com/caucho/hessian/io/Hessian2Input.java#L2861-L2866
-        // @blocktest("testFirst").given(i, new ArrayList<>(java.util.Arrays.asList(100, 101, 102)).iterator(), "java.util.Iterator<Integer>").given(_sbuf, new StringBuilder()).mock("parseChar()", (i.hasNext() ? i.next() : -1)).checkReturnEq("def");
+        // BLOCKTEST RV: https://github.com/apache/dubbo-hessian-lite/blob/ca001b4658227d5122f85bcb45032a0dac4faf0d/src/main/java/com/alibaba/com/caucho/hessian/io/Hessian2Input.java#L2861-L2866
+        // RV (commented out)
+        // atblocktest("testFirstForRV").given(i, new ArrayList<>(java.util.Arrays.asList(100, 101, 102)).iterator(), "java.util.Iterator<Integer>").given(_sbuf, new StringBuilder()).mock("parseChar()", (i.hasNext() ? i.next() : -1)).checkReturnEq("def");
         _sbuf.setLength(0);
         int ch;
         while ((ch = parseChar()) >= 0)
@@ -2889,8 +2890,9 @@ public class Hessian2Input
         _isLastChunk = true;
         _chunkLength = len;
 
-        // BLOCKTEST EVAL: https://github.com/apache/dubbo-hessian-lite/blob/ca001b4658227d5122f85bcb45032a0dac4faf0d/src/main/java/com/alibaba/com/caucho/hessian/io/Hessian2Input.java#L2874-L2879
-        // @blocktest("testSecond").given(i, new ArrayList<>(java.util.Arrays.asList(100, 101, 102)).iterator(), "java.util.Iterator<Integer>").given(_sbuf, new StringBuilder()).mock("parseChar()", (i.hasNext() ? i.next() : -1)).checkReturnEq("def");
+        // BLOCKTEST RV: https://github.com/apache/dubbo-hessian-lite/blob/ca001b4658227d5122f85bcb45032a0dac4faf0d/src/main/java/com/alibaba/com/caucho/hessian/io/Hessian2Input.java#L2874-L2879
+        // RV (commented out)
+        // atblocktest("testSecondForRV").given(i, new ArrayList<>(java.util.Arrays.asList(100, 101, 102)).iterator(), "java.util.Iterator<Integer>").given(_sbuf, new StringBuilder()).mock("parseChar()", (i.hasNext() ? i.next() : -1)).checkReturnEq("def");
         _sbuf.setLength(0);
         int ch;
         while ((ch = parseChar()) >= 0)

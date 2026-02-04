@@ -70,3 +70,60 @@ if [[ ${project_name} == jruby-jcodings && ${coverage} == "true" ]]; then
   sed -i.bak 's/<argLine>-Dfile.encoding=UTF-8<\/argLine>/<argLine>@{argLine} -Dfile.encoding=UTF-8<\/argLine>/' pom.xml
   rm pom.xml.bak
 fi
+
+if [[ ${project_name} == ATLANTBH-owl ]]; then
+  echo "Patching ATLANTBH-owl"
+  sed -i.bak 's/<argLine>-Dfile.encoding=UTF-8<\/argLine>/<argLine>@{argLine} -Dfile.encoding=UTF-8<\/argLine>/' pom.xml
+  rm pom.xml.bak
+  
+  sed -i.bak '
+/<plugin>/{
+  :a
+  N
+  /<\/plugin>/!ba
+  /<groupId>com.github.eirslett<\/groupId>/d
+}
+' pom.xml
+  rm pom.xml.bak
+fi
+
+
+if [[ ${project_name} == dingjs-javaagent ]]; then
+  echo "Patching dingjs-javaagent"
+  sed -i.bak 's|<project\.build\.target>1\.6</project\.build\.target>|<project.build.target>1.8</project.build.target>|g' pom.xml
+  rm pom.xml.bak
+fi
+
+if [[ ${project_name} == dingjs-javaagent ]]; then
+  echo "Patching magdel-MapNav"
+  sed -i.bak '
+/<plugin>/,/<\/plugin>/{
+  /<artifactId>maven-compiler-plugin<\/artifactId>/,/<\/plugin>/{
+    s|<source>.*</source>|<source>1.8</source>|
+    s|<target>.*</target>|<target>1.8</target>|
+    /<compilerArgs>/,/<\/compilerArgs>/d
+  }
+}
+' pom.xml
+  rm pom.xml.bak
+fi
+
+if [[ ${project_name} == tud-fop-j-Algo ]]; then
+  echo "Patching tud-fop-j-Algo"
+  
+  sed -i.bak '
+/<plugin>/{
+  :a
+  N
+  /<\/plugin>/!ba
+  /<artifactId>maven-antrun-plugin<\/artifactId>/d
+}
+' pom.xml
+  rm pom.xml.bak
+fi
+
+if [[ ${project_name} == demidenko05-beigesoft-accounting ]]; then
+  echo "Patching demidenko05-beigesoft-accounting"
+  sed -i.bak 's|<java\.version>1\.7</java\.version>|<java.version>1.8</java.version>|g' pom.xml
+  rm pom.xml.bak
+fi

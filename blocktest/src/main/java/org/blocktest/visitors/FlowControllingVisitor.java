@@ -9,16 +9,7 @@ import com.github.javaparser.ast.ArrayCreationLevel;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.ArrayAccessExpr;
-import com.github.javaparser.ast.expr.ArrayCreationExpr;
-import com.github.javaparser.ast.expr.AssignExpr;
-import com.github.javaparser.ast.expr.BinaryExpr;
-import com.github.javaparser.ast.expr.BooleanLiteralExpr;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.IntegerLiteralExpr;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ForStmt;
@@ -33,6 +24,7 @@ import org.blocktest.types.Flow;
 
 public class FlowControllingVisitor extends ModifierVisitor<Void> {
 
+    private String flowText = "";
     private final List<Flow> flows;
     private String testName;
     private int counter = 0;
@@ -43,6 +35,16 @@ public class FlowControllingVisitor extends ModifierVisitor<Void> {
         this.flows = new ArrayList<>(blockTest.flows);
         this.testName = blockTest.testName;
         this.processedAsElseIf = new HashSet<>();
+
+        StringBuilder sb = new StringBuilder();
+        for (Flow flow : flows) {
+            if (sb.length() > 0) {
+                sb.append(" -> ").append(flow.toString());
+            } else {
+                sb.append(flow.toString());
+            }
+        }
+        flowText = sb.toString();
     }
 
     public ExpressionStmt increaseByOne() {
@@ -190,8 +192,20 @@ public class FlowControllingVisitor extends ModifierVisitor<Void> {
         AssignExpr increment = new AssignExpr(new NameExpr(indexVar), new IntegerLiteralExpr(1), AssignExpr.Operator.PLUS);
 
         // assertTrue(_internal_abc[_internal_i]);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Required flow: (");
+        sb.append(flowText);
+        sb.append(") fails at step ");
+        BinaryExpr message = new BinaryExpr(
+            new StringLiteralExpr(sb.toString()),
+            new NameExpr(indexVar),
+            BinaryExpr.Operator.PLUS
+        );
+
         MethodCallExpr assertCall = new MethodCallExpr(null, "assertTrue");
         ArrayAccessExpr arrayAccess = new ArrayAccessExpr(arrayName, new NameExpr(indexVar));
+        assertCall.addArgument(message);
         assertCall.addArgument(arrayAccess);
         ExpressionStmt assertStmt = new ExpressionStmt(assertCall);
 

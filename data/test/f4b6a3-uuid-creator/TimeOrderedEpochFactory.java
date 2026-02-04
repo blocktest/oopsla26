@@ -434,6 +434,7 @@ public final class TimeOrderedEpochFactory extends AbstCombFactory {
 			if (incrementMax == INCREMENT_MAX_DEFAULT) {
 				if (random instanceof ByteRandom) {
 					// BLOCKTEST EVAL: https://github.com/f4b6a3/uuid-creator/blob/f9e6e6d02ecc8dac16a56e4fab1bd24caec8171c/src/main/java/com/github/f4b6a3/uuid/factory/rfc4122/TimeOrderedEpochFactory.java#L413-L417
+					// MUST PROVIDE TYPE
 					lambdatest().given(random, new PlusNFunction.BlockByteRandom(), "PlusNFunction.BlockByteRandom").given(incrementMax, INCREMENT_MAX_DEFAULT).checkReturnEq(1.943345852E9, 0.01);
 					return () -> {
 						// return n, where 1 <= n <= 2^32
@@ -453,6 +454,7 @@ public final class TimeOrderedEpochFactory extends AbstCombFactory {
 					final int bits = (int) Math.ceil(Math.log(incrementMax) / Math.log(2));
 					final int size = ((bits - 1) / Byte.SIZE) + 1;
 					// BLOCKTEST EVAL: https://github.com/f4b6a3/uuid-creator/blob/f9e6e6d02ecc8dac16a56e4fab1bd24caec8171c/src/main/java/com/github/f4b6a3/uuid/factory/rfc4122/TimeOrderedEpochFactory.java#L430-L435
+					// MUST PROVIDE TYPE
 					lambdatest().given(positive, 0x7fffffffffffffffL).given(random, new PlusNFunction.BlockByteRandom(), "PlusNFunction.BlockByteRandom").given(size, 10).given(incrementMax, INCREMENT_MAX_DEFAULT - 1).checkReturnEq(3985711175L, 0.01);
 					return () -> {
 						// return n, where 1 <= n <= incrementMax

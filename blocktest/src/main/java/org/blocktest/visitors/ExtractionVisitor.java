@@ -15,14 +15,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;import com.git
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.AssignExpr;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.LambdaExpr;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.expr.StringLiteralExpr;
-import com.github.javaparser.ast.expr.UnaryExpr;
+import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithStatements;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
@@ -32,6 +25,7 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import com.github.javaparser.ast.stmt.ThrowStmt;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import javassist.compiler.ast.Variable;
@@ -347,11 +341,13 @@ public class ExtractionVisitor extends VoidVisitorAdapter<ExtractionVisitor.Cont
             if (args.size() == 3) {
                 leftType = Util.getTypeFromStr(args.get(2).toString().replace("\"", ""));
                 symbolTable.put(left.toString(), leftType);
+                System.out.println("DEBUG: Type is provided for " + left.toString() + ": " + leftType.toString());
             }
 
-            leftType = getVariableType(symbolTable, left);
-
             Expression right = args.get(1);
+
+            leftType = getVariableType(symbolTable, left, right);
+
             GivenVariable givenVariable = new GivenVariable(leftType, left.toString(), left, right);
             blockTest.givens.add(givenVariable);
             blockTest.givenVariables.add(left.toString());
@@ -377,7 +373,7 @@ public class ExtractionVisitor extends VoidVisitorAdapter<ExtractionVisitor.Cont
                     symbolTable.put(left.toString(), leftType);
                 }
 
-                leftType = getVariableType(symbolTable, left);
+                leftType = getVariableType(symbolTable, left, right);
 
                 GivenVariable givenVariable = new GivenVariable(leftType, left.toString(), left, right);
                 blockTest.givens.add(givenVariable);
@@ -417,7 +413,7 @@ public class ExtractionVisitor extends VoidVisitorAdapter<ExtractionVisitor.Cont
             }
 
             for (Expression left : args) {
-                Type leftType = getVariableType(symbolTable, left);
+                Type leftType = getVariableType(symbolTable, left, null);
                 GivenVariable givenVariable = new GivenVariable(leftType, left.toString(), left, null);
                 blockTest.givens.add(givenVariable);
                 blockTest.givenVariables.add(left.toString());
@@ -469,20 +465,44 @@ public class ExtractionVisitor extends VoidVisitorAdapter<ExtractionVisitor.Cont
         }
     }
 
-    private static Type getVariableType(HashMap<String, Type> symbolTable, Expression left) {
+    private static Type getVariableType(HashMap<String, Type> symbolTable, Expression left, Expression right) {
         Type leftType;
         leftType = symbolTable.getOrDefault(left.toString(), null);
-        if (leftType == null || leftType.isUnknownType()) {
+        boolean wrongType = leftType != null && (leftType.toString().equals("java.lang.Class<?>") || leftType.toString().equals("U") || leftType.toString().contains("InferenceVariable_"));
+        if (leftType == null || leftType.isUnknownType() || wrongType) {
             // Cannot find the type of lhs using symbolTable
             try {
+                if (wrongType) {
+                    System.out.println("JavaParser returned wrong type");
+                    throw new RuntimeException("Unknown type");
+                }
                 System.out.println("Using TypeResolver to find the type of " + left);
                 String leftTypeStr = TypeResolver.sSymbolResolver.calculateType(left).describe();
+                if (leftType != null && (leftTypeStr.equals("java.lang.Class<?>") || leftTypeStr.equals("U") || leftTypeStr.contains("InferenceVariable_"))) {
+                    System.out.println("JavaParser returned wrong type");
+                    throw new RuntimeException("Unknown type");
+                }
+
                 TypeResolver.sSymbolResolver.calculateType(left).describe();
                 leftType = Util.getTypeFromStr(leftTypeStr);
                 symbolTable.put(left.toString(), leftType);
             } catch (Exception e) {
-                throw new RuntimeException(
-                        "left expression in " + Constant.GIVEN + " should be a variable: " + left + " " + e);
+                if (right != null) {
+                    System.out.println("Failed to use TypeResolver to find the type of " + left + ". Guessing type...");
+
+                    leftType = inferElementType(right, true);
+                    if (leftType != null) {
+                        symbolTable.put(left.toString(), leftType);
+                        System.out.println("Predicted type is " + leftType);
+                    } else {
+                        System.out.println("Failed to predcit type from RHS");
+                    }
+                }
+
+                if (leftType == null || leftType.isUnknownType()) {
+                    throw new RuntimeException(
+                            "left expression in " + Constant.GIVEN + " should be a variable: " + left + " " + e);
+                }
             }
         }
         if (leftType != null && leftType.isWildcardType()) {
@@ -497,6 +517,163 @@ public class ExtractionVisitor extends VoidVisitorAdapter<ExtractionVisitor.Cont
             }
         }
         return leftType;
+    }
+
+    private static Type inferElementType(Expression right, boolean primitive) {
+        if (right.isObjectCreationExpr()) {
+            ObjectCreationExpr oce = right.asObjectCreationExpr();
+
+            if (oce.getTypeAsString().contains("<>")) {
+                // new X<>;
+                Expression firstArg = oce.getArgument(0);
+                if (firstArg.isMethodCallExpr()) {
+                    MethodCallExpr mce = firstArg.asMethodCallExpr();
+                    boolean isArraysAsList =
+                            (mce.getScope().isPresent()
+                                    && mce.getScope().get().isNameExpr()
+                                    && (mce.getScope().get().asNameExpr().getNameAsString().equals("Arrays") || mce.getScope().get().asNameExpr().getNameAsString().equals("java.util.Arrays"))
+                                    && mce.getNameAsString().equals("asList")) || (mce.getScope().isPresent() && mce.getScope().get().toString().equals("java.util.Arrays") && mce.getNameAsString().equals("asList"));
+                    if (isArraysAsList && !mce.getArguments().isEmpty()) {
+                        Type elementType = inferElementType(mce.getArgument(0), false);
+                        if (elementType == null) return null;
+                        String containerType = oce.getType().toString(); // ArrayList, HashSet, LinkedList
+                        if (containerType.endsWith("<>")) {
+                            containerType = containerType.substring(0, containerType.length() - 2);
+                        }
+                        return Util.getTypeFromStr(containerType + "<" + elementType + ">");
+                    }
+                }
+            }
+
+            return oce.getType();
+        } else if (right.isStringLiteralExpr()) {
+            return Util.getTypeFromStr("java.lang.String");
+        } else if (right.isIntegerLiteralExpr()) {
+            if (right.asIntegerLiteralExpr().getValue().endsWith("L") || right.asIntegerLiteralExpr().getValue().endsWith("l")) {
+                return primitive ? Util.getTypeFromStr("long") : Util.getTypeFromStr("java.lang.Long");
+            } else {
+                return primitive ? Util.getTypeFromStr("int") : Util.getTypeFromStr("java.lang.Integer");
+            }
+        } else if (right.isDoubleLiteralExpr()) {
+            if (right.asDoubleLiteralExpr().getValue().endsWith("f") || right.asDoubleLiteralExpr().getValue().endsWith("F")) {
+                return primitive ? Util.getTypeFromStr("float") : Util.getTypeFromStr("java.lang.Float");
+            } else {
+                return primitive ? Util.getTypeFromStr("double") : Util.getTypeFromStr("java.lang.Double");
+            }
+        }  else if (right.isBooleanLiteralExpr()) {
+            return primitive ? Util.getTypeFromStr("boolean") : Util.getTypeFromStr("java.lang.Boolean");
+        }  else if (right.isCharLiteralExpr()) {
+            return primitive ? Util.getTypeFromStr("char") : Util.getTypeFromStr("java.lang.Character");
+        }  else if (right.isLongLiteralExpr()) {
+            return primitive ? Util.getTypeFromStr("long") : Util.getTypeFromStr("java.lang.Long");
+        } else if (right.isArrayCreationExpr()) {
+            ArrayCreationExpr ace = right.asArrayCreationExpr();
+            Type elementType = ace.getElementType();
+            return Util.getTypeFromStr(elementType.toString() + "[]");
+        } else if (right.isClassExpr()) {
+            return Util.getTypeFromStr("java.lang.Class");
+        } else if (right.isCastExpr()) {
+            CastExpr cast = right.asCastExpr();
+            return Util.getTypeFromStr(cast.getType().toString());
+        }
+
+        if (right.isMethodCallExpr()) {
+            MethodCallExpr mce = right.asMethodCallExpr();
+            if (mce.getNameAsString().equals("getAnnotation")
+                    && mce.getArguments().size() == 1
+                    && mce.getArgument(0).isClassExpr()) {
+                return Util.getTypeFromStr("java.lang.annotation.Annotation");
+            }
+        }
+
+        if (predictBuilderType(right).isPresent()) {
+            return Util.getTypeFromStr(predictBuilderType(right).get());
+        }
+
+        if (inferPathsGet(right).isPresent()) {
+            return Util.getTypeFromStr(inferPathsGet(right).get());
+        }
+
+        if (inferEnumType(right).isPresent()) {
+            return Util.getTypeFromStr(inferEnumType(right).get());
+        }
+        return null;
+    }
+
+    private static Optional<String> predictBuilderType(Expression expr) {
+        // Predict builder type
+        // TypedData.newBuilder().setString("foo").build() -> TypedData
+        if (!expr.isMethodCallExpr()) return Optional.empty();
+
+        MethodCallExpr mce = expr.asMethodCallExpr();
+        if (!mce.getNameAsString().equals("build")) return Optional.empty();
+
+        MethodCallExpr current = mce;
+
+        while (current.getScope().isPresent()
+                && current.getScope().get().isMethodCallExpr()) {
+
+            current = current.getScope().get().asMethodCallExpr();
+
+            if (current.getNameAsString().toLowerCase().contains("build")) {
+                if (current.getScope().isPresent()
+                        && current.getScope().get().isNameExpr()) {
+
+                    return Optional.of(
+                            current.getScope().get().asNameExpr().getNameAsString()
+                    );
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<String> inferPathsGet(Expression expr) {
+        if (!expr.isMethodCallExpr()) return Optional.empty();
+
+        MethodCallExpr mce = expr.asMethodCallExpr();
+        if (!mce.getNameAsString().equals("get")) return Optional.empty();
+        if (!mce.getScope().isPresent()) return Optional.empty();
+
+        Expression scope = mce.getScope().get();
+
+        // Paths.get(...)
+        if (scope.isNameExpr()
+                && scope.asNameExpr().getNameAsString().equals("Paths")) {
+            return Optional.of("Path");
+        }
+
+        // java.nio.file.Paths.get(...)
+        if (scope.isFieldAccessExpr()) {
+            String scopeStr = scope.toString();
+            if (scopeStr.endsWith(".Paths")) {
+                return Optional.of("Path");
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static Optional<String> inferEnumType(Expression expr) {
+        if (!expr.isFieldAccessExpr()) return Optional.empty();
+
+        FieldAccessExpr fae = expr.asFieldAccessExpr();
+
+        Expression scope = fae.getScope(); // scope of the constant
+
+        // If nested (TermsAggregation.Order.COUNT_ASC)
+        if (scope.isFieldAccessExpr()) {
+            FieldAccessExpr inner = scope.asFieldAccessExpr();
+            // return the fully qualified enum type: TermsAggregation.Order
+            return Optional.of(inner.toString());
+        }
+
+        // Simple case: Enum.CONSTANT
+        if (scope.isNameExpr()) {
+            return Optional.of(scope.asNameExpr().getNameAsString());
+        }
+
+        return Optional.empty();
     }
 
     private void findTargetStatements(Node expressionStmt, BlockTest blockTest, HashMap<String, Type> symbolTable) {

@@ -95,10 +95,10 @@ public class Main implements Callable<Integer> {
                 try (Stream<Path> paths = Files.walk(includedPath)) {
                     paths.filter(Files::isRegularFile).map(projectDirectory::resolve).forEach(path -> {
                         // BLOCKTEST EVAL: https://github.com/heroku/heroku-jvm-application-deployer/blob/ffd498f1a94853b30bc0275a6ef495f2ec3a11f7/src/main/java/com/heroku/deployer/Main.java#L109-L118
-                        blocktest().given(projectDirectory, Paths.get(System.getProperty("user.dir"))).given(path, Paths.get(Paths.get(System.getProperty("user.dir")).toString(), "foo", "baz", "..", "bar"), "Path").given(sourceBlobDescriptor, new SourceBlobDescriptor()).given(includedPath, Paths.get(Paths.get(System.getProperty("user.dir")).toString(), "foo")).checkTrue(sourceBlobDescriptor.getContents().containsKey(Paths.get("foo/bar"))).checkTrue(sourceBlobDescriptor.containsPath(Paths.get("foo/bar")));
+                        blocktest().given(projectDirectory, Paths.get(System.getProperty("user.dir"))).given(path, Paths.get(Paths.get(System.getProperty("user.dir")).toString(), "foo", "baz", "..", "bar")).given(sourceBlobDescriptor, new SourceBlobDescriptor()).given(includedPath, Paths.get(Paths.get(System.getProperty("user.dir")).toString(), "foo")).checkTrue(sourceBlobDescriptor.getContents().containsKey(Paths.get("foo/bar"))).checkTrue(sourceBlobDescriptor.containsPath(Paths.get("foo/bar")));
                         /*
                             @blocktest().given(projectDirectory, Paths.get("/abc"))
-                                    .given(path, Paths.get("/def"), "Path")
+                                    .given(path, Paths.get("/def"))
                                     .given(sourceBlobDescriptor, new SourceBlobDescriptor()).given(includedPath, Paths.get("bar"))
                                     .checkFalse(sourceBlobDescriptor.getContents().containsKey(Paths.get("foo/bar")))
                                     .checkFalse(sourceBlobDescriptor.containsPath(Paths.get("foo/bar"))).mock("System.exit(-1)")

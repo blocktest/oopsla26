@@ -158,13 +158,13 @@ public class Validator {
             if (configurations instanceof List) {
                 ((List) configurations).forEach(configuration -> {
                     // BLOCKTEST EVAL: https://github.com/wso2/config-mapper/blob/353b0829d3bf3dae92312dea6ff1dddff9a74fe6/src/main/java/org/wso2/config/mapper/Validator.java#L153-L161
-                    blocktest().given(configuration, new java.util.HashMap<String, Object>() {{ put("foo", "baz"); }}, "Object")
+                    blocktest().given(configuration, new java.util.HashMap<String, Object>() {{ put("foo", "baz"); }})
                             .given(splittedArray, new String[]{"bar", "foo"}).given(list, new ArrayList<>())
                             .checkEq(list.get(0), "baz");
-                    blocktest().given(configuration, new java.util.HashMap<>(), "Object")
+                    blocktest().given(configuration, new java.util.HashMap<>())
                             .given(splittedArray, new String[]{"foo", "bar"}).given(list, new ArrayList<>())
                             .checkEq(list.get(0), "");
-                    blocktest().given(configuration, new ArrayList<>(), "Object")
+                    blocktest().given(configuration, new ArrayList<>())
                             .given(splittedArray, new String[]{"foo", "bar"}).given(list, new ArrayList<>())
                             .checkEq(list.size(), 0);
                     if (configuration instanceof Map) {

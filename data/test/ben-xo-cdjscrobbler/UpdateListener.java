@@ -105,7 +105,7 @@ public class UpdateListener implements DeviceUpdateListener, SongEventVisitor {
                     blocktest()
                             .given(songEventQueue, new LinkedBlockingQueue<SongEvent>())
                             .mock("e.accept(this)")
-                            .given(e, new ResetEvent(new CdjStatus(new java.net.DatagramPacket(new byte[1024], 1024))), "SongEvent")
+                            .given(e, new ResetEvent(new CdjStatus(new java.net.DatagramPacket(new byte[1024], 1024))))
                             .given(deviceNumber, 1)
                             .mock("logger.info(..)")
                             .checkEq(songEventQueue.iterator().next().toString(), "** RESET (Song stopped or changed) **");

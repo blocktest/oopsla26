@@ -356,16 +356,16 @@ public class YamlReader implements AutoCloseable {
 						// BLOCKTEST EVAL: https://github.com/EsotericSoftware/yamlbeans/blob/763726d51c99824218051e485e1b44f7477456fa/src/com/esotericsoftware/yamlbeans/YamlReader.java#L350C1-L359C8
 						Event nextEvent = parser.peekNextEvent();
 						blocktest().given(nextEvent, new com.esotericsoftware.yamlbeans.parser.SequenceStartEvent("anchor", "myTag", true, false))
-								.given(object, new HashMap<String, String>()).given(key, "foo").given(config.tagSuffix, ".conf", "String")
+								.given(object, new HashMap<String, String>()).given(key, "foo").given(config.tagSuffix, ".conf")
 								.checkEq(((Map<String, String>)object).get("foo.conf"), "myTag");
 						blocktest().given(nextEvent, new com.esotericsoftware.yamlbeans.parser.MappingStartEvent("anchor", "myTag2", true, false))
-								.given(object, new HashMap<String, String>()).given(key, "foo2").given(config.tagSuffix, ".conf2", "String")
+								.given(object, new HashMap<String, String>()).given(key, "foo2").given(config.tagSuffix, ".conf2")
 								.checkEq(((Map<String, String>)object).get("foo2.conf2"), "myTag2");
 						blocktest().given(nextEvent, new com.esotericsoftware.yamlbeans.parser.ScalarEvent("anchor", "myTag3", new boolean[]{true, false}, "test", 'c'))
-								.given(object, new HashMap<String, String>()).given(key, "foo3").given(config.tagSuffix, ".conf3", "String")
+								.given(object, new HashMap<String, String>()).given(key, "foo3").given(config.tagSuffix, ".conf3")
 								.checkEq(((Map<String, String>)object).get("foo3.conf3"), "myTag3");
 						blocktest().given(nextEvent, new com.esotericsoftware.yamlbeans.parser.DocumentStartEvent(false, null, null))
-								.given(object, new HashMap<String, String>()).given(key, "foo4").given(config.tagSuffix, ".conf4", "String")
+								.given(object, new HashMap<String, String>()).given(key, "foo4").given(config.tagSuffix, ".conf4")
 								.checkEq(((Map<String, String>)object).isEmpty(), true);
 
 						switch (nextEvent.type) {

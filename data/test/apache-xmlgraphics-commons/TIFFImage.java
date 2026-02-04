@@ -305,10 +305,10 @@ public class TIFFImage extends AbstractRed {
         imageType = TYPE_UNSUPPORTED;
         switch(photometricType) {
             case // WhiteIsZero
-            0:
+                    0:
                 isWhiteZero = true;
             case // BlackIsZero
-            1:
+                    1:
                 if (sampleSize == 1 && samplesPerPixel == 1) {
                     imageType = TYPE_BILEVEL;
                 } else if (sampleSize == 4 && samplesPerPixel == 1) {
@@ -324,7 +324,7 @@ public class TIFFImage extends AbstractRed {
                 }
                 break;
             case // RGB
-            2:
+                    2:
                 if (sampleSize % 8 == 0) {
                     if (samplesPerPixel == 3) {
                         imageType = TYPE_RGB;
@@ -336,13 +336,13 @@ public class TIFFImage extends AbstractRed {
                 }
                 break;
             case // RGB Palette
-            3:
+                    3:
                 if (samplesPerPixel == 1 && (sampleSize == 4 || sampleSize == 8 || sampleSize == 16)) {
                     imageType = TYPE_PALETTE;
                 }
                 break;
             case // Transparency mask
-            4:
+                    4:
                 if (sampleSize == 1 && samplesPerPixel == 1) {
                     imageType = TYPE_BILEVEL;
                 }
@@ -780,7 +780,7 @@ public class TIFFImage extends AbstractRed {
                         int len = colormap.length / 3;
                         int len2 = len * 2;
                         // BLOCKTEST EVAL: https://github.com/apache/xmlgraphics-commons/blob/d5d782f9fce99774ef206a4a4437fc86f711d9d9/src/main/java/org/apache/xmlgraphics/image/codec/tiff/TIFFImage.java#L931C1-L943C26
-                        blocktest().given(sdata, new short[500]).given(colormap, new char[100000]).given(unitsBeforeLookup, 5).given(len2, 10).given(tempData, new short[] { 1, 2, 3, 4, 5 }).given(len, 3).setup(() -> {
+                        blocktest().given(sdata, new short[500]).given(colormap, new char[100000]).given(unitsBeforeLookup, 5).given(len2, 10).given(tempData, new short[] { 1, 2, 3, 4, 5 }).given(len, 3).given(count, 0).setup(() -> {
                             for (int i = 0; i < 100000; i++) {
                                 colormap[i] = (char) (i % 50);
                             }
@@ -807,7 +807,7 @@ public class TIFFImage extends AbstractRed {
                         int len = colormap.length / 3;
                         int len2 = len * 2;
                         // BLOCKTEST EVAL: https://github.com/apache/xmlgraphics-commons/blob/d5d782f9fce99774ef206a4a4437fc86f711d9d9/src/main/java/org/apache/xmlgraphics/image/codec/tiff/TIFFImage.java#L954C1-L966C26
-                        blocktest().given(sdata, new short[500]).given(colormap, new char[100000]).given(unitsBeforeLookup, 5).given(len2, 10).given(tempData, new short[] { 1, 2, 3, 4, 5 }).given(len, 3).setup(() -> {
+                        blocktest().given(sdata, new short[500]).given(colormap, new char[100000]).given(unitsBeforeLookup, 5).given(len2, 10).given(tempData, new short[] { 1, 2, 3, 4, 5 }).given(len, 3).given(count, 0).setup(() -> {
                             for (int i = 0; i < 100000; i++) {
                                 colormap[i] = (char) (i % 50);
                             }
@@ -970,7 +970,8 @@ public class TIFFImage extends AbstractRed {
                     int srcCount = 0;
                     int dstCount = 0;
                     // BLOCKTEST EVAL: https://github.com/apache/xmlgraphics-commons/blob/d5d782f9fce99774ef206a4a4437fc86f711d9d9/src/main/java/org/apache/xmlgraphics/image/codec/tiff/TIFFImage.java#L1181C1-L1193C22
-                    blocktest().given(newRect.height, 2, "int").given(newRect.width, 4, "int").given(data, new byte[100]).given(tempData, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}).given(padding, 1).end(FIRST_BLOCK)
+                    blocktest().given(newRect.height, 2).given(newRect.width, 4).given(data, new byte[100]).given(tempData, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+                            .given(dstCount, 0).given(srcCount, 0).given(padding, 1).end(FIRST_BLOCK)
                             .checkTrue(data[0] == 0 && data[1] == 1 && data[2] == 0 && data[3] == 2 && data[4] == 0 && data[5] == 0 && data[6] == 4 && data[7] == 0 && data[8] == 5);
                     for (int j = 0; j < newRect.height; j++) {
                         for (int i = 0; i < newRect.width / 2; i++) {
@@ -1363,11 +1364,11 @@ public class TIFFImage extends AbstractRed {
         ColorSpace cs = null;
         switch(numBands) {
             case // gray+alpha
-            2:
+                    2:
                 cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
                 break;
             case // RGB+alpha
-            4:
+                    4:
                 cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
                 break;
             default:

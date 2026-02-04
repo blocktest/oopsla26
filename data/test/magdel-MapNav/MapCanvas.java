@@ -9,6 +9,11 @@
  */
 
 package RPMap;
+import org.blocktest.BTest;
+import static org.blocktest.BTest.blocktest;
+import static org.blocktest.types.EndAt.*;
+import static org.blocktest.utils.Constant.*;
+
 import app.MapMidlet;
 import gpspack.GPSReader;
 import app.MapForms;
@@ -99,6 +104,15 @@ public final class MapCanvas extends Canvas implements GeneralFeedback, CommandL
   public void setRoute(MapRoute r) {
     activeRoute=null;
     activeRoute=r;
+  }
+
+  public static void main(String[] args) {
+    int dmaxx = 10;
+    int dmaxy = 5;
+//    float pp=((dmaxx<dmaxy)?dmaxx:dmaxy)*((GPSReader.SPEED_KMH<40)?((GPSReader.SPEED_KMH>10)?(GPSReader.SPEED_KMH-10)/15:0):2)/7;
+//    int dx = (int)(-pp*Math.sin(GPSReader.COURSE*MapUtil.G2R));
+//    int dy = (int)(-pp*Math.cos(GPSReader.COURSE*MapUtil.G2R));
+//    System.out.println("dx="+dx+" dy="+dy);
   }
   
   public MapRoute getActiveRoute() {
@@ -1728,7 +1742,10 @@ public final class MapCanvas extends Canvas implements GeneralFeedback, CommandL
             if (!rotateMap){
              
              //float sc = (GPSReader.SPEED_KMH<40)?((GPSReader.SPEED_KMH>10)?(GPSReader.SPEED_KMH-10)/15:0):2; 
-             //float pp=((dmaxx<dmaxy)?dmaxx:dmaxy)*sc/7; 
+             //float pp=((dmaxx<dmaxy)?dmaxx:dmaxy)*sc/7;
+              // BLOCKTEST EVAL: https://github.com/magdel/MapNav/blob/97c4f93f02a56aa1ce2b2ffc8d0cd41ed150e9b3/src/main/java/RPMap/MapCanvas.java#L1732-L1734
+              blocktest().given(dmaxx, 1).given(dmaxy, 2).given(GPSReader.SPEED_KMH, 40).given(GPSReader.COURSE, 20).given(MapUtil.G2R, 10).checkEq(dx, 0).checkEq(dy, 0);
+              blocktest().given(dmaxx, 200).given(dmaxy, 100).given(GPSReader.SPEED_KMH, 300).given(GPSReader.COURSE, 50).given(MapUtil.G2R, 2).checkEq(dx, 14).checkEq(dy, -24);
              float pp=((dmaxx<dmaxy)?dmaxx:dmaxy)*((GPSReader.SPEED_KMH<40)?((GPSReader.SPEED_KMH>10)?(GPSReader.SPEED_KMH-10)/15:0):2)/7; 
              dx = (int)(-pp*Math.sin(GPSReader.COURSE*MapUtil.G2R));
              dy = (int)(-pp*Math.cos(GPSReader.COURSE*MapUtil.G2R));
@@ -5409,6 +5426,10 @@ public final class MapCanvas extends Canvas implements GeneralFeedback, CommandL
       if ((key==KEY_STAR)||(key==KEY_NUM0)||(key==KEY_NUM1)||(key==KEY_NUM2)||(key==KEY_NUM3)
       ||(key==KEY_NUM4)||(key==KEY_NUM5)||(key==KEY_NUM6)||(key==KEY_NUM7)
       ||(key==KEY_NUM8)||(key==KEY_NUM9)) {
+        // BLOCKTEST EVAL: https://github.com/magdel/MapNav/blob/97c4f93f02a56aa1ce2b2ffc8d0cd41ed150e9b3/src/main/java/RPMap/MapCanvas.java#L5412C1-L5414C19
+        blocktest().given(keys,  new int[]{1, 2, 3, 4}).given(key, 10).checkEq(keys[0], 10).checkEq(keys[1], 1).checkEq(keys[2], 2).checkEq(keys[3], 3);
+        blocktest().given(keys,  new int[]{1, 1, 1, 1}).given(key, 2).checkEq(keys[0], 2).checkEq(keys[1], 1).checkEq(keys[2], 1).checkEq(keys[3], 1);
+        blocktest().given(keys,  new int[]{4, 3, 2, 1}).given(key, 5).checkEq(keys[0], 5).checkEq(keys[1], 4).checkEq(keys[2], 3).checkEq(keys[3], 2);
       for (int i=keys.length-1;i>0;i--)
         keys[i]=keys[i-1];
       keys[0]=key;

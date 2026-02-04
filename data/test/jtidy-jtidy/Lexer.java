@@ -2520,8 +2520,8 @@ public class Lexer
                             c = this.in.readChar();
 
                             // BLOCKTEST EVAL: https://github.com/jtidy/jtidy/blob/aade7c5a6c1007d013859ac95378a2d469f5e254/src/main/java/org/w3c/tidy/Lexer.java#L2517C1-L2525C30
-                            blocktest().given(c, '\r').given(this.token.linebreak, false, "boolean").mock("this.in.readChar()", '\n').checkFalse(this.token.linebreak).end(FIRST_BLOCK);
-                            blocktest().given(c, '\r').given(this.token.linebreak, false, "boolean").mock("this.in.readChar()", '\r').checkTrue(this.token.linebreak).end(FIRST_BLOCK);
+                            blocktest().given(c, '\r').given(this.token.linebreak, false).mock("this.in.readChar()", '\n').checkFalse(this.token.linebreak).end(FIRST_BLOCK);
+                            blocktest().given(c, '\r').given(this.token.linebreak, false).mock("this.in.readChar()", '\r').checkTrue(this.token.linebreak).end(FIRST_BLOCK);
                             if (c == '\r')
                             {
                                 c = this.in.readChar();

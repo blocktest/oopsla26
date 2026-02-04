@@ -330,6 +330,7 @@ public class Proxy extends AbstractVerticle {
                     if (!onlySource) {
                         Future<Buffer> f2 = client2.writeToServer(buffer).future();
                         // BLOCKTEST EVAL: https://github.com/Azure-Samples/cassandra-proxy/blob/f184bcaa612808ad9348a629330cc6bc94c13105/src/main/java/com/microsoft/azure/cassandraproxy/Proxy.java#L323-L400
+                        // MUST PROVIDE TYPE
                         CompositeFuture.all(f1, f2).onComplete(e -> {
                             Buffer buf = f1.result();
                             FastDecode.State sourceState = FastDecode.quickLook(buf);

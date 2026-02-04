@@ -569,6 +569,7 @@ final class DSLInterpreter
                     return ipp -> {
                         CharSequence inst = instance != null ? instance.apply(ipp) : null;
                         // BLOCKTEST EVAL: https://github.com/streamx-co/FluentJPA/blob/064ce0b468b63fa07aecb0cfc2d352108af1cb40/src/main/java/co/streamx/fluent/JPA/DSLInterpreter.java#L563-L576
+                        // MUST PROVIDE TYPE
                         /* @blocktest("testME").given(instance, list -> list.isEmpty() ? "" : list.get(0))
                                 .mock("extractColumnName(label)")
                                 .given(ipp, new ArrayList<CharSequence>(Arrays.asList("abc", "def", "dummy", "labelMe")), "List<CharSequence>")
@@ -576,18 +577,19 @@ final class DSLInterpreter
                         */
                         return pp -> {
                             // BLOCKTEST EVAL: https://github.com/streamx-co/FluentJPA/blob/064ce0b468b63fa07aecb0cfc2d352108af1cb40/src/main/java/co/streamx/fluent/JPA/DSLInterpreter.java#L565-L575
+                            // MUST PROVIDE TYPE
                             blocktest().given(aliases, new HashMap<>()).given(inst, null)
                                     .given(pp, new ArrayList<CharSequence>(Arrays.asList("abc", "def", "dummy", "labelMe")), "List<CharSequence>")
                                     .mock("extractColumnName(label)")
                                     .checkReturnEq("abc")
                                     .checkEq(aliases.get("abc"), "labelMe");
                             blocktest().given(aliases, new HashMap<>()).given(inst, "foo")
-                                    .given(pp, new ArrayList<CharSequence>(Arrays.asList("abc", "def", "dummy", "labelMe")), "List<CharSequence>")
+                                    .given(pp, new ArrayList<CharSequence>(Arrays.asList("abc", "def", "dummy", "labelMe")))
                                     .mock("extractColumnName(label)")
                                     .checkReturnEq("foo")
                                     .checkEq(aliases.get("foo"), "labelMe");
                             blocktest().given(aliases, new HashMap<>()).given(inst, "empty")
-                                    .given(pp, new ArrayList<CharSequence>(), "List<CharSequence>")
+                                    .given(pp, new ArrayList<CharSequence>())
                                     .mock("extractColumnName(label)")
                                     .checkReturnEq("empty")
                                     .checkEq(aliases.size(), 0);
@@ -694,13 +696,13 @@ final class DSLInterpreter
                         // BLOCKTEST EVAL: https://github.com/streamx-co/FluentJPA/blob/064ce0b468b63fa07aecb0cfc2d352108af1cb40/src/main/java/co/streamx/fluent/JPA/DSLInterpreter.java#L665-L670
                         blocktest().given(pp, new ArrayList<CharSequence>(Arrays.asList(
                                 new SubQueryManager.SubQuery("foo", "value", false)
-                        )), "List<CharSequence>").checkReturnEq("foo");
+                        ))).checkReturnEq("foo");
                         blocktest().given(pp, new ArrayList<CharSequence>(Arrays.asList(
                                 new SubQueryManager.SubQuery("baz", "baz", false)
-                        )), "List<CharSequence>").checkEq(methodReturn.toString(), "baz");
+                        ))).checkEq(methodReturn.toString(), "baz");
                         blocktest().given(pp, new ArrayList<CharSequence>(Arrays.asList(
                                 "bar"
-                        )), "List<CharSequence>").checkReturnEq("bar");
+                        ))).checkReturnEq("bar");
                         CharSequence seq = pp.get(0);
                         return SubQueryManager.isSubQuery(seq) ? SubQueryManager.getName(seq) : seq;
 
@@ -779,9 +781,9 @@ final class DSLInterpreter
                     Literal literal = getAnnotation(parameterAnnotations, Literal.class);
                     argsBuilder.add(ex -> {
                         // BLOCKTEST EVAL: https://github.com/streamx-co/FluentJPA/blob/064ce0b468b63fa07aecb0cfc2d352108af1cb40/src/main/java/co/streamx/fluent/JPA/DSLInterpreter.java#L744-L754
-                        // @blocktest("testLine").given(literal, null, "Literal").noInit(arg).noInit(context).noInit(subQueries).noInit(aliases).given(ex, null, "Expression").mock("setupParameterRenderingContext(..)", list -> list.length() < 5 ? "" : list.subSequence(0, 5)).checkEq(methodReturn.apply("foo"), "");
-                        // @blocktest("testLine2").given(literal, null, "Literal").noInit(arg).noInit(context).noInit(subQueries).noInit(aliases).given(ex, null, "Expression").mock("setupParameterRenderingContext(..)", list -> list.length() < 5 ? "" : list.subSequence(0, 5)).checkEq(methodReturn.apply("abcdef"), "abcde");
-                        // @blocktest("testLine3").given(literal, DSLInterpreter.BLOCKTEST_DUMMY_CLASS.class.getAnnotation(Literal.class), "Literal").noInit(arg).noInit(context).noInit(subQueries).noInit(aliases).given(ex, null, "Expression").mock("setupParameterRenderingContext(..)", list -> list.length() < 5 ? "" : list.subSequence(0, 5)).checkEq(methodReturn.apply("abcdef").toString(), "'abcde'");
+                        // @blocktest("testLine").given(literal, null).noInit(arg).noInit(context).noInit(subQueries).noInit(aliases).given(ex, null).mock("setupParameterRenderingContext(..)", list -> list.length() < 5 ? "" : list.subSequence(0, 5)).checkEq(methodReturn.apply("foo"), "");
+                        // @blocktest("testLine2").given(literal, null).noInit(arg).noInit(context).noInit(subQueries).noInit(aliases).given(ex, null).mock("setupParameterRenderingContext(..)", list -> list.length() < 5 ? "" : list.subSequence(0, 5)).checkEq(methodReturn.apply("abcdef"), "abcde");
+                        // @blocktest("testLine3").given(literal, DSLInterpreter.BLOCKTEST_DUMMY_CLASS.class.getAnnotation(Literal.class)).noInit(arg).noInit(context).noInit(subQueries).noInit(aliases).given(ex, null).mock("setupParameterRenderingContext(..)", list -> list.length() < 5 ? "" : list.subSequence(0, 5)).checkEq(methodReturn.apply("abcdef").toString(), "'abcde'");
                         Function<CharSequence, CharSequence> renderer = setupParameterRenderingContext(context,
                                 expression(ex != null ? ex : arg, subQueries, aliases));
 

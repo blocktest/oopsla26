@@ -15,17 +15,17 @@ public class regionName {
         String name = null;
         int region_code2 = -1;
         // BLOCKTEST EVAL: https://github.com/maxmind/geoip-api-java/blob/0ed8a38981512667533d47204486aae0278a1bc8/src/main/java/com/maxmind/geoip/regionName.java#L11-L23
-        blocktest().given(regionCode, "CA").checkEq(region_code2, 934).end(FIRST_BLOCK);
-        blocktest().given(regionCode, "93").checkEq(region_code2, 93).end(FIRST_BLOCK);
+        blocktest().given(regionCode, "CA").given(region_code2, -1).checkEq(region_code2, 934).end(FIRST_BLOCK);
+        blocktest().given(regionCode, "93").given(region_code2, -1).checkEq(region_code2, 93).end(FIRST_BLOCK);
         if (    ((regionCode.charAt(0) >= 48 ) && ( regionCode.charAt(0) < ( 48 + 10 )))
-             && ((regionCode.charAt(1) >= 48 ) && ( regionCode.charAt(1) < ( 48 + 10 )))
+                && ((regionCode.charAt(1) >= 48 ) && ( regionCode.charAt(1) < ( 48 + 10 )))
         ){
             // only numbers, that shorten the large switch statements
             region_code2 = (regionCode.charAt(0)- 48) * 10 + regionCode.charAt(1) - 48;
         } else if (    (    ((regionCode.charAt(0) >= 65) && (regionCode.charAt(0) < (65 + 26)))
-                     || ((regionCode.charAt(0) >= 48) && (regionCode.charAt(0) < (48 + 10))))
+                || ((regionCode.charAt(0) >= 48) && (regionCode.charAt(0) < (48 + 10))))
                 && (    ((regionCode.charAt(1) >= 65) && (regionCode.charAt(1) < (65 + 26)))
-                     || ((regionCode.charAt(1) >= 48) && (regionCode.charAt(1) < (48 + 10))))
+                || ((regionCode.charAt(1) >= 48) && (regionCode.charAt(1) < (48 + 10))))
         ) {
 
             region_code2 = (regionCode.charAt(0) - 48) * (65 + 26 - 48) + regionCode.charAt(1) - 48 + 100;

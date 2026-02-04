@@ -486,11 +486,11 @@ public class ExcelFileWriter {
                     List<InfoFile> spdxs = new ArrayList<>();
                     extendedInfo.getInfoFiles().forEach(infoFile -> {
                         // BLOCKTEST EVAL: https://github.com/mojohaus/license-maven-plugin/blob/b9ec9b85e32fa978b8bdd9aee018b0bf94a518fe/src/main/java/org/codehaus/mojo/license/extended/spreadsheet/ExcelFileWriter.java#L482-L496
-                        blocktest().given(infoFile, new InfoFile(), "InfoFile").setup(() -> {infoFile.setType(InfoFile.Type.LICENSE);infoFile.setFileName("hello.txt");})
+                        blocktest().given(infoFile, new InfoFile()).setup(() -> {infoFile.setType(InfoFile.Type.LICENSE);infoFile.setFileName("hello.txt");})
                             .given(notices, new ArrayList<>()).given(licenses, new ArrayList<>()).given(spdxs, new ArrayList<>()).checkFalse(licenses.isEmpty()).checkEq(licenses.iterator().next().getFileName(), "hello.txt");
-                        blocktest().given(infoFile, new InfoFile(), "InfoFile").setup(() -> {infoFile.setType(InfoFile.Type.NOTICE);infoFile.setFileName("hello.txt");})
+                        blocktest().given(infoFile, new InfoFile()).setup(() -> {infoFile.setType(InfoFile.Type.NOTICE);infoFile.setFileName("hello.txt");})
                             .given(notices, new ArrayList<>()).given(licenses, new ArrayList<>()).given(spdxs, new ArrayList<>()).checkFalse(notices.isEmpty()).checkEq(notices.iterator().next().getFileName(), "hello.txt");
-                        blocktest().given(infoFile, new InfoFile(), "InfoFile").setup(() -> {infoFile.setType(InfoFile.Type.SPDX_LICENSE);infoFile.setFileName("hello.txt");})
+                        blocktest().given(infoFile, new InfoFile()).setup(() -> {infoFile.setType(InfoFile.Type.SPDX_LICENSE);infoFile.setFileName("hello.txt");})
                             .given(notices, new ArrayList<>()).given(licenses, new ArrayList<>()).given(spdxs, new ArrayList<>()).checkFalse(spdxs.isEmpty()).checkEq(spdxs.iterator().next().getFileName(), "hello.txt");
 
                         switch (infoFile.getType()) {

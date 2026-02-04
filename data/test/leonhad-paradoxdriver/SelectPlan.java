@@ -299,19 +299,19 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             final Set<FieldNode> fields = node.getClauseFields();
             // BLOCKTEST EVAL: https://github.com/leonhad/paradoxdriver/blob/de3a6ad18b6c7f1d461383876339dc8086beaead/src/main/java/com/googlecode/paradox/planner/plan/SelectPlan.java#L291-L299
              /* @lambdatest().args(new FieldNode("areacodes", "State", new ScannerPosition()))
-                        .given(this.tables, new ArrayList<>()).setup(() -> {
+                        .given(this.tables, new ArrayList<>()).given(conditionalFields, new ArrayList<>()).setup(() -> {
                             new Driver();
                             ParadoxConnection conn = (ParadoxConnection) DriverManager.getConnection("jdbc:paradox:target/test-classes/db");
                             this.tables.add(new PlanTableNode(conn.getConnectionInfo(), new TableNode(null, "areacodes", "alias", null)));
                         }).checkEq(conditionalFields.iterator().next().toString(), "AREACODES.State"); */
             /* lNOTambdatest().args(new FieldNode("areacodes2", "State", new ScannerPosition()))
-                        .given(this.tables, new ArrayList<>()).setup(() -> {
+                        .given(this.tables, new ArrayList<>()).given(conditionalFields, new ArrayList<>()).setup(() -> {
                             new Driver();
                             ParadoxConnection conn = (ParadoxConnection) DriverManager.getConnection("jdbc:paradox:target/test-classes/db");
                             this.tables.add(new PlanTableNode(conn.getConnectionInfo(), new TableNode(null, "areacodes", "alias", null)));
                         }).checkTrue(conditionalFields.isEmpty()); */
             fields.forEach((FieldNode fn) -> {
-               for (final PlanTableNode table : this.tables) {
+                for (final PlanTableNode table : this.tables) {
                     if (table.isThis(fn.getTableName())) {
                         conditionalFields.addAll(Arrays.stream(table.getTable().getFields())
                                 .filter(f -> f.getName().equalsIgnoreCase(fn.getName()))

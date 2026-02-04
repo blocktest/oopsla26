@@ -751,9 +751,9 @@ public class ActionValidator<MESSAGES extends UserMessages> {
                     final UserMessage current = ite.next();
                     if (current.getValidatorAnnotation().filter(anno -> {
                         // BLOCKTEST EVAL: https://github.com/lastaflute/lastaflute/blob/01201e2eee995053bf6f9febcf58ace01ed38c30/src/main/java/org/lastaflute/web/validation/ActionValidator.java#L744-L746
-                        // @blocktest("a").given(anno, ActionValidator.class.getDeclaredField("hibernateValidator").getAnnotation(NotNull.class), "Annotation").checkReturnFalse();
-                        // @blocktest("b").given(anno, ActionValidator.class.getDeclaredField("blocktestNotNull").getAnnotation(NotNull.class), "Annotation").checkReturnTrue();
-                        // @blocktest("c").given(anno, ActionValidator.class.getDeclaredField("blocktestRequired").getAnnotation(Required.class), "Annotation").checkReturnTrue();
+                        // @blocktest("a").given(anno, ActionValidator.class.getDeclaredField("hibernateValidator").getAnnotation(NotNull.class)).checkReturnFalse();
+                        // @blocktest("b").given(anno, ActionValidator.class.getDeclaredField("blocktestNotNull").getAnnotation(NotNull.class)).checkReturnTrue();
+                        // @blocktest("c").given(anno, ActionValidator.class.getDeclaredField("blocktestRequired").getAnnotation(Required.class)).checkReturnTrue();
                         return anno instanceof NotNull || anno instanceof Required;
                     }).isPresent()) {
                         continue; // remove required annotations because they were born by type failure's null

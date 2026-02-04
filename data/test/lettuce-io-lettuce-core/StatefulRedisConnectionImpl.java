@@ -193,10 +193,11 @@ public class StatefulRedisConnectionImpl<K, V> extends RedisChannelHandler<K, V>
             if (command instanceof CompleteableCommand) {
                 ((CompleteableCommand<?>) command).onComplete((ignored, e) -> {
                     // BLOCKTEST EVAL: https://github.com/lettuce-io/lettuce-core/blob/761d60247159662ce1db8bc20318bc4b573bc010/src/main/java/io/lettuce/core/StatefulRedisConnectionImpl.java#L188-L192
-                    blocktest().given(multi, new MultiOutput<>(StringCodec.UTF8), "MultiOutput<String, String>")
+                    // MUST PROVIDE TYPE
+                    blocktest().given(multi, new MultiOutput<String, String>(StringCodec.UTF8), "MultiOutput<String, String>")
                             .given(e, null, "Throwable").checkEq(multi.toString(), new MultiOutput<>(StringCodec.UTF8).toString());
-                    blocktest().given(multi, new MultiOutput<>(StringCodec.UTF8), "MultiOutput<String, String>")
-                            .given(e, new Throwable("foo"), "Throwable").checkEq(multi, null);
+                    blocktest().given(multi, new MultiOutput<String, String>(StringCodec.UTF8))
+                            .given(e, new Throwable("foo")).checkEq(multi, null);
                     if (e != null) {
                         multi = null;
                     }
@@ -228,6 +229,12 @@ public class StatefulRedisConnectionImpl<K, V> extends RedisChannelHandler<K, V>
 
         if (local.getType().name().equals(SELECT.name())) {
             local = attachOnComplete(local, status -> {
+                // BLOCKTEST EVAL: https://github.com/lettuce-io/lettuce-core/blob/761d60247159662ce1db8bc20318bc4b573bc010/src/main/java/io/lettuce/core/StatefulRedisConnectionImpl.java#L219-L226
+                // MUST PROVIDE TYPE
+                blocktest().given(state,  new ConnectionState()).given(status, "OK").given(command, new Command<String, String, String>(CommandType.GET, null, new CommandArgs<>(StringCodec.UTF8).add("SLEEP").add(1)), "Command<String, String, String>").checkEq(state.getDb(), 1);
+                blocktest().given(state,  new ConnectionState()).given(status, "OK").given(command, new Command<String, String, String>(CommandType.GET, null, new CommandArgs<>(StringCodec.UTF8).add("SLEEP").add(10))).checkEq(state.getDb(), 10);
+                blocktest().given(state,  new ConnectionState()).given(status, "OK").given(command, new Command<String, String, String>(CommandType.GET, null, new CommandArgs<>(StringCodec.UTF8).add("SLEEP"))).checkEq(state.getDb(), 0);
+                blocktest().given(state,  new ConnectionState()).given(status, "NOTOK").given(command, new Command<String, String, String>(CommandType.GET, null, new CommandArgs<>(StringCodec.UTF8).add("SLEEP").add(1))).checkEq(state.getDb(), 0);
                 if ("OK".equals(status)) {
                     Long db = CommandArgsAccessor.getFirstInteger(command.getArgs());
                     if (db != null) {

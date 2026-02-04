@@ -1,17 +1,20 @@
 package org.blocktest.utils;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.stmt.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
-
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.stmt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ComplexityChecker {
     public static void main(String[] args) throws Exception {
@@ -26,27 +29,31 @@ public class ComplexityChecker {
         }
 
         if (sourceFile.endsWith(".java")) {
-            int lineNumber = Integer.parseInt(args[1]);
-            int guards = analyzeStatement(lineNumber, sourceFile);
-            System.out.println(sourceFile + ":" + lineNumber + "," + guards);
+            int lineNumber = args[1].contains("C") ? Integer.parseInt(args[1].split("C")[0]) : Integer.parseInt(args[1]);
+            Result r = analyzeStatement(lineNumber, sourceFile);
+            System.out.println(sourceFile + ":" + lineNumber + "," + r.error + "," + r.guards + "," + r.mType + "," + r.mArgs);
         } else {
             try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    sourceFile = line.split(",")[0];
-                    int lineNumber = Integer.parseInt(line.split(",")[1]);
-                    int guards = analyzeStatement(lineNumber, sourceFile);
-                    System.out.println(sourceFile + ":" + lineNumber + "," + guards);
+                    try {
+                        sourceFile = line.split(",")[0];
+                        int lineNumber = line.split(",")[1].contains("C") ? Integer.parseInt(line.split(",")[1].split("C")[0]) : Integer.parseInt(line.split(",")[1]);
+                        Result r = analyzeStatement(lineNumber, sourceFile);
+                        System.out.println(sourceFile + ":" + lineNumber + "@#$#@" + r.error + "@#$#@" + r.guards + "@#$#@" + r.mType + "@#$#@" + r.mArgs + "@#$#@" + r.lineCount + "@#$#@" + r.sign);
+                    } catch (Exception e) {
+                        System.out.println(sourceFile + ",failed");
+                    }
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
-
-    public static int analyzeStatement(int lineNumber, String filePath) throws IOException {
+    public static Result analyzeStatement(int lineNumber, String filePath) throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
-            return -1;
+            return new Result(-1, "", "",-1, 0,-1);
         }
 
         JavaParser parser = new JavaParser();
@@ -54,15 +61,46 @@ public class ComplexityChecker {
         try {
             cu = parser.parse(Files.newInputStream(file.toPath())).getResult().get();
         } catch (Exception e) {
-            return -2;
+            return new Result(-1, "", "", -1, 0, -2);
         }
 
         Expression finestStatement = findFinestStatementAtLine(cu, lineNumber);
 
+        Optional<MethodDeclaration> methodOpt = cu.findFirst(MethodDeclaration.class, m -> {
+            return m.getRange()
+                    .map(r -> r.begin.line <= lineNumber && r.end.line >= lineNumber)
+                    .orElse(false);
+        });
+
+        int mArgs = -1;
+        String mType = "";
+        String sign = "";
+        int lineCount = 0;
+        if (methodOpt.isPresent()) {
+            MethodDeclaration method = methodOpt.get();
+            if (method.isPublic()) {
+                mType = "public";
+            } else if (method.isPrivate()) {
+                mType = "private";
+            } else if (method.isProtected()) {
+                mType = "protected";
+            } else {
+                mType = "package-private";
+            }
+
+            sign = getPrettySignature(method);
+            mArgs = method.getParameters().size();
+
+            lineCount = method.getRange()
+                    .map(r -> r.end.line - r.begin.line + 1) // +1 because both start and end are inclusive
+                    .orElse(-1); // if range is not available
+        }
+
         if (finestStatement != null) {
-            return countGuardBlocks(finestStatement);
+            int guard = countGuardBlocks(finestStatement);
+            return new Result(guard, mType, sign, mArgs,lineCount, 0);
         } else {
-            return -3;
+            return new Result(-1, "", "",-1, 0, -2);
         }
     }
 
@@ -106,8 +144,6 @@ public class ComplexityChecker {
         return finestStatement;
     }
 
-
-
     private static int countGuardBlocks(Node node) {
         int count = 0;
         Optional<Node> parentOpt = node.getParentNode();
@@ -132,5 +168,52 @@ public class ComplexityChecker {
                 node instanceof SwitchStmt ||
                 node instanceof CatchClause;
         // Note: TryStmt and SynchronizedStmt are NOT guard blocks because they don't have conditions to enter them
+    }
+
+    public static String getPrettySignature(MethodDeclaration m) {
+        String methodName = m.getNameAsString();
+
+        String params = m.getParameters().stream()
+                .map(p -> {
+                    String typeStr = p.getType().asString();
+
+                    // erase generics: "Set<InetAddress>" => "Set"
+                    int genericIdx = typeStr.indexOf('<');
+                    if (genericIdx != -1) {
+                        typeStr = typeStr.substring(0, genericIdx);
+                    }
+
+                    // strip array brackets: "byte[]" => "byte"
+                    typeStr = typeStr.replaceAll("\\[\\]", "");
+
+                    // handle varargs: String[] → String...
+                    if (p.isVarArgs()) {
+                        typeStr = typeStr.replace("[]", "") + "...";
+                    }
+
+                    return typeStr;
+                })
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
+
+        return methodName + "(" + params + ")";
+    }
+
+    public static class Result {
+        public int guards = -1;
+        public String mType = "";
+        public String sign = "";
+        public int mArgs = -1;
+        public int lineCount = 0;
+        public int error = 0;
+
+        public Result(int guard, String mType, String sign, int mArgs, int lineCount, int error) {
+            this.guards = guard;
+            this.mType = mType;
+            this.sign = sign;
+            this.mArgs = mArgs;
+            this.lineCount = lineCount;
+            this.error = error;
+        }
     }
 }

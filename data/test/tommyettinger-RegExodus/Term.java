@@ -534,6 +534,10 @@ public class Term implements REFlags, Serializable {
                             blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', ':', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
                             blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', '!', '!', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, true).end(FIRST_ASSIGN);
                             blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', '!', '!', '>'}).given(p, 3).given(end, 5).expect(PatternSyntaxException.class).end(FIRST_THROW);
+                            blocktest().given(cp, '$').given(p, 0).given(end, 3)
+                                    .given(mi, false).given(mr, false).given(mb, false).given(mu, false)
+                                    .given(data, new char[] {'4', ':'})
+                                    .end(FIRST_BLOCK).checkFalse(mb);
 
                             while (Category.Space.contains(cp) || Category.Po.contains(cp)) {
                                 p++;
@@ -1143,6 +1147,9 @@ public class Term implements REFlags, Serializable {
                     }
                     case '0':
                     case 'o':   // oct arbitrary-digit number -> char
+                        // Oct number 0123 is decimal number 83:
+                        // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1129C1-L1140C42
+                        blocktest().given(i, 0).given(out, 4).given(data, new char[]{'0', '1', '2', '3'}).given(c, 0).checkEq("oct", 83);
                         int oct = 0;
                         for (; i < out; ) {
                             char d = data[i++];
@@ -1160,6 +1167,8 @@ public class Term implements REFlags, Serializable {
                         break;
 
                     case 'm':   // decimal number -> char
+                        // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1146C1-L1159C40
+                        blocktest().given(i, 0).given(out, 3).given(data, new char[]{'1', '2', '3'}).given(c, 0).checkEq("dec", 123);
                         int dec = 0;
                         for (; i < out; ) {
                             char d = data[i++];
@@ -1261,6 +1270,9 @@ public class Term implements REFlags, Serializable {
                                 n = (n * 10) + c - '0';
                                 i++;
                             }
+                            // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1242C1-L1246C30
+                            blocktest().given(i, 0).given(out, 2).given(data, new char[]{'1', '2'}).given(c, '2')
+                                    .start(FIRST_BLOCK, 2).checkEq(n, 212);
                             term.type = (flags & IGNORE_CASE) > 0 ? REG_I : REG;
                             term.memreg = n;
                             return i;
@@ -1476,6 +1488,9 @@ public class Term implements REFlags, Serializable {
                 b.append(target);
                 b.append(",0,inf}");
                 if (failNext != null) {
+                    // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1462-L1464
+                    blocktest().given(b, new StringBuilder()).given(failNext.instanceNum, 5).checkEq(b.toString(), ", =>5, ");
+                    blocktest().given(b, new StringBuilder()).given(failNext.instanceNum, 15).checkEq(b.toString(), ", =>15, ");
                     b.append(", =>");
                     b.append(failNext.instanceNum);
                     b.append(", ");
@@ -1488,6 +1503,9 @@ public class Term implements REFlags, Serializable {
                 b.append(minCount);
                 b.append(",inf}");
                 if (failNext != null) {
+                    // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1474-L1476
+                    blocktest().given(b, new StringBuilder()).given(failNext.instanceNum, 5).checkEq(b.toString(), ", =>5, ");
+                    blocktest().given(b, new StringBuilder()).given(failNext.instanceNum, 15).checkEq(b.toString(), ", =>15, ");
                     b.append(", =>");
                     b.append(failNext.instanceNum);
                     b.append(", ");
@@ -1634,13 +1652,13 @@ public class Term implements REFlags, Serializable {
             case LOOKAHEAD_CONDITION_IN:
                 // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1618C1-L1626C18
                 blocktest().given(lookaheadId, 1).mock("((Lookahead) this).isPositive", true).given(failNext, new Term())
-                        .given(failNext.instanceNum, 1, "int")
+                        .given(failNext.instanceNum, 1)
                         .checkEq(b.toString(), "(cond1= , , =>1, ");
                 blocktest().given(lookaheadId, 3).mock("((Lookahead) this).isPositive", false).given(failNext, new Term())
-                        .given(failNext.instanceNum, 2, "int")
+                        .given(failNext.instanceNum, 2)
                         .checkEq(b.toString(), "(cond3! , , =>2, ");
                 blocktest().given(lookaheadId, 5).mock("((Lookahead) this).isPositive", false).given(failNext, null)
-                        .given(failNext.instanceNum, 6, "int")
+                        .given(failNext.instanceNum, 6)
                         .checkEq(b.toString(), "(cond5! , ");
                 b.append("(cond");
                 b.append(lookaheadId);
@@ -1657,6 +1675,9 @@ public class Term implements REFlags, Serializable {
                 b.append(lookaheadId);
                 b.append(")");
                 if (failNext != null) {
+                    // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1633-L1635
+                    blocktest().given(b, new StringBuilder()).given(failNext.instanceNum, 5).checkEq(b.toString(), ", =>5, ");
+                    blocktest().given(b, new StringBuilder()).given(failNext.instanceNum, 15).checkEq(b.toString(), ", =>15, ");
                     b.append(", =>");
                     b.append(failNext.instanceNum);
                     b.append(", ");
@@ -1674,6 +1695,9 @@ public class Term implements REFlags, Serializable {
             case BRANCH_STORE_CNT:
                 b.append("(cnt)");
             case BRANCH:
+                // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1650-L1653
+                blocktest().given(b, new StringBuilder()).given(failNext, new Term()).given(failNext.instanceNum, 5).checkEq(b.toString(), "=>5 , ");
+                blocktest().given(b, new StringBuilder()).given(failNext, null).given(failNext.instanceNum, 5).checkEq(b.toString(), "=>null , ");
                 b.append("=>");
                 if (failNext != null) b.append(failNext.instanceNum);
                 else b.append("null");
@@ -1864,7 +1888,16 @@ class Pretokenizer implements Serializable {
             if (esc) {
                 if(c == 'Q')
                 {
-
+                    // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1841C1-L1850C22
+                    // Case innermost
+                    blocktest().given(end, 2).given(data, new char[]{'\\', 'E'}).given(i, 0).given(esc, true)
+                            .checkFalse(esc);
+                    // Case inner but not most
+                    blocktest().given(end, 2).given(data, new char[]{'\\', 'f'}).given(i, 0).given(esc, true)
+                            .checkTrue(esc);
+                    // Case not inside at all
+                    blocktest().given(end, 0).given(data, new char[]{'\\', 'f'}).given(i, 0).given(esc, true)
+                            .checkTrue(esc);
                     for (; i < end; i++) {
                         char c1 = data[i];
                         if(c1 == '\\') {
@@ -1919,9 +1952,15 @@ class Pretokenizer implements Serializable {
                                         skip = 4; // "(?<!"
                                         break;
                                     default:
+                                        // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1895C39-L1912C61
+                                        blocktest().given(i, 1).given(c1, 1).given(data, new char[]{'>', '>', '>', '>', '>', '>'}).given(skip, 0).given(end, 6).checkEq(ttype, NAMED_GROUP).checkTrue(this.groupDeclared).checkEq(this.groupName, ">");
+                                        blocktest().given(i, 1).given(c1, 1).given(data, new char[]{'>', '>', '>', '>', '>', '>'}).given(skip, 0).given(end, 5).expect(PatternSyntaxException.class);
+                                        blocktest().given(i, 1).given(c1, 1).given(data, new char[]{0, 0, 0, 0, 0, 0}).given(skip, 0).given(end, 5).expect(PatternSyntaxException.class);
+                                        blocktest().given(i, 1).given(c1, 0).given(data, new char[]{'>', '>', '>', '>', 0, '>'}).given(skip, 0).given(end, 6).checkEq(ttype, NAMED_GROUP).checkTrue(this.groupDeclared).checkEq(this.groupName, new String(new char[]{0}));
                                         int p = i + 3;
                                         skip = 4; //'(?<' + '>'
-                                        int nstart, nend;
+                                        int nstart;
+                                        int nend;
                                         nstart = p;
                                         if(Category.N.contains(c1))
                                             throw new PatternSyntaxException("number at the start of a named group");
@@ -1999,6 +2038,9 @@ class Pretokenizer implements Serializable {
                         skip = 3; //'({' + '}'
                         int nstart, nend;
                         boolean isDecl;
+                        // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1975C3-L2003C1
+                        blocktest().given(p, 0).given(data, new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8'}).given(c, ' ').given(end, 1)
+                                .end(FIRST_BLOCK, 4, true).expect(PatternSyntaxException.class);
                         c = data[p];
                         while (Category.Space.contains(c)) {
                             c = data[++p];

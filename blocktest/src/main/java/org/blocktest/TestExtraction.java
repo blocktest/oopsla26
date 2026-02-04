@@ -46,7 +46,7 @@ public class TestExtraction {
     public static Set<String> staticPrivateFields = new HashSet<>();
 
     static void extractTest(String inputFileSource, String testOutputFile, String testedClassName,
-                            String className, int duplicatedTestCount, boolean coverage, boolean rewrite) {
+                            String className, int duplicatedTestCount, boolean coverage, boolean rewrite, boolean compile) {
         FileInputStream in;
         try {
             in = new FileInputStream(inputFileSource);
@@ -117,12 +117,36 @@ public class TestExtraction {
         }
 
         CompilationUnit newCU = new CompilationUnit();
-        if (packageName != null) {
+        if (packageName != null && compile) {
             newCU.setPackageDeclaration(new PackageDeclaration(new Name(packageName)));
         }
 
         NodeList<ImportDeclaration> imports = cu.getImports();
+        NodeList<ImportDeclaration> tmp = new NodeList<>();
         Set<String> inputStrings = imports.stream().map((NodeWithName::getNameAsString)).collect(Collectors.toSet());
+
+        System.out.println("Compile is " + compile);
+        if (!compile) {
+            // remove non standard library's import
+            for (ImportDeclaration dec : imports) {
+                System.out.println("DEC is " + dec.getNameAsString());
+                if (dec.getNameAsString().startsWith("java.")) {
+                    tmp.add(dec);
+                }
+            }
+
+            System.out.println("TMP:");
+            System.out.println(tmp);
+            imports = tmp;
+        } else {
+            // remove JUnit and TestNG
+            for (ImportDeclaration dec : imports) {
+                if (!dec.getNameAsString().startsWith("org.junit") && !dec.getNameAsString().startsWith("org.testng")) {
+                    tmp.add(dec);
+                }
+            }
+            imports = tmp;
+        }
 
         NodeList<ImportDeclaration> testImports = new NodeList<>(imports);
         if (Util.junitVersion.equals("junit4")) {
@@ -141,10 +165,12 @@ public class TestExtraction {
             testImports.add(new ImportDeclaration("org.blocktest.BTest", false, false));
         }
 
-        if (packageName != null) {
-            testImports.add(new ImportDeclaration(packageName + "." + testedClassName, true, true));
-        } else {
-            testImports.add(new ImportDeclaration(testedClassName, true, true));
+        if (compile) {
+            if (packageName != null) {
+                testImports.add(new ImportDeclaration(packageName + "." + testedClassName, true, true));
+            } else {
+                testImports.add(new ImportDeclaration(testedClassName, true, true));
+            }
         }
 
         newCU.setImports(testImports);

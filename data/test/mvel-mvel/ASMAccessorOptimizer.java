@@ -1217,8 +1217,11 @@ public class ASMAccessorOptimizer extends AbstractOptimizer implements AccessorO
       catch (IllegalArgumentException e) {
         if (member.getDeclaringClass().equals(ctx)) {
           // BLOCKTEST EVAL: https://github.com/mvel/mvel/blob/236d37bc78a158553592afedbbf1aa27815efb78/src/main/java/org/mvel2/optimizers/impl/asm/ASMAccessorOptimizer.java#L1212C1-L1220C12
-          // @blocktest("testFirst").given(member, org.mvel2.DataConversion.class.getDeclaredField("CONVERTERS")).given(property, "ArrayTypeMarker").given(expr, new char[]{}, "char[]").given(tkStart, 0, "int").expect(CompileException.class);
-          // @blocktest("testSecond").given(member, org.mvel2.DataConversion.class.getDeclaredField("CONVERTERS")).given(property, "ArrayTypeMarkers").given(expr, new char[]{}, "char[]").given(tkStart, 0, "int");
+          // @blocktest("testFirst").given(member, org.mvel2.DataConversion.class.getDeclaredField("CONVERTERS")).given(property, "ArrayTypeMarker").given(expr, new char[]{}).given(tkStart, 0).expect(CompileException.class);
+          // @blocktest("testSecond").given(member, org.mvel2.DataConversion.class.getDeclaredField("CONVERTERS")).given(property, "ArrayTypeMarkers").given(expr, new char[]{}).given(tkStart, 0);
+          // @blocktest("fallthru").given(member, ASMAccessorOptimizer.class.getMethod("isLiteralOnly")).given(property, "isLiteralOnly").given(expr, new char[]{}).given(tkStart, 0).expect(null);
+          // Case NoSuchMethodException
+          // @blocktest("NSM").given(member, ASMAccessorOptimizer.class.getMethod("isLiteralOnlyX")).given(property, "isLiteralOnlyX").given(expr, new char[]{}).given(tkStart, 0).expect(NoSuchMethodException.class);
           try {
             Class c = Class.forName(member.getDeclaringClass().getName() + "$" + property);
 

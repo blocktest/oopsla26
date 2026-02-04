@@ -227,9 +227,9 @@ public class Rule {
                 final Languages ls = Languages.getInstance(s);
                 ls.getLanguages().forEach(l -> {
                     // BLOCKTEST EVAL: https://github.com/apache/commons-codec/blob/634ac7caba17b3610e8fe3dd19f9f05faf4d1f94/src/main/java/org/apache/commons/codec/language/bm/Rule.java#L222-L228
-                    blocktest().given(rs, new HashMap<>()).given(l, Languages.getInstance(NameType.ASHKENAZI).getLanguages().iterator().next(), "String")
+                    blocktest().given(rs, new HashMap<>()).given(l, Languages.getInstance(NameType.ASHKENAZI).getLanguages().iterator().next())
                             .given(s, NameType.ASHKENAZI).given(rt, RuleType.APPROX).checkEq(rs.size(), 1);
-                    blocktest().given(rs, new HashMap<>()).given(l, "randomlang", "String")
+                    blocktest().given(rs, new HashMap<>()).given(l, "randomlang")
                             .given(s, NameType.ASHKENAZI).given(rt, RuleType.APPROX).expect(IllegalArgumentException.class);
                     try (final Scanner scanner = createScanner(s, rt, l)) {
                         rs.put(l, parseRules(scanner, createResourceName(s, rt, l)));
@@ -542,15 +542,15 @@ public class Rule {
                         // last char
                         return input -> {
                             // BLOCKTEST EVAL: https://github.com/apache/commons-codec/blob/634ac7caba17b3610e8fe3dd19f9f05faf4d1f94/src/main/java/org/apache/commons/codec/language/bm/Rule.java#L532-L533
-                            blocktest().given(input, "abc", "CharSequence")
+                            blocktest().given(input, "abc")
                                     .given(bContent, "match").given(shouldMatch, true).checkReturnTrue();
-                            blocktest().given(input, "abc", "CharSequence")
+                            blocktest().given(input, "abc")
                                     .given(bContent, "match").given(shouldMatch, false).checkReturnFalse();
-                            blocktest().given(input, "abc", "CharSequence")
+                            blocktest().given(input, "abc")
                                     .given(bContent, "matCh").given(shouldMatch, true).checkReturnFalse();
-                            blocktest().given(input, "abc", "CharSequence")
+                            blocktest().given(input, "abc")
                                     .given(bContent, "matCh").given(shouldMatch, false).checkReturnTrue();
-                            blocktest().given(input, "", "CharSequence")
+                            blocktest().given(input, "")
                                     .given(bContent, "match").given(shouldMatch, true).checkReturnFalse();
                             return input.length() > 0 &&
                                contains(bContent, input.charAt(input.length() - 1)) == shouldMatch;

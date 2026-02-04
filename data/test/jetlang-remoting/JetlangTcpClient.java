@@ -223,6 +223,9 @@ public class JetlangTcpClient<R, W> implements JetlangClient<R, W> {
         }
         if(socketConnector.getReadTimeoutInMs() > 0) {
             Runnable checkTimeout = () -> {
+                // BLOCKTEST EVAL: https://github.com/jetlang/remoting/blob/505aadcc72f28bdf1796ce6fc5b490cece2e5375/src/main/java/org/jetlang/remote/client/JetlangTcpClient.java#L219-L226
+                blocktest().noInit(ReadTimeout).mock("onReadTimeout.run()").given(lastRead, new AtomicBoolean(true)).checkFalse(lastRead.get());
+                blocktest().noInit(ReadTimeout).mock("onReadTimeout.run()").given(lastRead, new AtomicBoolean(false)).checkTrue(lastRead.get());
                 if (!lastRead.get()) {
                     lastRead.set(true);
                     onReadTimeout.run();
@@ -317,9 +320,9 @@ public class JetlangTcpClient<R, W> implements JetlangClient<R, W> {
     }
 
     public <T extends W, C extends R> Disposable request(final String reqTopic,
-                                  final T req,
-                                  final DisposingExecutor executor, final Callback<C> callback,
-                                  final Callback<TimeoutControls> timeoutRunnable, int timeout, TimeUnit timeUnit) {
+                                                         final T req,
+                                                         final DisposingExecutor executor, final Callback<C> callback,
+                                                         final Callback<TimeoutControls> timeoutRunnable, int timeout, TimeUnit timeUnit) {
         final AtomicBoolean disposed = new AtomicBoolean(false);
         final int id = reqId.incrementAndGet();
         Runnable reqSend = () -> {
@@ -340,7 +343,8 @@ public class JetlangTcpClient<R, W> implements JetlangClient<R, W> {
             Runnable onTimeout = () -> {
                 if (!disposed.get()) {
                     // BLOCKTEST EVAL: https://github.com/jetlang/remoting/blob/505aadcc72f28bdf1796ce6fc5b490cece2e5375/src/main/java/org/jetlang/remote/client/JetlangTcpClient.java#L336-L339
-                    lambdatest().given(pendingRequests, Collections.synchronizedMap(new HashMap<Integer, JetlangTcpClient.Req>(){{ put(1, null); put(2, null);  }}), "Map<Integer, JetlangTcpClient.Req>")
+                    // MUST PROVIDE TYPE
+                    lambdatest().given(disposed, new AtomicBoolean(false)).given(pendingRequests, Collections.synchronizedMap(new HashMap<Integer, JetlangTcpClient.Req>(){{ put(1, null); put(2, null);  }}), "Map<Integer, JetlangTcpClient.Req>")
                             .given(id, 1).checkFalse(pendingRequests.containsKey(1)).checkTrue(pendingRequests.containsKey(2)).checkTrue(disposed.get());
                     TimeoutControls controls = () -> {
                         disposed.set(true);

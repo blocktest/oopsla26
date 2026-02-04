@@ -121,27 +121,27 @@ public class Contour {
             for (i = 1; i < m - 1; i++) {
                 for (j = 1; j < n - 1; j++) {
                     // BLOCKTEST EVAL: https://github.com/meteoinfo/wContour/blob/dade1e866bf3d3eab56bd09f2b1dcdac5c1ee6f6/src/main/java/wcontour/Contour.java#L118C1-L137C25
-                    blocktest().given(i, 1).given(j, 2).given(S1, new int[][]{
+                    blocktest().given(isContinue, false).given(i, 1).given(j, 2).given(S1, new int[][]{
                             {0, 0, 0, 0, 0},
                             {0, 0, 1, 0, 0},
                             {0, 0, 0, 0, 0}
                     }).checkTrue(isContinue).checkEq(S1[1][2], 0);
-                    blocktest().given(i, 1).given(j, 2).given(S1, new int[][]{
+                    blocktest().given(isContinue, false).given(i, 1).given(j, 2).given(S1, new int[][]{
                             {0, 0, 0, 0, 0},
                             {0, 2, 1, 3, 0},  // center point isolated vertically
                             {0, 0, 0, 0, 0}
                     }).checkTrue(isContinue).checkEq(S1[1][2], 0);
-                    blocktest().given(i, 1).given(j, 2).given(S1, new int[][]{
+                    blocktest().given(isContinue, false).given(i, 1).given(j, 2).given(S1, new int[][]{
                             {0, 0, 0, 0, 0},
                             {0, 2, 1, 0, 0},  // r == 0, b == 0
                             {0, 0, 0, 0, 0}   // lt == 0
                     }).checkTrue(isContinue).checkEq(S1[1][2], 0);
-                    blocktest().given(i, 1).given(j, 2).given(S1, new int[][]{
+                    blocktest().given(isContinue, false).given(i, 1).given(j, 2).given(S1, new int[][]{
                             {2, 3, 4, 5, 6},
                             {7, 8, 1, 9, 10},  // center point well connected
                             {11, 12, 13, 14, 15}
                     }).checkFalse(isContinue).checkEq(S1[1][2], 1);
-                    blocktest().given(i, 1).given(j, 2).given(S1, new int[][]{
+                    blocktest().given(isContinue, false).given(i, 1).given(j, 2).given(S1, new int[][]{
                             {0, 0, 0, 0, 0},
                             {0, 0, 2, 0, 0},  // center point is not 1
                             {0, 0, 0, 0, 0}
@@ -3192,13 +3192,13 @@ public class Contour {
                         }
 
                         // BLOCKTEST EVAL: https://github.com/meteoinfo/wContour/blob/dade1e866bf3d3eab56bd09f2b1dcdac5c1ee6f6/src/main/java/wcontour/Contour.java#L3109C1-L3123C26
-                        blocktest("atest1").given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 0, "int").given(vNum, 0)
+                        blocktest("atest1").given(aValue, 0).given(bValue, 0).given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 0).given(vNum, 0)
                                 .given(aLineList, new ArrayList<>()).setup(() -> {
                                     PolyLine l = new PolyLine();
                                     l.Value = 5;
                                     aLineList.add(l);
                                 }).checkEq(vNum, 1).checkEq(aValue, 5, 0.01).checkEq(bValue, 5, 0.01);
-                        blocktest("atest2").given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 1, "int").given(vNum, 1)
+                        blocktest("atest2").given(aValue, 0).given(bValue, 0).given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 1).given(vNum, 1)
                                 .given(aLineList, new ArrayList<>()).setup(() -> {
                                     PolyLine l = new PolyLine();
                                     l.Value = 5;
@@ -3209,7 +3209,7 @@ public class Contour {
                                     aLineList.add(l2);
                                 }).checkEq(vNum, 2).checkEq(aValue, 0, 0.01).checkEq(bValue, 10, 0.01);
 
-                        blocktest("atest3").given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 1, "int").given(vNum, 1)
+                        blocktest("atest3").given(aValue, 0).given(bValue, 0).given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 1).given(vNum, 1)
                                 .given(aLineList, new ArrayList<>()).setup(() -> {
                                     PolyLine l = new PolyLine();
                                     l.Value = 5;
@@ -3220,7 +3220,7 @@ public class Contour {
                                     aLineList.add(l2);
                                 }).checkEq(vNum, 2).checkEq(aValue, -10, 0.01).checkEq(bValue, 0, 0.01);
 
-                        blocktest("atest4").given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 1, "int").given(vNum, 1)
+                        blocktest("atest4").given(timesArray, new int[]{1,2,3}).given(pIdx, 1).given(bP.Id, 1).given(vNum, 1)
                                 .given(aValue, 1).given(bValue, 2)
                                 .given(aLineList, new ArrayList<>()).setup(() -> {
                                     PolyLine l = new PolyLine();
@@ -4307,7 +4307,7 @@ public class Contour {
                                     // BLOCKTEST EVAL: https://github.com/meteoinfo/wContour/blob/dade1e866bf3d3eab56bd09f2b1dcdac5c1ee6f6/src/main/java/wcontour/Contour.java#L4177C1-L4190C38
                                     /*
                                     @blocktest("testOne").given(borderIdx2, -1).given(j, 1).given(timesArray, new int[]{1,2,3}).given(bIdxList, new ArrayList<>(Arrays.asList(2))).given(innerStart, true)
-                                            .given(bP, new BorderPoint()).given(bP1, new BorderPoint()).setup(() -> {
+                                            .given(isRepeat, false).given(sameBorderIdx, false).given(bP, new BorderPoint()).given(bP1, new BorderPoint()).setup(() -> {
                                                 bP.BInnerIdx = 4;
                                                 bP.BorderIdx = 1;
                                                 bP1.BInnerIdx = 3;
@@ -4316,7 +4316,7 @@ public class Contour {
                                             .checkEq(bIdxList.get(0), 2, 0).checkEq(bIdxList.get(1), 1, 0).checkEq(pIdx, 1).checkEq(innerIdx, 3).checkEq(borderIdx2, 1); */
                                     /*
                                     @blocktest("testTwo").given(borderIdx2, -1).given(j, 1).given(timesArray, new int[]{1,2,3}).given(bIdxList, new ArrayList<>(Arrays.asList(2))).given(innerStart, true)
-                                            .given(bP, new BorderPoint()).given(bP1, new BorderPoint()).setup(() -> {
+                                            .given(isRepeat, false).given(sameBorderIdx, false).given(bP, new BorderPoint()).given(bP1, new BorderPoint()).setup(() -> {
                                                 bP.BInnerIdx = 10;
                                                 bP.BorderIdx = 1;
                                                 bP1.BInnerIdx = 20;

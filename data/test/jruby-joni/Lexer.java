@@ -1244,9 +1244,9 @@ class Lexer extends ScannerSupport {
                             }
                             p = token.backP + encLength;
                             // BLOCKTEST EVAL: https://github.com/jruby/joni/blob/d4696c4f6dcdd1484895abae4b9b3c62874759e1/src/org/joni/Lexer.java#L1178C1-L1183C53
-                            blocktest().given(p, 0).given(enc, new Regex("foo").enc, "Encoding").given(bytes, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }).given(token.backP, 5, "int").given(stop, 0, "int")
+                            blocktest().given(p, 0).given(enc, new Regex("foo").getEncoding()).given(bytes, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }).given(token.backP, 5).given(stop, 0)
                                     .checkEq(encLength, 1).checkEq(p, 6).start(FIRST_BLOCK, 2);
-                            blocktest().given(p, 0).given(enc, new Regex("foo").enc, "Encoding").given(bytes, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }).given(token.backP, 5, "int").given(stop, 0, "int").mock("enc.length(..)", -1)
+                            blocktest().given(p, 0).given(enc, new Regex("foo").getEncoding()).given(bytes, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }).given(token.backP, 5).given(stop, 0).mock("enc.length(..)", -1)
                                     .expect(IllegalArgumentException.class).start(FIRST_BLOCK, 2);
                         }
                         break;

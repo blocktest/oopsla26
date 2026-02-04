@@ -272,7 +272,7 @@ public class FastjsonSerializer implements Serializer {
                 Collection collection = createCollection(clazzType, ((JSONArray)arg).size());
                 ((JSONArray)arg).forEach(element -> {
                     // BLOCKTEST EVAL: https://github.com/jessin20161124/miniDubboOpen/blob/a02a5c2b393456861401b14057752fb22a7308ab/src/main/java/com/jessin/practice/dubbo/netty/FastjsonSerializer.java#L268-L271
-                    blocktest().noInit(elementType).given(element, null, "Object").mock("convert(..)", new String("testME")).given(collection, new ArrayList<>()).checkTrue(!collection.isEmpty()).checkEq(collection.iterator().next().toString(), "testME");
+                    blocktest().noInit(elementType).given(element, null).mock("convert(..)", new String("testME")).given(collection, new ArrayList<>()).checkTrue(!collection.isEmpty()).checkEq(collection.iterator().next().toString(), "testME");
                     Object newResult = convert(element, null, elementType);
                     collection.add(newResult);
                 });

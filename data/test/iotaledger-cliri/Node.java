@@ -203,7 +203,7 @@ public class Node {
                                             String port = ":" + n.getAddress().getPort();
 
                                             // BLOCKTEST EVAL: https://github.com/iotaledger/cliri/blob/1f974cafb1c17d96ae7e0a6856f563dcf3794238/src/main/java/com/iota/iri/network/Node.java#L200-L208
-                                            blocktest().given(n, null, "TCPNeighbor")
+                                            blocktest().given(n, null)
                                                     .given(hostname, "localhost").given(port, ":80")
                                                     .given(ip, "10.0.1.1")
                                                     .mock("removeNeighbor(..)").mock("newNeighbor(..)").mock("addNeighbor(..)")
@@ -212,7 +212,7 @@ public class Node {
                                                 removeNeighbor(uri, n.isFlagged());
                                                 // BLOCKTEST EVAL: https://github.com/iotaledger/cliri/blob/1f974cafb1c17d96ae7e0a6856f563dcf3794238/src/main/java/com/iota/iri/network/Node.java#L203-L207
                                                 /*
-                                                @blocktest().given(n, null, "TCPNeighbor")
+                                                @blocktest().given(n, null)
                                                         .mock("removeNeighbor(..)").mock("newNeighbor(..)").mock("addNeighbor(..)")
                                                         .given(hostname, "localhost").given(port, ":80").given(ip, "10.0.1.1")
                                                         .checkEq(neighborIpCache.get("localhost"), "10.0.1.1");

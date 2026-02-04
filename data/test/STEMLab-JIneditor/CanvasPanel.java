@@ -396,21 +396,23 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 if (stateEnd1 != null && stateEnd2 != null) {
                     createTransition(transitionPoints, stateEnd1, stateEnd2);
 
-            		transitionPoints.clear();
-            		stateEnd1 = null;
-            		stateEnd2 = null;
-            		System.out.println("create transition");
+                    transitionPoints.clear();
+                    stateEnd1 = null;
+                    stateEnd2 = null;
+                    System.out.println("create transition");
                 }
             } else if (currentEditState == EditState.CREATE_INTERLAYERCONNECTION) {
                 System.out.println("mousepressed_createinterlayerconnection");
                 // BLOCKTEST EVAL: https://github.com/STEMLab/JIneditor/blob/ccca7bec12fe58583d25da0d13ae038b27d34424/src/main/java/edu/pnu/gui/CanvasPanel.java#L401C1-L417C18
                 blocktest("test1").given(currentKeyEvent, KeyEvent.KEY_RELEASED).given(currentEditWorkState, EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND1)
+                        .given(statesEnd1, new ArrayList<State>()).given(statesEnd2, new ArrayList<State>()).given(selectedStateMap, new HashMap<State, Color>())
                         .setup(() -> {
                             State s = new State();
                             statesEnd1.add(s);
                             selectedStateMap.put(s, Color.YELLOW);
                         }).checkTrue(statesEnd1.isEmpty()).checkTrue(selectedStateMap.isEmpty());
                 blocktest("test2").given(currentKeyEvent, KeyEvent.KEY_RELEASED).given(currentEditWorkState, EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND1)
+                        .given(statesEnd1, new ArrayList<State>()).given(statesEnd2, new ArrayList<State>()).given(selectedStateMap, new HashMap<State, Color>())
                         .setup(() -> {
                             State s = new State();
                             State s2 = new State();
@@ -419,6 +421,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                         }).checkTrue(statesEnd1.isEmpty()).checkFalse(selectedStateMap.isEmpty());
 
                 blocktest("test3").given(currentKeyEvent, KeyEvent.KEY_RELEASED).given(currentEditWorkState, EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND2)
+                        .given(statesEnd1, new ArrayList<State>()).given(statesEnd2, new ArrayList<State>()).given(selectedStateMap, new HashMap<State, Color>())
                         .setup(() -> {
                             State s = new State();
                             statesEnd2.add(s);
@@ -426,6 +429,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                         }).checkTrue(statesEnd2.isEmpty()).checkTrue(selectedStateMap.isEmpty());
 
                 blocktest("test4").given(currentKeyEvent, KeyEvent.KEY_RELEASED).given(currentEditWorkState, EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND2)
+                        .given(statesEnd1, new ArrayList<State>()).given(statesEnd2, new ArrayList<State>()).given(selectedStateMap, new HashMap<State, Color>())
                         .setup(() -> {
                             State s = new State();
                             State s2 = new State();
@@ -434,6 +438,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                         }).checkTrue(statesEnd2.isEmpty()).checkFalse(selectedStateMap.isEmpty());
 
                 blocktest("test5").given(currentKeyEvent, KeyEvent.KEY_RELEASED).given(currentEditWorkState, EditWorkState.CREATE_CELLSPACE_NEXTPOINT)
+                        .given(statesEnd1, new ArrayList<State>()).given(statesEnd2, new ArrayList<State>()).given(selectedStateMap, new HashMap<State, Color>())
                         .setup(() -> {
                             State s = new State();
                             State s2 = new State();
@@ -442,6 +447,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                         }).checkFalse(statesEnd2.isEmpty()).checkFalse(selectedStateMap.isEmpty());
 
                 blocktest("test6").given(currentKeyEvent, KeyEvent.KEY_PRESSED).given(currentEditWorkState, EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND2)
+                        .given(statesEnd1, new ArrayList<State>()).given(statesEnd2, new ArrayList<State>()).given(selectedStateMap, new HashMap<State, Color>())
                         .setup(() -> {
                             State s = new State();
                             State s2 = new State();
@@ -608,10 +614,10 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 }
             } else if (currentEditState == EditState.CREATE_CELLSPACEBOUNDARY_AS_DOOR) {
                 // Point snapPoint = searchSnapPointToCellSpaceBoundary(e);
-            	Map<String, Object> map = searchSnapPointToCellSpace(e, null);
+                Map<String, Object> map = searchSnapPointToCellSpace(e, null);
                 Point snapPoint = (Point) map.get("Point");
-            	LineString baseDoorLine2 = (LineString) map.get("BaseLine");
-                
+                LineString baseDoorLine2 = (LineString) map.get("BaseLine");
+
                 if (snapPoint != null) {
                     double doorHeight = project.getCurrentCellSpaceBoundaryOnFloor()
                             .getFloorProperty().getDoorHeight();
@@ -620,9 +626,9 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                         doorPointList.add(snapPoint);
                         baseDoorLine = baseDoorLine2;
                     } else if (doorPointList.size() == 1 && baseDoorLine.equals(baseDoorLine2)) {
-                    	doorPointList.add(snapPoint);
+                        doorPointList.add(snapPoint);
                     }
-                    
+
                     if (doorPointList.size() == 2) {
                         createCellSpaceBoundaryAsDoor(map);
 
@@ -662,21 +668,21 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
                     project.setEditState(EditState.SELECT_STATE);
                     isSelected = true;
-                    
-                    String selectedStateIDs = "";                    
+
+                    String selectedStateIDs = "";
                     for(State selected : selectedStateMap.keySet()) {
                         selectedStateIDs += selected.getGmlID() + ", ";
                         //System.out.println("State : " + selected.getGmlID() + ", " + selected.getPosition().getPanelRatioX() + " " + (1 - selected.getPosition().getPanelRatioY()));
                     }
                     selectedStateIDs = selectedStateIDs.substring(0, selectedStateIDs.length() - 2);
                     if(selectedStateMap.size() > 1) {
-                    	mainFrame.setLabel_CurrentEditState("Selected State : " + selectedStateIDs);
+                        mainFrame.setLabel_CurrentEditState("Selected State : " + selectedStateIDs);
                     } else if(selectedStateMap.size() == 1) {
-                    	String dualityID = null;
-                    	if(selectedState.getDuality() != null) {
-                    		dualityID = selectedState.getDuality().getGmlID();
-                    	}
-                    	mainFrame.setLabel_CurrentEditState("Selected State : " + selectedStateIDs + " duality : " + dualityID);
+                        String dualityID = null;
+                        if(selectedState.getDuality() != null) {
+                            dualityID = selectedState.getDuality().getGmlID();
+                        }
+                        mainFrame.setLabel_CurrentEditState("Selected State : " + selectedStateIDs + " duality : " + dualityID);
                     }
                 }
 
@@ -695,7 +701,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
                         project.setEditState(EditState.SELECT_TRANSITION);
                         isSelected = true;
-                        
+
                         String selectedTransitionIDs = "";
                         for(Transition selected : selectedTransitionMap.keySet()) {
                             selectedTransitionIDs += selected.getGmlID() + ", ";
@@ -720,7 +726,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
                         project.setEditState(EditState.SELECT_CELLSPACEBOUNDARY);
                         isSelected = true;
-                        
+
                         String selectedCellSpaceBoundaryIDs = "";
                         for(CellSpaceBoundary selected : selectedCellSpaceBoundaryMap.keySet()) {
                             selectedCellSpaceBoundaryIDs += selected.getGmlID() + ", ";
@@ -744,7 +750,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
                         project.setEditState(EditState.SELECT_CELLSPACE);
                         isSelected = true;
-                        
+
                         String selectedCellSpaceIDs = "";
                         for(CellSpace selected : selectedCellSpaceMap.keySet()) {
                             selectedCellSpaceIDs += selected.getGmlID() + ", ";
@@ -919,23 +925,23 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         repaint();
     }
 
-	private void createTransition(ArrayList<Point> transitionPoints, State stateEnd1, State stateEnd2) {
-		TransitionOnFloor transitionOnFloor = project.getCurrentTransitionOnFloor();
-		Transition transition = new Transition();
-		LineString path = new LineString();
-		ArrayList<Point> pathPoints = path.getPoints();
+    private void createTransition(ArrayList<Point> transitionPoints, State stateEnd1, State stateEnd2) {
+        TransitionOnFloor transitionOnFloor = project.getCurrentTransitionOnFloor();
+        Transition transition = new Transition();
+        LineString path = new LineString();
+        ArrayList<Point> pathPoints = path.getPoints();
 
-		pathPoints.addAll(transitionPoints);
-		path.setPoints(pathPoints);
+        pathPoints.addAll(transitionPoints);
+        path.setPoints(pathPoints);
 
-		transition.setStates(new State[] { stateEnd1, stateEnd2 });
-		transition.setPath(path);
-		
-		stateEnd1.getTransitionReference().add(transition);
-		stateEnd2.getTransitionReference().add(transition);
+        transition.setStates(new State[] { stateEnd1, stateEnd2 });
+        transition.setPath(path);
 
-		transitionOnFloor.getTransitionMember().add(transition);
-	}
+        stateEnd1.getTransitionReference().add(transition);
+        stateEnd2.getTransitionReference().add(transition);
+
+        transitionOnFloor.getTransitionMember().add(transition);
+    }
 
     // CellSpace, CellSpaceBoundary 생성 순서
     // 일단 처음 CellSpace는 그냥 만든다.
@@ -969,19 +975,19 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         checkRing.setPoints(checkPoints);
         com.vividsolutions.jts.geom.LineString jtsLine = JTSUtil.convertJTSLineString(checkRing);
         if (JTSUtil.Orientation2D_Polygon(jtsLine.getNumPoints(), jtsLine.getCoordinateSequence()) > 0) {
-        	ArrayList<LineString> temp = new ArrayList<LineString>();
-        	for (int i = checkPoints.size() - 1; i >= 0; i--) {
-        		LineString tempLine = new LineString();
-        		ArrayList<Point> tempPoints = tempLine.getPoints();
-        		tempPoints.add(checkPoints.get(i).clone());
-        		if (i == 0) {
-        			tempPoints.add(checkPoints.get(checkPoints.size() - 1).clone());
-        		} else {
-        			tempPoints.add(checkPoints.get(i - 1).clone());
-        		}
-        		temp.add(tempLine);
-        	}
-        	lineStringElements = temp;
+            ArrayList<LineString> temp = new ArrayList<LineString>();
+            for (int i = checkPoints.size() - 1; i >= 0; i--) {
+                LineString tempLine = new LineString();
+                ArrayList<Point> tempPoints = tempLine.getPoints();
+                tempPoints.add(checkPoints.get(i).clone());
+                if (i == 0) {
+                    tempPoints.add(checkPoints.get(checkPoints.size() - 1).clone());
+                } else {
+                    tempPoints.add(checkPoints.get(i - 1).clone());
+                }
+                temp.add(tempLine);
+            }
+            lineStringElements = temp;
         	/*
         	int last = lineStringElements.size() - 1;
         	for (int i = last; i >= 0; i--) {
@@ -994,7 +1000,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         	}
         	lineStringElements = temp;
         	*/
-        	System.out.println("reversed");
+            System.out.println("reversed");
         }
         //
         for (int i = 0; i < lineStringElements.size(); i++) {
@@ -1012,34 +1018,34 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                             || GeometryUtil.isOverlapsLineString(ls, otherLS)) { // ls가 otherLS를 포함하면 otherLS의 기하를 가지는 boundary생성
                         System.out.println("overlaped boundary checked");
                         if (!lineStringOfAdjacencyBoundaryMap.containsKey(otherLS)) { // 해당 lineString을 가지는 CellSpaceBoundary가 있을 경우의 수는
-                        	createCellSpaceBoundary(ls, otherLS, cellSpace, otherCellSpace); 
+                            createCellSpaceBoundary(ls, otherLS, cellSpace, otherCellSpace);
                         } else { // 이미 boundary가 존재할 경우에만 else로 넘어온다.
                             // 벽의 일부씩만 겹쳤을 때 intersection으로 boundary 생성해주는 부분 추가해야한다.
                             // 지금은 새로 만들어지는 벽이 기존에 있는 문을 포함할 경우만 해놓음.
                             ArrayList<CellSpaceBoundary> adjacencyBoundaryList = lineStringOfAdjacencyBoundaryMap
                                     .get(otherLS);
-                            
+
                             CellSpaceBoundary targetBoundary = null;
                             for (CellSpaceBoundary existBoundary : adjacencyBoundaryList) {
-                            	LineString existLS = existBoundary.getGeometry2D();
-                            	if (GeometryUtil.isContainsLineString(ls, existLS)
+                                LineString existLS = existBoundary.getGeometry2D();
+                                if (GeometryUtil.isContainsLineString(ls, existLS)
                                         || GeometryUtil.isContainsLineString(existLS, ls)
                                         || GeometryUtil.isOverlapsLineString(ls, existLS)) {
-                            		targetBoundary = existBoundary;
-                            	}
+                                    targetBoundary = existBoundary;
+                                }
                             }
-                            
+
                             if (targetBoundary != null) {
-                            	// Cell의 Line에 Boundary는 있지만 Cell과 붙어있지 않은 경우
-                            	// 외부로 향하는 문으로 만들어놨는데 Cell이 붙는 경우
-                            	// 문이 1개인 경우는 간단하지만 문이 한쪽 벽에 여러개 있을 때
-                            	// 여기에 추가로 Cell이 생성되면 여러개의 문에 대한 Line 분할 필요
-                            	System.out.println("targetBoundary is not null");
+                                // Cell의 Line에 Boundary는 있지만 Cell과 붙어있지 않은 경우
+                                // 외부로 향하는 문으로 만들어놨는데 Cell이 붙는 경우
+                                // 문이 1개인 경우는 간단하지만 문이 한쪽 벽에 여러개 있을 때
+                                // 여기에 추가로 Cell이 생성되면 여러개의 문에 대한 Line 분할 필요
+                                System.out.println("targetBoundary is not null");
                             } else {
-                            	createCellSpaceBoundary(ls, otherLS, cellSpace, otherCellSpace);
+                                createCellSpaceBoundary(ls, otherLS, cellSpace, otherCellSpace);
                             }
-                            
-                           
+
+
                         }
                     }
                 }
@@ -1069,65 +1075,65 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         dualityState.setDuality(cellSpace);
         stateOnFloor.getStateMember().add(dualityState);
         cellSpace.setDuality(dualityState);
-        
+
         // 변경 전
         // search adjacency boundary
         /*
          * for(CellSpaceBoundary boundary : cellSpace.getPartialBoundedBy()) { LineString ls = boundary.getGeometry2D(); if(ls.getxLinkGeometry() !=
          * null) continue;
-         * 
+         *
          * for(CellSpace c : project.getCurrentCellSpaceOnFloor().getCellSpaceMember()) { if(c.equals(cellSpace)) continue;
-         * 
+         *
          * for(CellSpaceBoundary otherBoundary : c.getPartialBoundedBy()) { LineString otherls = otherBoundary.getGeometry2D(); if(otherls == null)
          * continue; // 3차원기하만 있을 경우 if(otherls.getxLinkGeometry() != null) continue;
-         * 
+         *
          * if(colLinear(otherls, ls)) { // boundary의 기하가 서로 평행하게 인접한 것을 찾는다. if(!adjacencyBoundaryMap.containsKey(otherBoundary)) {
          * adjacencyBoundaryMap.put(otherBoundary, new ArrayList<CellSpaceBoundary>()); } if(!adjacencyBoundaryMap.containsKey(boundary)) {
          * adjacencyBoundaryMap.put(boundary, new ArrayList<CellSpaceBoundary>()); } // 인접한 양쪽에 대한 정보를 map에 저장한다.
          * adjacencyBoundaryMap.get(otherBoundary).add(boundary); adjacencyBoundaryMap.get(boundary).add(otherBoundary); }
-         * 
+         *
          * } } }
          */
 
         return cellSpace;
     }
-    
+
     public CellSpaceBoundary createCellSpaceBoundary(LineString geometry2D) {
-    	CellSpaceBoundary newBoundary = new CellSpaceBoundary(); // 1. 다른 방과 붙어 있어 벽에 대한 boundary가 있는 경우. 이 때는 여기 조건에 포함되지 않음
-        
+        CellSpaceBoundary newBoundary = new CellSpaceBoundary(); // 1. 다른 방과 붙어 있어 벽에 대한 boundary가 있는 경우. 이 때는 여기 조건에 포함되지 않음
+
         ArrayList<Point> newPoints = geometry2D.getPoints();
         for (Point p : newPoints) {
-        	setPanelRatioXY(p);
+            setPanelRatioXY(p);
         }
         geometry2D.setPoints(newPoints);
-        
+
         geometry2D.setIsReversed(false);
         newBoundary.setGeometry2D(geometry2D);
         newBoundary.setBoundaryType(BoundaryType.CellSpaceBoundary);
-        
+
         return newBoundary;
     }
-    
+
     public void createCellSpaceBoundary(LineString ls, LineString otherLS, CellSpace c1, CellSpace c2) {
-    	HashMap<LineString, ArrayList<CellSpaceBoundary>> lineStringOfAdjacencyBoundaryMap = project
+        HashMap<LineString, ArrayList<CellSpaceBoundary>> lineStringOfAdjacencyBoundaryMap = project
                 .getCurrentCellSpaceBoundaryOnFloor().getLineStringOfAdjacencyBoundaryMap();
         HashMap<CellSpaceBoundary, ArrayList<CellSpace>> boundaryOfReferenceCellSpaceMap = project
                 .getCurrentCellSpaceBoundaryOnFloor().getBoundaryOfReferenceCellSpaceMap();
-                
+
         // geometry2d of boundary will be a intersection between ls and otherLS.
         LineString intersection = GeometryUtil.getIntersectionLineString(
                 ls, otherLS);
         if (intersection == null) {
-        	System.out.println("Intersection is null");
-        	return;
+            System.out.println("Intersection is null");
+            return;
         }
         CellSpaceBoundary newBoundary = createCellSpaceBoundary(intersection.clone());
         String c1Usage = c1.getDescription("Usage");
         String c2Usage = c2.getDescription("Usage");
         if ((c1Usage != null && c2Usage != null) && (c1Usage.equals("Door") || c2Usage.equals("Door"))) {
-        	newBoundary.setBoundaryType(BoundaryType.Door);
+            newBoundary.setBoundaryType(BoundaryType.Door);
         }
-        
+
         c1.getPartialBoundedBy().add(newBoundary);
         c2.getPartialBoundedBy().add(newBoundary);
 
@@ -1152,32 +1158,32 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         project.getCurrentCellSpaceBoundaryOnFloor()
                 .getCellSpaceBoundaryMember().add(newBoundary);
     }
-    
+
     public void createCellSpaceBoundaryAsDoor(Map<String, Object> map) {
-    	HashMap<LineString, ArrayList<CellSpaceBoundary>> lineStringOfAdjacencyBoundaryMap = project
+        HashMap<LineString, ArrayList<CellSpaceBoundary>> lineStringOfAdjacencyBoundaryMap = project
                 .getCurrentCellSpaceBoundaryOnFloor().getLineStringOfAdjacencyBoundaryMap();
         HashMap<CellSpaceBoundary, ArrayList<CellSpace>> boundaryOfReferenceCellSpaceMap = project
                 .getCurrentCellSpaceBoundaryOnFloor().getBoundaryOfReferenceCellSpaceMap();
-        
+
         LineString doorLineString = new LineString();
         doorLineString.setPoints((ArrayList<Point>) doorPointList.clone());
-        
+
         CellSpace baseCellSpace = (CellSpace) map.get("CellSpace");
         LineString baseLine = (LineString) map.get("BaseLine");
-        
+
         if (baseCellSpace == null) {
-        	System.out.println("Base CellSpace is null");
+            System.out.println("Base CellSpace is null");
         }
         if (baseLine == null) {
-        	System.out.println("Base Door Line is null");
+            System.out.println("Base Door Line is null");
         }
-        
+
         ArrayList<CellSpaceBoundary> adjacencyBoundaryList = lineStringOfAdjacencyBoundaryMap.get(baseLine);
-        
+
         if (!lineStringOfAdjacencyBoundaryMap.containsKey(baseLine) || adjacencyBoundaryList.size() == 0) {
-        	CellSpaceBoundary doorBoundary = createCellSpaceBoundary(doorLineString);
-        	//doorBoundary.setBoundaryType(BoundaryType.Door);
-        	baseCellSpace.getPartialBoundedBy().add(doorBoundary);
+            CellSpaceBoundary doorBoundary = createCellSpaceBoundary(doorLineString);
+            //doorBoundary.setBoundaryType(BoundaryType.Door);
+            baseCellSpace.getPartialBoundedBy().add(doorBoundary);
 
             if (!lineStringOfAdjacencyBoundaryMap.containsKey(baseLine)) {
                 lineStringOfAdjacencyBoundaryMap.put(baseLine,
@@ -1191,66 +1197,66 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
             boundaryOfReferenceCellSpaceMap.get(doorBoundary).add(baseCellSpace);
             project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().add(doorBoundary);
         } else {
-        	CellSpaceBoundary deleted = null;
-        	ArrayList<CellSpaceBoundary> splitedBoundary = null;
-        	for (CellSpaceBoundary adjacencyBoundary : adjacencyBoundaryList) {
-        		LineString adjacencyLS = adjacencyBoundary.getGeometry2D();
-        		
-        		if (GeometryUtil.isContainsLineString(adjacencyLS, doorLineString)
+            CellSpaceBoundary deleted = null;
+            ArrayList<CellSpaceBoundary> splitedBoundary = null;
+            for (CellSpaceBoundary adjacencyBoundary : adjacencyBoundaryList) {
+                LineString adjacencyLS = adjacencyBoundary.getGeometry2D();
+
+                if (GeometryUtil.isContainsLineString(adjacencyLS, doorLineString)
                         && adjacencyBoundary.getBoundaryType() != BoundaryType.Door) { // 기존 boundary에 door가 생긴다면
-        			splitedBoundary = splitCellSpaceBoundary(adjacencyBoundary, doorLineString); // boundary 쪼갠다.
-        			
-        			deleted = adjacencyBoundary;
-        		}
-        	}
-        	
-        	if (deleted != null) {
-	        	int idx = adjacencyBoundaryList.indexOf(deleted);
-	        	adjacencyBoundaryList.remove(deleted);
-	        	adjacencyBoundaryList.addAll(idx, splitedBoundary);
-	        	baseCellSpace.getPartialBoundedBy().remove(deleted);
-	        	baseCellSpace.getPartialBoundedBy().addAll(splitedBoundary);        	
-	        	
-	        	ArrayList<CellSpace> referenceCellSpaceList = boundaryOfReferenceCellSpaceMap.get(deleted);
-	        	CellSpace otherReference = null;
-	        	for (CellSpace otherCellSpace : referenceCellSpaceList) {
-	        		if (!baseCellSpace.equals(otherCellSpace)) {
-	        			ArrayList<LineString> otherLSElements = otherCellSpace.getLineStringElements();
-	        			boolean check = false;
-	        			for (LineString otherLS : otherLSElements) {
-	        				if (lineStringOfAdjacencyBoundaryMap.containsKey(otherLS)) {
-	                            if (lineStringOfAdjacencyBoundaryMap.get(otherLS).contains(deleted)) {
-	                                lineStringOfAdjacencyBoundaryMap.get(otherLS).remove(deleted);
-	                                lineStringOfAdjacencyBoundaryMap.get(otherLS).addAll(splitedBoundary);
-	                                otherCellSpace.getPartialBoundedBy().remove(deleted);
-	                                otherCellSpace.getPartialBoundedBy().addAll(splitedBoundary);
-	                                
-	                                otherReference = otherCellSpace;
-	                                check = true;
-	                                break;
-	                            }
-	                        }
-	        			}
-	        			
-	        			if (check) {
-	        				break;
-	        			}
-	        		}
-	        	}
-	        	
-	        	//
-	        	boundaryOfReferenceCellSpaceMap.remove(deleted);
-	        	for (CellSpaceBoundary splited : splitedBoundary) {
-	        		boundaryOfReferenceCellSpaceMap.put(splited, new ArrayList<CellSpace>());
-	        		boundaryOfReferenceCellSpaceMap.get(splited).add(baseCellSpace);
-	        		boundaryOfReferenceCellSpaceMap.get(splited).add(otherReference);
-	        	}
-	        	project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().remove(deleted);
-	        	project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().addAll(splitedBoundary);
-        	} else {
-        		CellSpaceBoundary doorBoundary = createCellSpaceBoundary(doorLineString);
-            	doorBoundary.setBoundaryType(BoundaryType.Door);
-            	baseCellSpace.getPartialBoundedBy().add(doorBoundary);
+                    splitedBoundary = splitCellSpaceBoundary(adjacencyBoundary, doorLineString); // boundary 쪼갠다.
+
+                    deleted = adjacencyBoundary;
+                }
+            }
+
+            if (deleted != null) {
+                int idx = adjacencyBoundaryList.indexOf(deleted);
+                adjacencyBoundaryList.remove(deleted);
+                adjacencyBoundaryList.addAll(idx, splitedBoundary);
+                baseCellSpace.getPartialBoundedBy().remove(deleted);
+                baseCellSpace.getPartialBoundedBy().addAll(splitedBoundary);
+
+                ArrayList<CellSpace> referenceCellSpaceList = boundaryOfReferenceCellSpaceMap.get(deleted);
+                CellSpace otherReference = null;
+                for (CellSpace otherCellSpace : referenceCellSpaceList) {
+                    if (!baseCellSpace.equals(otherCellSpace)) {
+                        ArrayList<LineString> otherLSElements = otherCellSpace.getLineStringElements();
+                        boolean check = false;
+                        for (LineString otherLS : otherLSElements) {
+                            if (lineStringOfAdjacencyBoundaryMap.containsKey(otherLS)) {
+                                if (lineStringOfAdjacencyBoundaryMap.get(otherLS).contains(deleted)) {
+                                    lineStringOfAdjacencyBoundaryMap.get(otherLS).remove(deleted);
+                                    lineStringOfAdjacencyBoundaryMap.get(otherLS).addAll(splitedBoundary);
+                                    otherCellSpace.getPartialBoundedBy().remove(deleted);
+                                    otherCellSpace.getPartialBoundedBy().addAll(splitedBoundary);
+
+                                    otherReference = otherCellSpace;
+                                    check = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (check) {
+                            break;
+                        }
+                    }
+                }
+
+                //
+                boundaryOfReferenceCellSpaceMap.remove(deleted);
+                for (CellSpaceBoundary splited : splitedBoundary) {
+                    boundaryOfReferenceCellSpaceMap.put(splited, new ArrayList<CellSpace>());
+                    boundaryOfReferenceCellSpaceMap.get(splited).add(baseCellSpace);
+                    boundaryOfReferenceCellSpaceMap.get(splited).add(otherReference);
+                }
+                project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().remove(deleted);
+                project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().addAll(splitedBoundary);
+            } else {
+                CellSpaceBoundary doorBoundary = createCellSpaceBoundary(doorLineString);
+                doorBoundary.setBoundaryType(BoundaryType.Door);
+                baseCellSpace.getPartialBoundedBy().add(doorBoundary);
 
                 if (!lineStringOfAdjacencyBoundaryMap.containsKey(baseLine)) {
                     lineStringOfAdjacencyBoundaryMap.put(baseLine,
@@ -1263,7 +1269,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 }
                 boundaryOfReferenceCellSpaceMap.get(doorBoundary).add(baseCellSpace);
                 project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().add(doorBoundary);
-        	}
+            }
         }
     }
 
@@ -1298,11 +1304,11 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                     ArrayList<LineString> splitedLS = GeometryUtil.splitLineString(ls,
                             doorLineString); // lineString 분할
                     for(LineString splited : splitedLS) {
-                            for(Point p : splited.getPoints()) {
-                                    setPanelRatioXY(p);
-                            }
+                        for(Point p : splited.getPoints()) {
+                            setPanelRatioXY(p);
+                        }
                     }
-                    
+
                     LineString doorInThisCellSpace = null;
                     int insertCount = 0;
                     for (int j = 0; j < splitedLS.size(); j++) {
@@ -1311,25 +1317,25 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
                         /*
                          * if(j == 0) { int tempi; if(i == 0) tempi = lineStringElements.size() - 1; else tempi = i - 1;
-                         * 
+                         *
                          * lineStringElements.get(tempi).getPoints().get(1).setZ(doorPointList.get(0).getZ()); } else if(j == splitedLS.size() - 1) {
                          * lineStringElements.get((i + 2) % lineStringElements.size()).getPoints().get(0).setZ(doorPointList.get(0).getZ()); }
                          */
 
                         boolean isEquals = true;
                         for (Point doorPoint : doorPointList) {
-                        	boolean check = false;
-                        	for (Point splitPoint : splitPoints) {
-                        		if (doorPoint.equalsPanelRatioXY(splitPoint)) {
-                        			check = true;
-                        			break;
-                        		}
-                        	}
-                        	
-                        	if (!check) {
-                        		isEquals = false;
-                        		break;
-                        	}
+                            boolean check = false;
+                            for (Point splitPoint : splitPoints) {
+                                if (doorPoint.equalsPanelRatioXY(splitPoint)) {
+                                    check = true;
+                                    break;
+                                }
+                            }
+
+                            if (!check) {
+                                isEquals = false;
+                                break;
+                            }
                         }
                         if (isEquals) {
                             doorInThisCellSpace = split;
@@ -1399,7 +1405,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                                                 otherCellSpace.getPartialBoundedBy().remove(
                                                         adjacencyBoundary);
                                                 otherCellSpace.getPartialBoundedBy().
-                                                		addAll(splitedBoundary);
+                                                        addAll(splitedBoundary);
                                             }
                                         }
                                     }
@@ -1423,9 +1429,9 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                                 if (GeometryUtil.isContainsLineString(split,
                                         boundary.getGeometry2D())
                                         || GeometryUtil.isOverlapsLineString(split,
-                                                boundary.getGeometry2D())
+                                        boundary.getGeometry2D())
                                         || GeometryUtil.isEqualsLineString(split,
-                                                boundary.getGeometry2D())) {
+                                        boundary.getGeometry2D())) {
                                     if (!lineStringOfAdjacencyBoundaryMap.containsKey(split)) {
                                         lineStringOfAdjacencyBoundaryMap.put(split,
                                                 new ArrayList<CellSpaceBoundary>());
@@ -1500,7 +1506,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public ArrayList<CellSpaceBoundary> splitCellSpaceBoundary(CellSpaceBoundary boundary,
-            LineString doorLineString) {
+                                                               LineString doorLineString) {
         HashMap<LineString, ArrayList<LineString>> xLink2DMap = project
                 .getCurrentCellSpaceBoundaryOnFloor().getxLink2DMap();
 
@@ -1510,7 +1516,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         ArrayList<LineString> splited = GeometryUtil.splitLineString(boundaryLS, doorLineString);
         for(LineString split : splited) {
             for(Point p : split.getPoints()) {
-                    setPanelRatioXY(p);
+                setPanelRatioXY(p);
             }
         }
         for (LineString split : splited) {
@@ -1520,20 +1526,20 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
             boolean result = true;
             for (Point splitPoint : splitPoints) {
-            	boolean check = false;
-            	for (Point doorPoint : doorLineString.getPoints()) {
-            		if (doorPoint.equalsPanelRatioXY(splitPoint)) {
-            			check = true;
-            			break;
-            		}
-            	}
-            	if (check == false) {
-            		result = false;
-            		break;
-            	}
+                boolean check = false;
+                for (Point doorPoint : doorLineString.getPoints()) {
+                    if (doorPoint.equalsPanelRatioXY(splitPoint)) {
+                        check = true;
+                        break;
+                    }
+                }
+                if (check == false) {
+                    result = false;
+                    break;
+                }
             }
 
-            CellSpaceBoundary newBoundary = new CellSpaceBoundary();            
+            CellSpaceBoundary newBoundary = new CellSpaceBoundary();
             if (result) {
                 newBoundary.setBoundaryType(BoundaryType.Door);
             } else {
@@ -1551,17 +1557,17 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
          * count = 1; ArrayList<LineString> splited = splitLineString(geometry2D, doorLineString); // 기존 벽에 대한 기하를 문이 있는 기하로 3분할 for(LineString split
          * : splited) { ArrayList<Point> splitPoints = split.getPoints(); if(splitPoints.get(0).equals(splitPoints.get(1))) continue; // 분할했을 경우 문이 벽의
          * 끝에 있다면 끝점이 동일하므로 제외한다.
-         * 
+         *
          * CellSpaceBoundary newBoundary = new CellSpaceBoundary(); // 새로운 CellSpaceBoundary 생성
          * if(doorLineString.getPoints().containsAll(splitPoints)) { newBoundary.setBoundaryType(BoundaryType.Door); } else {
          * newBoundary.setBoundaryType(BoundaryType.CellSpaceBoundary); } newBoundary.setGeometry2D(split);
-         * 
+         *
          * cellSpace.getPartialBoundedBy().add(indexOf + count, newBoundary); // 기존에 있던 boundary 뒤에 insert, 기존 boundary는 나중에 삭제
          * exteriorRingPoints.add(insertIndex + count, split.getPoints().get(0).clone()); // cellSpace의 기하에 대해서도 문에 대한 좌표를 추가해야 한다. count++;
-         * 
+         *
          * newBoundaryList.add(newBoundary); lineStringOfBoundaryMap.put(split, newBoundary); boundaryOfCellSpaceMap.put(newBoundary, cellSpace);
          * project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().add(newBoundary); } exteriorRingPoints.remove(insertIndex);
-         * 
+         *
          * xLink2DMap.remove(geometry2D); lineStringOfBoundaryMap.remove(geometry2D); // 문 생성전 기존 boundary에 대한 기하와 boundary에 대한 정보는 삭제한다.
          * boundaryOfCellSpaceMap.remove(boundary); cellSpace.getPartialBoundedBy().remove(boundary);
          * project.getCurrentCellSpaceBoundaryOnFloor().getCellSpaceBoundaryMember().remove(boundary);
@@ -1572,27 +1578,27 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
     /*
      * public ArrayList<LineString> splitLineString(LineString base, LineString target) { ArrayList<LineString> splited = new ArrayList<LineString>();
-     * 
+     *
      * Point p1 = base.getPoints().get(0); Point p2 = base.getPoints().get(1); Point p3 = target.getPoints().get(0); Point p4 =
      * target.getPoints().get(1);
-     * 
+     *
      * if(p1.getPanelRatioX() < p2.getPanelRatioX()) { if(p3.getPanelRatioX() > p4.getPanelRatioX()) { target.getPoints().clear();
      * target.getPoints().add(p4); target.getPoints().add(p3); } } else if(p1.getPanelRatioX() > p2.getPanelRatioX()) { if(p3.getPanelRatioX() <
      * p4.getPanelRatioX()) { target.getPoints().clear(); target.getPoints().add(p4); target.getPoints().add(p3); } } p3 = target.getPoints().get(0);
      * p4 = target.getPoints().get(1);
-     * 
+     *
      * if(p1.getPanelRatioY() < p2.getPanelRatioY()) { if(p3.getPanelRatioY() > p4.getPanelRatioY()) { target.getPoints().clear();
      * target.getPoints().add(p4); target.getPoints().add(p3); } } else if(p1.getPanelRatioY() > p2.getPanelRatioY()) { if(p3.getPanelRatioY() <
      * p4.getPanelRatioY()) { target.getPoints().clear(); target.getPoints().add(p4); target.getPoints().add(p3); } } p3 = target.getPoints().get(0);
      * p4 = target.getPoints().get(1);
-     * 
+     *
      * // create splited LineString of CellSpaceBoundary LineString newBase = new LineString(); newBase.setPoints((ArrayList<Point>)
      * base.getPoints().clone()); newBase.getPoints().remove(p2); newBase.getPoints().add(p3.clone());
-     * 
+     *
      * LineString newLS = new LineString(); newLS.getPoints().add(p4.clone()); newLS.getPoints().add(p2);
-     * 
+     *
      * splited.add(newBase); splited.add(target); splited.add(newLS);
-     * 
+     *
      * return splited; }
      */
     public State searchAdjacencyState(MouseEvent e) {
@@ -1616,11 +1622,11 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         CellSpaceOnFloor cellSpaceOnFloor = project.getCurrentCellSpaceOnFloor();
         ArrayList<CellSpace> cellSpaceMember = cellSpaceOnFloor.getCellSpaceMember();
         for (CellSpace cellSpace : cellSpaceMember) {
-        	Point p = new Point();
-        	p.setPanelX(e.getX());
-        	p.setPanelY(e.getY());
-        	if (GeometryUtil.isContainsPolygon(cellSpace.getGeometry2D(), p)) {
-            //if (isInPolygon(cellSpace.getGeometry2D(), e.getX(), e.getY())) {
+            Point p = new Point();
+            p.setPanelX(e.getX());
+            p.setPanelY(e.getY());
+            if (GeometryUtil.isContainsPolygon(cellSpace.getGeometry2D(), p)) {
+                //if (isInPolygon(cellSpace.getGeometry2D(), e.getX(), e.getY())) {
                 pointInCellSpace = cellSpace;
 
                 System.out.println("select cellspace");
@@ -1687,16 +1693,16 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
         return foundSnapPoint;
     }
-    
+
     public Point searchSnapPointToCellSpace(MouseEvent e) {
-    	Map<String, Point> map = searchSnapPointToCellSpace(e, null);
-    	Point p = map.get("Point");
-    	
-    	return p;
+        Map<String, Point> map = searchSnapPointToCellSpace(e, null);
+        Point p = map.get("Point");
+
+        return p;
     }
 
     public Map searchSnapPointToCellSpace(MouseEvent e, LineString baseLine) {
-    	Map map = new HashMap<String, Object>();
+        Map map = new HashMap<String, Object>();
         Point snapPoint = null;
         CellSpaceOnFloor cellSpaceOnFloor = project.getCurrentCellSpaceOnFloor();
         ArrayList<CellSpace> cellSpaceMember = cellSpaceOnFloor.getCellSpaceMember();
@@ -1705,9 +1711,9 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         LineString minLS = null;
         CellSpace minCS = null;
         for (CellSpace cellSpace : cellSpaceMember) {
-        	if (cellSpace.getGmlID().equals("C2774")) {
-        		System.out.println("C2774 found");
-        	}
+            if (cellSpace.getGmlID().equals("C2774")) {
+                System.out.println("C2774 found");
+            }
             double d = GeometryUtil.getDistancePointToPolygon(cellSpace.getGeometry2D(), e.getX(), e.getY());
             if(d > 100) continue;
             for (LineString ls : cellSpace.getLineStringElements()) {
@@ -1732,7 +1738,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                     map.put("CellSpace", cellSpace);
 
                     System.out.println("snap point");
-                } 
+                }
 
                 double distance = GeometryUtil.getDistancePointToLineString(ls, e.getX(), e.getY());
                 if (distance < minDistance) {
@@ -1742,7 +1748,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 }
             }
         }
-        
+
         if (minCS != null && minLS != null && snapPoint == null) {
             Point p1 = minLS.getPoints().get(0);
             Point p2 = minLS.getPoints().get(1);
@@ -1762,7 +1768,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 System.out.println("snapPointfound");
                 setPanelRatioXY(snapPoint);
                 baseLine = minLS;
-                
+
                 map.put("BaseLine", baseLine);
                 map.put("Point", snapPoint);
                 map.put("CellSpace", minCS);
@@ -1789,9 +1795,9 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
             Point p1 = null;
             try {
-            	p1 = geometry2D.getPoints().get(0);
+                p1 = geometry2D.getPoints().get(0);
             } catch(Exception e1) {
-            	e1.printStackTrace();
+                e1.printStackTrace();
             }
             Point p2 = geometry2D.getPoints().get(1);
 
@@ -1822,12 +1828,12 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 // snapPoint = getSnapPointToLineString(x1, y1, x2, y2, e.getX(), e.getY());
                 double distance = GeometryUtil.getDistancePointToLineString(geometry2D, e.getX(), e.getY());
                 if (distance < 10) {
-	                snapPoint = GeometryUtil.getSnapPointToLineString(x1, y1, x2, y2, e.getX(),
-	                        e.getY());
-	                if (snapPoint != null) {
-	                    System.out.println("snapPointfound");
-	                    return snapPoint;
-	                }
+                    snapPoint = GeometryUtil.getSnapPointToLineString(x1, y1, x2, y2, e.getX(),
+                            e.getY());
+                    if (snapPoint != null) {
+                        System.out.println("snapPointfound");
+                        return snapPoint;
+                    }
                 }
             }
         }
@@ -1922,7 +1928,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                         .getCurrentFloorPlan().getHeight() * scale));
         mainFrame.getScrollPane().revalidate();
         mainFrame.getScrollPane().repaint();
-        
+
         //mainFrame.getScrollPane().getViewport().setViewPosition(new java.awt.Point(e.getX(), e.getY()));
 
         repaint();
@@ -1937,8 +1943,8 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         EditWorkState workState = project.getEditWorkState();
         currentKeyEvent = e.getKeyCode();
         switch (e.getKeyCode()) {
-        case KeyEvent.VK_ESCAPE:
-            keyPressESCAPE(state);
+            case KeyEvent.VK_ESCAPE:
+                keyPressESCAPE(state);
             
             /*if (state == EditState.CREATE_STATE) {
                 project.setEditState(EditState.NONE);
@@ -1973,80 +1979,80 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
             project.setEditState(EditState.NONE);
             mainFrame.setLabel_CurrentEditState("");*/
-            break;
-        case KeyEvent.VK_DELETE:
-            if (state == EditState.SELECT_STATE) {
-                // project.deleteState(selectedState);
-                for (State selected : selectedStateMap.keySet()) {
-                    project.deleteState(selected);
+                break;
+            case KeyEvent.VK_DELETE:
+                if (state == EditState.SELECT_STATE) {
+                    // project.deleteState(selectedState);
+                    for (State selected : selectedStateMap.keySet()) {
+                        project.deleteState(selected);
+                    }
+                    selectedState = null;
+                    selectedStateMap.clear();
+                    project.setEditState(EditState.NONE);
+                } else if (state == EditState.SELECT_CELLSPACE) {
+                    for (CellSpace cellSpace : selectedCellSpaceMap.keySet()) {
+                        project.deleteCellSpace(cellSpace);
+                    }
+                    selectedCellSpace = null;
+                    selectedCellSpaceMap.clear();
+                    project.setEditState(EditState.NONE);
+                } else if (state == EditState.SELECT_TRANSITION) {
+                    for (Transition selected : selectedTransitionMap.keySet()) {
+                        project.deleteTransition(selected);
+                    }
+                    selectedTransition = null;
+                    selectedTransitionMap.clear();
+                    project.setEditState(EditState.NONE);
+                    mainFrame.setLabel_CurrentEditState("");
+                } else if (state == EditState.SELECT_CELLSPACEBOUNDARY) {
+                    for (CellSpaceBoundary selected : selectedCellSpaceBoundaryMap.keySet()) {
+                        project.deleteCellSpaceBoundary(selected);;
+                    }
+                    selectedCellSpaceBoundary = null;
+                    selectedCellSpaceBoundaryMap.clear();
+                    project.setEditState(EditState.NONE);
+                    mainFrame.setLabel_CurrentEditState("");
                 }
-                selectedState = null;
-                selectedStateMap.clear();
-                project.setEditState(EditState.NONE);
-            } else if (state == EditState.SELECT_CELLSPACE) {
-                for (CellSpace cellSpace : selectedCellSpaceMap.keySet()) {
-                    project.deleteCellSpace(cellSpace);
-                }
-                selectedCellSpace = null;
-                selectedCellSpaceMap.clear();
-                project.setEditState(EditState.NONE);
-            } else if (state == EditState.SELECT_TRANSITION) {
-                for (Transition selected : selectedTransitionMap.keySet()) {
-                    project.deleteTransition(selected);
-                }
-                selectedTransition = null;
-                selectedTransitionMap.clear();
-                project.setEditState(EditState.NONE);
-                mainFrame.setLabel_CurrentEditState("");
-            } else if (state == EditState.SELECT_CELLSPACEBOUNDARY) {
-            	for (CellSpaceBoundary selected : selectedCellSpaceBoundaryMap.keySet()) {
-            		project.deleteCellSpaceBoundary(selected);;
-            	}
-            	selectedCellSpaceBoundary = null;
-            	selectedCellSpaceBoundaryMap.clear();
-            	project.setEditState(EditState.NONE);
-            	mainFrame.setLabel_CurrentEditState("");
-            }
-            break;
-        case KeyEvent.VK_ENTER:
-            if (state == EditState.CREATE_INTERLAYERCONNECTION) {
-                if (workState == EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND1) {
-                    System.out.println("interlayerconnection_end2");
-                    workState = EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND2;
-                    project.setEditWorkState(workState);
-                    mainFrame.setLabel_CurrentEditState("Create InterLayerConnection : Choose the other state(or states) and press Enter key");
-                } else if (workState == EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND2) {
-                    workState = EditWorkState.CREATE_INTERLAYERCONNECTION_CREATE;
-                    project.setEditWorkState(workState);
-                    mainFrame.setLabel_CurrentEditState(workState.toString());
-                    System.out.println("interlayerconnection_create");
-                    //
-                    createInterLayerConnection();
+                break;
+            case KeyEvent.VK_ENTER:
+                if (state == EditState.CREATE_INTERLAYERCONNECTION) {
+                    if (workState == EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND1) {
+                        System.out.println("interlayerconnection_end2");
+                        workState = EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND2;
+                        project.setEditWorkState(workState);
+                        mainFrame.setLabel_CurrentEditState("Create InterLayerConnection : Choose the other state(or states) and press Enter key");
+                    } else if (workState == EditWorkState.CREATE_INTERLAYERCONNECTION_SELECTEND2) {
+                        workState = EditWorkState.CREATE_INTERLAYERCONNECTION_CREATE;
+                        project.setEditWorkState(workState);
+                        mainFrame.setLabel_CurrentEditState(workState.toString());
+                        System.out.println("interlayerconnection_create");
+                        //
+                        createInterLayerConnection();
+
+                        project.setEditState(EditState.NONE);
+                        project.setEditWorkState(EditWorkState.NONE);
+                        mainFrame.setLabel_CurrentEditState("");
+                    }
+                } else if (state == EditState.CREATE_CELLSPACE
+                        && cellSpaceCreatingLineStrings.size() >= 3) {
+                    CellSpace newCellSpace = createCellSpace(cellSpaceCreatingLineStrings);
+
+                    cellSpaceCreatingLineStrings.clear();
 
                     project.setEditState(EditState.NONE);
                     project.setEditWorkState(EditWorkState.NONE);
                     mainFrame.setLabel_CurrentEditState("");
                 }
-            } else if (state == EditState.CREATE_CELLSPACE
-                    && cellSpaceCreatingLineStrings.size() >= 3) {
-                CellSpace newCellSpace = createCellSpace(cellSpaceCreatingLineStrings);
 
-                cellSpaceCreatingLineStrings.clear();
-
-                project.setEditState(EditState.NONE);
-                project.setEditWorkState(EditWorkState.NONE);
-                mainFrame.setLabel_CurrentEditState("");
-            }
-
-            break;
-        case KeyEvent.VK_CONTROL:
-            System.out.println("pressed control");
-            break;
+                break;
+            case KeyEvent.VK_CONTROL:
+                System.out.println("pressed control");
+                break;
         }
 
         repaint();
     }
-    
+
     public void keyPressESCAPE(EditState state) {
         if (state == EditState.CREATE_STATE) {
             project.setEditState(EditState.NONE);
@@ -2170,7 +2176,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 displayState(g, state, Color.RED, floorPlanWidth, floorPlanHeight, floorPlanScale);
             }
         }
-        
+
         // display points(creating cellspace)
         g2.setColor(Color.blue);
         for (LineString ls : cellSpaceCreatingLineStrings) {
@@ -2256,7 +2262,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public void displayState(Graphics g, State state, Color color, int floorPlanWidth,
-            int floorPlanHeight, double floorPlanScale) {
+                             int floorPlanHeight, double floorPlanScale) {
         int x = (int) (state.getPosition().getPanelRatioX() * floorPlanWidth * floorPlanScale);
         int y = (int) (state.getPosition().getPanelRatioY() * floorPlanHeight * floorPlanScale);
         if (hasInterLayerConnection(state)) {
@@ -2268,7 +2274,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public void displayTransition(Graphics g, Transition transition, Color color,
-            int floorPlanWidth, int floorPlanHeight, double floorPlanScale) {
+                                  int floorPlanWidth, int floorPlanHeight, double floorPlanScale) {
         ArrayList<State> stateMember = project.getCurrentStateOnFloor().getStateMember();
         State[] states = transition.getStates();
 
@@ -2309,7 +2315,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public void displayCellSpace(Graphics g, CellSpace cellSpace, Color color, int floorPlanWidth,
-            int floorPlanHeight, double floorPlanScale) {
+                                 int floorPlanHeight, double floorPlanScale) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setStroke(new BasicStroke(2));
@@ -2317,13 +2323,13 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
         ArrayList<Point> points = cellSpace.getGeometry2D().getExteriorRing().getPoints();
         for (int i = 0; i < points.size() - 1; i++) {
-        	if (points.get(i).getPanelRatioX() == 0 && points.get(i).getPanelRatioY() == 0) {
-        		setPanelRatioXY(points.get(i));
-        	}
-        	if (points.get(i + 1).getPanelRatioX() == 0 && points.get(i + 1).getPanelRatioY() == 0) {
-        		setPanelRatioXY(points.get(i + 1));
-        	}
-        	
+            if (points.get(i).getPanelRatioX() == 0 && points.get(i).getPanelRatioY() == 0) {
+                setPanelRatioXY(points.get(i));
+            }
+            if (points.get(i + 1).getPanelRatioX() == 0 && points.get(i + 1).getPanelRatioY() == 0) {
+                setPanelRatioXY(points.get(i + 1));
+            }
+
             setPanelXYForCurrentScale(points.get(i));
             setPanelXYForCurrentScale(points.get(i + 1));
 
@@ -2334,19 +2340,19 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
             g2.draw(new Line2D.Double(x1, y1, x2, y2));
         }
-        
+
         ArrayList<LineString> lineStringElements = cellSpace.getLineStringElements();
         for (int i = 0; i < lineStringElements.size(); i++) {
-        	LineString lineString = lineStringElements.get(i);
-        	ArrayList<Point> lsPoints = lineString.getPoints();
-        	for (Point point : lsPoints) {
-        		setPanelXYForCurrentScale(point);
-        	}
+            LineString lineString = lineStringElements.get(i);
+            ArrayList<Point> lsPoints = lineString.getPoints();
+            for (Point point : lsPoints) {
+                setPanelXYForCurrentScale(point);
+            }
         }
     }
 
     public void displayCellSpaceBoundary(Graphics g, CellSpaceBoundary boundary, Color color,
-            int floorPlanWidth, int floorPlanHeight, double floorPlanScale) {
+                                         int floorPlanWidth, int floorPlanHeight, double floorPlanScale) {
         if (boundary.getGeometry2D() == null)
             return; // 3D 기하를 위한 윗면, 아랫면 boundary는 2D 기하가 없다.
 
@@ -2393,7 +2399,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         return ((p2.getPanelRatioX() - p1.getPanelRatioX()) * (p3.getPanelRatioY() - p1
                 .getPanelRatioY()))
                 - ((p3.getPanelRatioX() - p1.getPanelRatioX()) * (p2.getPanelRatioY() - p1
-                        .getPanelRatioY()));
+                .getPanelRatioY()));
     }
 
     public boolean left(Point p1, Point p2, Point p3) {
@@ -2493,13 +2499,13 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
             return ((p1.getPanelRatioX() <= p3.getPanelRatioX()) && (p3.getPanelRatioX() <= p2
                     .getPanelRatioX()))
                     || ((p1.getPanelRatioX() >= p3.getPanelRatioX()) && (p3.getPanelRatioX() >= p2
-                            .getPanelRatioX()));
+                    .getPanelRatioX()));
         }
 
         return ((p1.getPanelRatioY() <= p3.getPanelRatioY()) && (p3.getPanelRatioY() <= p2
                 .getPanelRatioY()))
                 || ((p1.getPanelRatioY() >= p3.getPanelRatioY()) && (p3.getPanelRatioY() >= p2
-                        .getPanelRatioY()));
+                .getPanelRatioY()));
     }
 
     public boolean intersect(Point[] line1, Point[] line2) {
@@ -2553,7 +2559,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         double snapBounds = 10;
 
         if (point.getPanelRatioX() == 0 && point.getPanelRatioY() == 0) {
-        	setPanelRatioXY(point);
+            setPanelRatioXY(point);
         }
         setPanelXYForCurrentScale(point);
         double pointX = point.getPanelX();
@@ -2579,12 +2585,12 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
             Point p2 = points.get(i + 1);
 
             if (p1.getPanelRatioX() == 0 && p1.getPanelRatioY() == 0) {
-            	setPanelRatioXY(p1);
+                setPanelRatioXY(p1);
             }
             if (p2.getPanelRatioX() == 0 && p2.getPanelRatioY() == 0) {
-            	setPanelRatioXY(p2);
+                setPanelRatioXY(p2);
             }
-            
+
             setPanelXYForCurrentScale(p1);
             setPanelXYForCurrentScale(p2);
             double x1 = p1.getPanelX();
@@ -2607,28 +2613,28 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
                 lowerY = y2;
                 upperY = y1;
             }
-            
+
             double epsilon = 5;
             boolean coverX = false;
             if (upperX - lowerX <= epsilon) {
-            	coverX = true;
+                coverX = true;
             } else {
-            	if (lowerX <= x && x <= upperX) {
-            		coverX = true;
-            	}
+                if (lowerX <= x && x <= upperX) {
+                    coverX = true;
+                }
             }
             boolean coverY = false;
             if (upperY - lowerY <= epsilon) {
-            	coverY = true;
+                coverY = true;
             } else {
-            	if (lowerY <= y && y <= upperY) {
-            		coverY = true;
-            	}
+                if (lowerY <= y && y <= upperY) {
+                    coverY = true;
+                }
             }
-            
+
 
             if (!(coverX && coverY)) {
-            	continue;
+                continue;
             }
             //if (!(lowerX <= x && x <= upperX && lowerY <= y && y <= upperY))
             //    continue;
@@ -2644,7 +2650,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public double getDistancePointToLine(double x1, double y1, double x2, double y2, double p,
-            double q) {
+                                         double q) {
         double a = y1 - y2;
         double b = x2 - x1;
         double c = a * (-1) * x1 - b * y1;
@@ -2857,42 +2863,42 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     private void showPropertiesDialog(String type, AbstractFeature feature) {
-            JDialog dialog = null;
-            if(type.equalsIgnoreCase("STATE")) {
-            	dialog = new StatePropertiesDialog((State) feature, project.getMultiLayeredGraph().getInterEdges().get(0));
-            } else if(type.equalsIgnoreCase("TRANSITION")) {
-            	dialog = new TransitionPropertiesDialog((Transition) feature);
-            } else if(type.equalsIgnoreCase("CELLSPACE")) {
-            	dialog = new CellSpacePropertiesDialog((CellSpace) feature);
-            } else if(type.equalsIgnoreCase("CELLSPACEBOUNDARY")) {
-            	dialog = new CellSpaceBoundaryPropertiesDialog((CellSpaceBoundary) feature);
+        JDialog dialog = null;
+        if(type.equalsIgnoreCase("STATE")) {
+            dialog = new StatePropertiesDialog((State) feature, project.getMultiLayeredGraph().getInterEdges().get(0));
+        } else if(type.equalsIgnoreCase("TRANSITION")) {
+            dialog = new TransitionPropertiesDialog((Transition) feature);
+        } else if(type.equalsIgnoreCase("CELLSPACE")) {
+            dialog = new CellSpacePropertiesDialog((CellSpace) feature);
+        } else if(type.equalsIgnoreCase("CELLSPACEBOUNDARY")) {
+            dialog = new CellSpaceBoundaryPropertiesDialog((CellSpaceBoundary) feature);
+        }
+
+        dialog.setModal(true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
+
+        if (feature instanceof CellSpace) {
+            CellSpace cellSpace = (CellSpace) feature;
+            if (cellSpace.getDescription("Usage").equals("Door")) {
+                double groundHeight = project.getCurrentCellSpaceOnFloor().getFloorProperty().getGroundHeight();
+                double doorHeight = project.getCurrentCellSpaceOnFloor().getFloorProperty().getDoorHeight();
+                cellSpace.setCeilingHeight(groundHeight + doorHeight);
+                cellSpace.setIsDefaultCeiling(false);
+
+                for (CellSpaceBoundary bounded : cellSpace.getPartialBoundedBy()) {
+                    bounded.setBoundaryType(BoundaryType.Door);
+                }
             }
-            
-            dialog.setModal(true);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-            
-            if (feature instanceof CellSpace) {
-            	CellSpace cellSpace = (CellSpace) feature;
-            	if (cellSpace.getDescription("Usage").equals("Door")) {
-            		double groundHeight = project.getCurrentCellSpaceOnFloor().getFloorProperty().getGroundHeight();
-            		double doorHeight = project.getCurrentCellSpaceOnFloor().getFloorProperty().getDoorHeight();
-            		cellSpace.setCeilingHeight(groundHeight + doorHeight);
-            		cellSpace.setIsDefaultCeiling(false);
-            		
-            		for (CellSpaceBoundary bounded : cellSpace.getPartialBoundedBy()) {
-            			bounded.setBoundaryType(BoundaryType.Door);
-            		}
-            	}
-            } else if (feature instanceof CellSpaceBoundary) {
-            	CellSpaceBoundary boundary = (CellSpaceBoundary) feature;
-            	if (boundary.getBoundaryType() == BoundaryType.Door) {
-            		//
-            	}
+        } else if (feature instanceof CellSpaceBoundary) {
+            CellSpaceBoundary boundary = (CellSpaceBoundary) feature;
+            if (boundary.getBoundaryType() == BoundaryType.Door) {
+                //
             }
-            
-            System.out.println("properties end");
-            repaint();
+        }
+
+        System.out.println("properties end");
+        repaint();
     }
     private JMenuItem getMntmStateDuality() {
         if (mntmStateDuality == null) {
@@ -3016,151 +3022,151 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
         }
         return mntmCellSpaceBoundaryProperties;
     }
-    
+
     public void searchByID(String ID) {
         ArrayList<CellSpace> cellSpaces = project.getCurrentCellSpaceOnFloor().getCellSpaceMember();
         //selectedCellSpaceMap.clear();
         for(CellSpace cellSpace : cellSpaces) {
-                if(cellSpace.getGmlID().equalsIgnoreCase(ID)) {
-                        project.setEditState(EditState.SELECT_CELLSPACE);
-                		selectedCellSpaceMap.put(cellSpace, Color.yellow);
-                        System.out.println("searched");
-                }
+            if(cellSpace.getGmlID().equalsIgnoreCase(ID)) {
+                project.setEditState(EditState.SELECT_CELLSPACE);
+                selectedCellSpaceMap.put(cellSpace, Color.yellow);
+                System.out.println("searched");
+            }
         }
         repaint();
     }
-    
+
     // for joonseokkim
     public void setPanelXYForCurrentScaleForJSK() {
-    	IndoorFeatures indoorFeatures = project.getIndoorFeatures();
-    	PrimalSpaceFeatures primalSpaceFeatures = indoorFeatures.getPrimalSpaceFeatures();
-    	ArrayList<CellSpaceOnFloor> cellSpaceOnFloorList = primalSpaceFeatures.getCellSpaceOnFloors();
-    	System.out.println("CellSpaceOnFloorList size : " + cellSpaceOnFloorList.size());
-    	for (CellSpaceOnFloor cellSpaceOnFloor : cellSpaceOnFloorList) {
-    		FloorProperty floorProperty = cellSpaceOnFloor.getFloorProperty();
-    		
-    		File floorPlanFile = new File(floorProperty.getFloorPlanPath());
+        IndoorFeatures indoorFeatures = project.getIndoorFeatures();
+        PrimalSpaceFeatures primalSpaceFeatures = indoorFeatures.getPrimalSpaceFeatures();
+        ArrayList<CellSpaceOnFloor> cellSpaceOnFloorList = primalSpaceFeatures.getCellSpaceOnFloors();
+        System.out.println("CellSpaceOnFloorList size : " + cellSpaceOnFloorList.size());
+        for (CellSpaceOnFloor cellSpaceOnFloor : cellSpaceOnFloorList) {
+            FloorProperty floorProperty = cellSpaceOnFloor.getFloorProperty();
+
+            File floorPlanFile = new File(floorProperty.getFloorPlanPath());
             BufferedImage floorPlan = null;
             double width;
             double height;
             if (floorPlanFile.exists()) {
                 try {
-					floorPlan = ImageIO.read(floorPlanFile);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    floorPlan = ImageIO.read(floorPlanFile);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-            
+
             if (floorPlan == null) {
-            	System.out.println("floorPlan is null");
+                System.out.println("floorPlan is null");
             }
-            
-			width = floorPlan.getWidth();
-			height = floorPlan.getHeight();
-			
-			ArrayList<CellSpace> cellSpaceMember = cellSpaceOnFloor.getCellSpaceMember();
-			for (CellSpace cellSpace : cellSpaceMember) {
-				Polygon geometry2D = cellSpace.getGeometry2D();
-				LinearRing exteriorRing = geometry2D.getExteriorRing();
-				setPanelXYForCurrentScaleForJSK(exteriorRing, width, height, floorPlanScale);
-				
-				ArrayList<LineString> lineStringElements = cellSpace.getLineStringElements(); // (p1,p2) (p2,p3) (p3,p1)
-				for (int i = 0; i < exteriorRing.getPoints().size() - 1; i++) { // p1 p2 p3 p1
-					int previous = i - 1;
-					if (previous == -1) {
-						previous = exteriorRing.getPoints().size() - 2;
-					}
-					Point p = exteriorRing.getPoints().get(i);
-					Point prevP = lineStringElements.get(previous).getPoints().get(1);
-					Point nextP = lineStringElements.get(i).getPoints().get(0);
-					
-					prevP.copy(p);
-					nextP.copy(p);					
-				}
+
+            width = floorPlan.getWidth();
+            height = floorPlan.getHeight();
+
+            ArrayList<CellSpace> cellSpaceMember = cellSpaceOnFloor.getCellSpaceMember();
+            for (CellSpace cellSpace : cellSpaceMember) {
+                Polygon geometry2D = cellSpace.getGeometry2D();
+                LinearRing exteriorRing = geometry2D.getExteriorRing();
+                setPanelXYForCurrentScaleForJSK(exteriorRing, width, height, floorPlanScale);
+
+                ArrayList<LineString> lineStringElements = cellSpace.getLineStringElements(); // (p1,p2) (p2,p3) (p3,p1)
+                for (int i = 0; i < exteriorRing.getPoints().size() - 1; i++) { // p1 p2 p3 p1
+                    int previous = i - 1;
+                    if (previous == -1) {
+                        previous = exteriorRing.getPoints().size() - 2;
+                    }
+                    Point p = exteriorRing.getPoints().get(i);
+                    Point prevP = lineStringElements.get(previous).getPoints().get(1);
+                    Point nextP = lineStringElements.get(i).getPoints().get(0);
+
+                    prevP.copy(p);
+                    nextP.copy(p);
+                }
 				/*
 				for (LineString ls : lineStringElements) {
 					setPanelXYForCurrentScaleForJSK(ls, width, height, floorPlanScale);
 				}
 				*/
-			}
-    	}
-    	
-    	MultiLayeredGraph mlg = indoorFeatures.getMultiLayeredGraph();
-    	SpaceLayers spaceLayers = mlg.getSpaceLayers().get(0);
-    	SpaceLayer spaceLayer = spaceLayers.getSpaceLayerMember().get(0);
-    	ArrayList<StateOnFloor> stateOnFloorList = spaceLayer.getNodes().get(0).getStateOnFloors();
-    	for (StateOnFloor stateOnFloor : stateOnFloorList) {
-    		FloorProperty floorProperty = stateOnFloor.getFloorProperty();
-    		
-    		File floorPlanFile = new File(floorProperty.getFloorPlanPath());
+            }
+        }
+
+        MultiLayeredGraph mlg = indoorFeatures.getMultiLayeredGraph();
+        SpaceLayers spaceLayers = mlg.getSpaceLayers().get(0);
+        SpaceLayer spaceLayer = spaceLayers.getSpaceLayerMember().get(0);
+        ArrayList<StateOnFloor> stateOnFloorList = spaceLayer.getNodes().get(0).getStateOnFloors();
+        for (StateOnFloor stateOnFloor : stateOnFloorList) {
+            FloorProperty floorProperty = stateOnFloor.getFloorProperty();
+
+            File floorPlanFile = new File(floorProperty.getFloorPlanPath());
             BufferedImage floorPlan = null;
             double width;
             double height;
             if (floorPlanFile.exists()) {
                 try {
-					floorPlan = ImageIO.read(floorPlanFile);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    floorPlan = ImageIO.read(floorPlanFile);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-            
+
             if (floorPlan == null) {
-            	System.out.println("floorPlan is null");
+                System.out.println("floorPlan is null");
             }
-            
-			width = floorPlan.getWidth();
-			height = floorPlan.getHeight();
-			
-			ArrayList<State> stateMember = stateOnFloor.getStateMember();
-			for (State state : stateMember) {
-				Point p = state.getPosition();
-				setPanelXYForCurrentScaleForJSK(p, width, height, floorPlanScale);
-			}
-    	}
-    	
-    	ArrayList<TransitionOnFloor> transitionOnFloorList = spaceLayer.getEdges().get(0).getTransitionOnFloors();
-    	System.out.println("transitionOnFloorList size : " + transitionOnFloorList.size());
-    	for (TransitionOnFloor transitionOnFloor : transitionOnFloorList) {
-    		FloorProperty floorProperty = transitionOnFloor.getFloorProperty();
-    		
-    		File floorPlanFile = new File(floorProperty.getFloorPlanPath());
+
+            width = floorPlan.getWidth();
+            height = floorPlan.getHeight();
+
+            ArrayList<State> stateMember = stateOnFloor.getStateMember();
+            for (State state : stateMember) {
+                Point p = state.getPosition();
+                setPanelXYForCurrentScaleForJSK(p, width, height, floorPlanScale);
+            }
+        }
+
+        ArrayList<TransitionOnFloor> transitionOnFloorList = spaceLayer.getEdges().get(0).getTransitionOnFloors();
+        System.out.println("transitionOnFloorList size : " + transitionOnFloorList.size());
+        for (TransitionOnFloor transitionOnFloor : transitionOnFloorList) {
+            FloorProperty floorProperty = transitionOnFloor.getFloorProperty();
+
+            File floorPlanFile = new File(floorProperty.getFloorPlanPath());
             BufferedImage floorPlan = null;
             double width;
             double height;
             if (floorPlanFile.exists()) {
                 try {
-					floorPlan = ImageIO.read(floorPlanFile);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    floorPlan = ImageIO.read(floorPlanFile);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-            
+
             if (floorPlan == null) {
-            	System.out.println("floorPlan is null");
+                System.out.println("floorPlan is null");
             }
-            
-			width = floorPlan.getWidth();
-			height = floorPlan.getHeight();
-			
-			ArrayList<Transition> transitionMember = transitionOnFloor.getTransitionMember();
-			for (Transition transition : transitionMember) {
-				LineString ls = transition.getPath();
-				setPanelXYForCurrentScaleForJSK(ls, width, height, floorPlanScale);
-			}
-    	}
+
+            width = floorPlan.getWidth();
+            height = floorPlan.getHeight();
+
+            ArrayList<Transition> transitionMember = transitionOnFloor.getTransitionMember();
+            for (Transition transition : transitionMember) {
+                LineString ls = transition.getPath();
+                setPanelXYForCurrentScaleForJSK(ls, width, height, floorPlanScale);
+            }
+        }
     }
-    
+
     public void setPanelXYForCurrentScaleForJSK(LineString ls, double floorPlanWidth, double floorPlanHeight, double floorPlanScale) {
-    	ArrayList<Point> points = ls.getPoints();
-    	
-    	for (Point point : points) {
-    		setPanelXYForCurrentScaleForJSK(point, floorPlanWidth, floorPlanHeight, floorPlanScale);
-    	}
+        ArrayList<Point> points = ls.getPoints();
+
+        for (Point point : points) {
+            setPanelXYForCurrentScaleForJSK(point, floorPlanWidth, floorPlanHeight, floorPlanScale);
+        }
     }
-    
+
     public void setPanelXYForCurrentScaleForJSK(Point p, double floorPlanWidth, double floorPlanHeight, double floorPlanScale) {
         double x = (p.getPanelRatioX() * floorPlanWidth * floorPlanScale);
         double y = (p.getPanelRatioY() * floorPlanHeight * floorPlanScale);
@@ -3175,7 +3181,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 
         double ratioX = ((double) x / (floorPlanWidth * floorPlanScale));
         double ratioY = ((double) y / (floorPlanHeight * floorPlanScale));
-        
+
         p.setPanelRatioX(ratioX);
         p.setPanelRatioY(ratioY);
     }

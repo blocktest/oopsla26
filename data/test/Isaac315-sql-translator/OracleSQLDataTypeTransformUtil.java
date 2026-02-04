@@ -3,6 +3,8 @@ package com.raysonfang.sqltranslator.sql.dialect.oracle.util;
 import com.alibaba.druid.sql.ast.SQLRecordDataType;
 import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
 import com.alibaba.druid.sql.ast.expr.SQLNumberExpr;
+import com.alibaba.druid.sql.dialect.oracle.ast.OracleDataTypeIntervalDay;
+import com.alibaba.druid.sql.dialect.oracle.ast.expr.OracleArgumentExpr;
 import org.blocktest.BTest;
 import static org.blocktest.BTest.blocktest;
 import static org.blocktest.types.EndAt.*;
@@ -105,6 +107,19 @@ public class OracleSQLDataTypeTransformUtil extends SQLTransformUtils {
                     } else {
                         dataType = new SQLDataTypeImpl("decimal", precision);
                     }
+                    // BLOCKTEST EVAL: https://github.com/Isaac315/sql-translator/blob/78f3fb0091c94563a640ef672de3e75e2b5c3bb2/src/main/java/com/raysonfang/sqltranslator/sql/dialect/oracle/util/OracleSQLDataTypeTransformUtil.java#L87C1-L97C22
+                    // Case if
+                    blocktest().given(precision, 0).checkEq(dataType, new SQLDataTypeImpl("tinyint")).start(FIRST_BLOCK);
+                    // Case elif (boundary)
+                    blocktest().given(precision, 3).checkEq(dataType, new SQLDataTypeImpl("smallint")).start(FIRST_BLOCK);
+                    // Case 2nd elif (boundary)
+                    blocktest().given(precision, 5).checkEq(dataType, new SQLDataTypeImpl("int")).start(FIRST_BLOCK);
+                    // Case 3rd elif (boundary)
+                    blocktest().given(precision, 9).checkEq(dataType, new SQLDataTypeImpl("bigint")).start(FIRST_BLOCK);
+                    // Case 3rd elif (boundary) 2
+                    blocktest().given(precision, 20).checkEq(dataType, new SQLDataTypeImpl("bigint")).start(FIRST_BLOCK);
+                    // Case else
+                    blocktest().given(precision, 21).checkEq(dataType, new SQLDataTypeImpl("decimal", 21)).start(FIRST_BLOCK);
                 } else {
                     dataType = new SQLDataTypeImpl("decimal", precision, scale);
                 }

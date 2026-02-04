@@ -104,9 +104,9 @@ public class CCSecurity extends Security {
                             return item.getConfig().getExtension().entrySet().parallelStream();
                         }).filter(entry -> {
                             // BLOCKTEST EVAL: https://github.com/chengdedeng/waf/blob/9ba9a18857154830a35e3b10d111d025208f73ef/src/main/java/info/yangguo/waf/request/security/CCSecurity.java#L100-L114
-                            blocktest().given(entry.getKey(), "https.*", "String").given(url.get(), "https://example.com", "String")
+                            blocktest().given(entry.getKey(), "https.*").given(url.get(), "https://example.com")
                                     .checkReturnTrue();
-                            blocktest().given(entry.getKey(), "https.*", "String").given(url.get(), "http://example.com", "String")
+                            blocktest().given(entry.getKey(), "https.*").given(url.get(), "http://example.com")
                                     .checkReturnFalse();
                             Timer itemTimer = Constant.metrics.timer("CCSecurity[" + entry.getKey() + "]");
                             Timer.Context itemContext = itemTimer.time();

@@ -40,7 +40,7 @@ public final class BindingDataStore {
     public void addParameterSources(List<ParameterBinding> parameters) {
         assert parameters != null;
         for (ParameterBinding parameter : parameters) {
-        	DataSource<?> inputValue = rpcSourceFromParameter(parameter);
+            DataSource<?> inputValue = rpcSourceFromParameter(parameter);
             this.inputSources.put(parameter.getName(), inputValue);
         }
     }
@@ -48,7 +48,7 @@ public final class BindingDataStore {
     public void addTriggerMetadataSource(Map<String, TypedData> metadata) {
         for (Map.Entry<String,TypedData> entry : metadata.entrySet())
         {
-        	DataSource<?> inputValue = rpcSourceFromTypedData(entry.getKey(), entry.getValue());
+            DataSource<?> inputValue = rpcSourceFromTypedData(entry.getKey(), entry.getValue());
             this.metadataSources.put(entry.getKey(), inputValue);
         }
     }
@@ -62,7 +62,7 @@ public final class BindingDataStore {
         if (parameterDataSource == null) {
             throw new RuntimeException("Cannot find matched parameter name of customer function, please check if customer function is defined correctly");
         }
-    	return parameterDataSource.computeByName(name, target);
+        return parameterDataSource.computeByName(name, target);
     }
 
     public Optional<BindingData> getTriggerMetatDataByName(String name, Type target) {
@@ -70,11 +70,11 @@ public final class BindingDataStore {
         if (metadataDataSource == null) {
             throw new RuntimeException("Cannot find matched @BindingName of customer function, please check if customer function is defined correctly");
         }
-    	return metadataDataSource.computeByName(name, target);
+        return metadataDataSource.computeByName(name, target);
     }
 
     public Optional<BindingData> getDataByType(Type target) {
-    	return this.otherSources.get(ExecutionContext.class).computeByType(target);
+        return this.otherSources.get(ExecutionContext.class).computeByType(target);
     }
 
     static DataSource<?> rpcSourceFromTypedData(String name, TypedData data) {
@@ -108,7 +108,8 @@ public final class BindingDataStore {
             if (!excludeReturn || !entry.getKey().equals(RETURN_NAME)) {
                 entry.getValue().computeFromValue().ifPresent(data -> {
                     // BLOCKTEST EVAL: https://github.com/Azure/azure-functions-java-worker/blob/c92d38cdeb867f2f7e2ae9b2515c32c2ecfd1e41/src/main/java/com/microsoft/azure/functions/worker/binding/BindingDataStore.java#L103-L104
-                    blocktest().given(entry, new HashMap<String, DataTarget>(){{ put("test", null); }}.entrySet().iterator().next()).given(data, TypedData.newBuilder().setString("foo").build(), "TypedData")
+                    blocktest().given(entry, new HashMap<String, DataTarget>(){{ put("test", null); }}.entrySet().iterator().next()).given(data, TypedData.newBuilder().setString("foo").build())
+                            .given(bindings, new ArrayList<>())
                             .checkEq(bindings.get(0).getName(), "test").checkEq(bindings.get(0).getData().getString(), "foo");
                     bindings.add(ParameterBinding.newBuilder().setName(entry.getKey()).setData(data).build());
                 });
@@ -118,14 +119,14 @@ public final class BindingDataStore {
     }
 
     public Optional<TypedData> getDataTargetTypedValue(String name) throws Exception{
-    	return Optional.ofNullable(this.getTarget(this.promotedTargets).get(name)).map(o -> {
-			try {
-				return o.computeFromValue().orElse(null);
-			} catch (Exception ex) {
-				ExceptionUtils.rethrow(ex);
-				return null;
-			}
-		});
+        return Optional.ofNullable(this.getTarget(this.promotedTargets).get(name)).map(o -> {
+            try {
+                return o.computeFromValue().orElse(null);
+            } catch (Exception ex) {
+                ExceptionUtils.rethrow(ex);
+                return null;
+            }
+        });
     }
 
     public Optional<BindingData> getOrAddDataTarget(UUID outputId, String name, Type target, boolean hasImplicitOutput) {

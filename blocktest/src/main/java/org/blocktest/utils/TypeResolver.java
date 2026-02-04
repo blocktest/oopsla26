@@ -46,6 +46,7 @@ public class TypeResolver {
                     if (path.endsWith(".jar") || path.endsWith(".zip") || path.endsWith(".war")) {
                         // use JarTypeSolver for jar files if possible (which does not require loading
                         // class)
+                        System.out.println("Adding JarTypeSolver: " + path);
                         sTypeSolver.add(new JarTypeSolver(Paths.get(path)));
                     }
                 }
@@ -54,6 +55,7 @@ public class TypeResolver {
                 // add all source paths to the solver
                 for (String path : Util.appSrcPath.split(File.pathSeparator)) {
                     if (Paths.get(path).toFile().isDirectory()) {
+                        System.out.println("Adding JavaParserTypeSolver: " + path);
                         sTypeSolver.add(new JavaParserTypeSolver(path));
                     } else {
                         // assume it is a file

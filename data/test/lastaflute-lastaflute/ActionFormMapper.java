@@ -932,7 +932,7 @@ public class ActionFormMapper { // created per request (since 1.1.2)
             final String[] ary = (String[]) value;
             option.getSimpleTextParameterFilter().ifPresent(filter -> {
                 // BLOCKTEST EVAL: https://github.com/lastaflute/lastaflute/blob/01201e2eee995053bf6f9febcf58ace01ed38c30/src/main/java/org/lastaflute/web/ruts/process/ActionFormMapper.java#L927-L936
-                blocktest().given(filter, (FormSimpleTextParameterFilter) (str, meta) -> str.replace(meta.getPropertyName(), "BANNED"), "FormSimpleTextParameterFilter")
+                blocktest().given(filter, (FormSimpleTextParameterFilter) (str, meta) -> str.replace(meta.getPropertyName(), "BANNED"))
                         .given(propertyName, "foo").given(propertyType, String.class).mock("createFormSimpleTextParameterMeta(propertyName, propertyType)", new FormSimpleTextParameterMeta(propertyName, propertyType))
                         .given(ary, new String[] { "foo1", "bar2", "baz3", null, "the word foo is BANNED" })
                         .checkEq(ary[0], "BANNED1").checkEq(ary[1], "bar2").checkEq(ary[2], "baz3").checkEq(ary[3], null)

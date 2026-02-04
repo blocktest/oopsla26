@@ -76,7 +76,7 @@ clone_project() {
 	pushd project &> /dev/null
 	git checkout ${SHA} &>> ${OUTPUT_DIR}/logs/setup.log
 	if [[ $? -ne 0 ]]; then
-		echo "Unable to checkout, try fetching agian..."
+		echo "Unable to checkout, try fetching again..."
 		git fetch origin ${SHA} &>> ${OUTPUT_DIR}/logs/setup.log
 		git checkout ${SHA} &>> ${OUTPUT_DIR}/logs/setup.log
 		check_status_code "clone_project checkout"
@@ -99,6 +99,13 @@ generate_test() {
 	pushd ${OUTPUT_DIR}/project &> /dev/null
 	cp ${BLOCKTEST_FILE} ${relative_path}
 	local absolute_path=$(realpath ${relative_path})
+	
+	if [[ ! -f ${OUTPUT_DIR}/deps.txt ]]; then
+		# Find classpath
+		mvn dependency:build-classpath -Dmdep.outputFile=deps.txt
+		echo "$(cat deps.txt):$(pwd)/target/classes" > deps2.txt
+		mv deps2.txt ${OUTPUT_DIR}/deps.txt
+	fi
 	popd &> /dev/null
 	
 	if [[ -z $(head -n 3 ${BLOCKTEST_FILE} | grep "TEST_DIR") ]]; then
@@ -120,9 +127,16 @@ generate_test() {
 		export ADD_JUNIT=1
 	fi
 	
+	local deps_file=${OUTPUT_DIR}/deps.txt
+	local app_src=${OUTPUT_DIR}/project/src/main/java
+	if [[ ! -d ${app_src} ]]; then
+		app_src=${OUTPUT_DIR}/project/$(echo ${BLOCK_URL} | cut -d '/' -f 8)
+		echo "Changing app_src to ${app_src}"
+	fi
+	
 	pushd ${SCRIPT_DIR}/../../blocktest &> /dev/null
 	# Dry run
-	(time mvn -Dmaven.repo.local=${OUTPUT_DIR}/repo exec:java -Dexec.mainClass="org.blocktest.BlockTestRunnerSourceCode" -Dexec.args="--input_file=${absolute_path} ${framework}") &>> ${OUTPUT_DIR}/logs/gen.log
+	(time mvn -Dmaven.repo.local=${OUTPUT_DIR}/repo exec:java -Dexec.mainClass="org.blocktest.BlockTestRunnerSourceCode" -Dexec.args="--input_file=${absolute_path} ${framework} --dep_file_path=${deps_file} --app_src_path=${app_src}") &>> ${OUTPUT_DIR}/logs/gen.log
 	check_status_code "test_generation"
 	
 	duplicated_test_count=""
@@ -132,7 +146,7 @@ generate_test() {
 	
 	local start=$(date +%s%3N)
 	# Actually generate tests
-	(time mvn -Dmaven.repo.local=${OUTPUT_DIR}/repo exec:java -Dexec.mainClass="org.blocktest.BlockTestRunnerSourceCode" -Dexec.args="--input_file=${absolute_path} --output_dir=${fullpath_dir}${framework}${duplicated_test_count}") &>> ${OUTPUT_DIR}/logs/gen-timed.log
+	(time mvn -Dmaven.repo.local=${OUTPUT_DIR}/repo exec:java -Dexec.mainClass="org.blocktest.BlockTestRunnerSourceCode" -Dexec.args="--input_file=${absolute_path} --output_dir=${fullpath_dir}${framework}${duplicated_test_count} --dep_file_path=${deps_file} --app_src_path=${app_src}") &>> ${OUTPUT_DIR}/logs/gen-timed.log
 	check_status_code "test_generation_timed"
 	local end=$(date +%s%3N)
 	DURATION=$((end - start))

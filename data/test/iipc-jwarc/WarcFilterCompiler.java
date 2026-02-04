@@ -139,12 +139,12 @@ class WarcFilterCompiler {
         if (":status".equals(token)) {
             return record -> {
                 // BLOCKTEST EVAL: https://github.com/iipc/jwarc/blob/e4ff0fe435c378b68b482a3ca1502b70b33fe872/src/org/netpreserve/jwarc/WarcFilterCompiler.java#L143-L155
-                blocktest().given(record, new WarcRecord(null, null, null), "WarcRecord")
+                blocktest().given(record, new WarcRecord(null, null, null))
                         .checkReturnEq(Optional.empty());
                 blocktest().given(record,
                                 new WarcResponse.Builder(URI.create("http://example.org/"))
                                         .setHeader("five", "5")
-                                        .build(), "WarcResponse")
+                                        .build())
                         .checkReturnEq(Optional.empty());
                 /*
                 @blocktest().given(record,

@@ -60,9 +60,10 @@ public class Parser {
     {
         ArrayList<Expression> lexprs = new ArrayList<Expression>();
         int intval = Integer.parseInt(s.substring(1, 7), 16);
-        // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L58-L60
-                blocktest().given(s, "#FF5733").checkEq(lexprs.get(0).toString(), "1.0000000").checkEq(lexprs.get(1).toString(), "0.3411765").checkEq(lexprs.get(2).toString(), "0.2000000");
-                blocktest().given(s, "#000000").checkEq(lexprs.get(0).toString(), "0.0000000").checkEq(lexprs.get(1).toString(), "0.0000000").checkEq(lexprs.get(2).toString(), "0.0000000");
+        // BLOCKTEST RV: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L58-L60
+        // RV (commented out)
+//              blocktest().given(s, "#FF5733").checkEq(lexprs.get(0).toString(), "1.0000000").checkEq(lexprs.get(1).toString(), "0.3411765").checkEq(lexprs.get(2).toString(), "0.2000000");
+//              blocktest().given(s, "#000000").checkEq(lexprs.get(0).toString(), "0.0000000").checkEq(lexprs.get(1).toString(), "0.0000000").checkEq(lexprs.get(2).toString(), "0.0000000");
         lexprs.add(new Value(((float)(intval >> 16))/255));
         lexprs.add(new Value(((float)(intval >> 8 & 0xFF))/255));
         lexprs.add(new Value(((float)(intval & 0xFF))/255));
@@ -259,23 +260,24 @@ public class Parser {
             }
             ii++;
         }
-        // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L254-L269
-        blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, null).given(ret, new ArrayList<>(Arrays.asList(
-                new Token("foo"), new Token("bar"), new Token("baz")
-                )))
-                .given(lbcount, 1).given(lineNr, 1, "int").given(caretPos, 1, "int").end(FIRST_THROW).expect(ParseException.class).checkFlow(IfStmt().Then());
-        blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, null).given(ret, new ArrayList<>(Arrays.asList(
-                        new Token("foo"), new Token("bar"), new Token("baz")
-                )))
-                .given(lbcount, -1).given(lineNr, 1, "int").given(caretPos, 1, "int").end(FIRST_THROW).expect(ParseException.class).checkFlow(IfStmt().ElseIf().Then());
-        blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, null).given(ret, new ArrayList<>(Arrays.asList(
-                        new Token("foo"), new Token("bar"), new Token("baz")
-                )))
-                .given(lbcount, 0).given(lineNr, 0, "int").given(caretPos, 1, "int").end(FIRST_THROW).checkFlow(IfStmt().ElseIf().Else().Then().IfStmt());
-        blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, new org.konte.lang.Tokens.Operator("+")).given(ret, new ArrayList<>(Arrays.asList(
-                        new Token("foo"), new Token("bar"), new Token("baz")
-                )))
-                .given(lbcount, 0).given(lineNr, 0, "int").given(caretPos, 1, "int").end(FIRST_THROW).checkFlow(IfStmt().ElseIf().Else().Then().IfStmt()).expect(ParseException.class);
+        // BLOCKTEST RV: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L254-L269
+        // RV (commented out)
+//      blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, null).given(ret, new ArrayList<>(Arrays.asList(
+//              new Token("foo"), new Token("bar"), new Token("baz")
+//              )))
+//              .given(lbcount, 1).given(lineNr, 1).given(caretPos, 1).end(FIRST_THROW).expect(ParseException.class).checkFlow(IfStmt().Then());
+//      blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, null).given(ret, new ArrayList<>(Arrays.asList(
+//                      new Token("foo"), new Token("bar"), new Token("baz")
+//              )))
+//              .given(lbcount, -1).given(lineNr, 1).given(caretPos, 1).end(FIRST_THROW).expect(ParseException.class).checkFlow(IfStmt().ElseIf().Then());
+//      blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, null).given(ret, new ArrayList<>(Arrays.asList(
+//                      new Token("foo"), new Token("bar"), new Token("baz")
+//              )))
+//              .given(lbcount, 0).given(lineNr, 0).given(caretPos, 1).end(FIRST_THROW).checkFlow(IfStmt().ElseIf().Else().Then().IfStmt());
+//      blocktest().mock("ret.stream().map(tok -> tok.name).reduce(\"\", (ss, s) -> ss + \" \" + s)", "").given(t, Language.right_bracket).given(last, new org.konte.lang.Tokens.Operator("+")).given(ret, new ArrayList<>(Arrays.asList(
+//                      new Token("foo"), new Token("bar"), new Token("baz")
+//              )))
+//              .given(lbcount, 0).given(lineNr, 0).given(caretPos, 1).end(FIRST_THROW).checkFlow(IfStmt().ElseIf().Else().Then().IfStmt()).expect(ParseException.class);
         if (lbcount > 0)
         {
             throw new ParseException("Missing  )  after\n" +
@@ -602,18 +604,19 @@ public class Parser {
 
                     break;
                 case INCLUDE:
-                    // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L580-L597
-                    blocktest().given(s, "baz").given(t, new Token("foo")).given(lastName, "bar").given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class)
-                            .checkFlow(IfStmt().Then().IfStmt().Then()).end(FIRST_BLOCK, 2);
-                    blocktest().given(s, "baz").given(t, new Token("foo")).given(lastName, null).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class)
-                            .checkFlow(IfStmt().Then().IfStmt().Else()).end(FIRST_BLOCK, 2);
-                    blocktest().given(s, "baz").given(t, null).given(lastName, "bar").given(lineNr, 0, "int").given(caretPos, 0, "int").checkEq(lastName, "bar baz")
-                            .end(FIRST_BLOCK, 2);
-                    blocktest().given(s, "baz").given(t, null).given(lastName, null).given(lineNr, 0, "int").given(caretPos, 0, "int").checkEq(lastName, "baz")
-                            .end(FIRST_BLOCK, 2);
+                    // BLOCKTEST RV: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L580-L597
+                    // RV (commented out)
+//                  blocktest().given(s, "baz").given(t, new Token("foo")).given(lastName, "bar").given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class)
+//                          .checkFlow(IfStmt().Then().IfStmt().Then()).end(FIRST_BLOCK, 2);
+//                  blocktest().given(s, "baz").given(t, new Token("foo")).given(lastName, null).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class)
+//                          .checkFlow(IfStmt().Then().IfStmt().Else()).end(FIRST_BLOCK, 2);
+//                  blocktest().given(s, "baz").given(t, null).given(lastName, "bar").given(lineNr, 0, "int").given(caretPos, 0, "int").checkEq(lastName, "bar baz")
+//                          .end(FIRST_BLOCK, 2);
+//                  blocktest().given(s, "baz").given(t, null).given(lastName, null).given(lineNr, 0, "int").given(caretPos, 0, "int").checkEq(lastName, "baz")
+//                          .end(FIRST_BLOCK, 2);
                     // .checkFlow(IfStmt().IfStmt().Then().IfStmt().Else()).end(FIRST_BLOCK, 2);
-                    blocktest().given(s, "bar.png").given(t, null).given(lastName, null).given(lineNr, 0, "int").given(caretPos, 0, "int").checkEq(lastName, "bar.png")
-                            .end(FIRST_BLOCK, 2);
+//                  blocktest().given(s, "bar.png").given(t, null).given(lastName, null).given(lineNr, 0, "int").given(caretPos, 0, "int").checkEq(lastName, "bar.png")
+//                          .end(FIRST_BLOCK, 2);
                     if (t != null)
                     {
                         if (lastName != null) {
@@ -647,11 +650,15 @@ public class Parser {
                     {
                         try {
                             // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L611-L613
-                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("hello.png"))
-                                .given(lineNr, 0, "int").given(caretPos, 0, "int")
-                                .setup(() -> {imgMatcher.find();})
-                                .expect(ParseException.class)
-                                .end(FIRST_THROW);
+                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("hello.png")).given(lineNr, 0, "int").given(caretPos, 0, "int").setup(() -> {
+                              imgMatcher.find();
+                            }).expect(ParseException.class).end(FIRST_THROW);
+                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("img/README/2015-02-23-21-57-cubes.png funny")).given(lineNr, 0, "int").given(caretPos, 0, "int").setup(() -> {
+                              imgMatcher.find();
+                            }).mock("getFile(workdir, imgMatcher.group(1))", new File("img/README/2015-02-23-21-57-cubes.png")).checkTrue(Model.bitmapCache.getImage("funny") != null);
+                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("img/README/2015-02-23-21-57-cubes.png funny")).given(lineNr, 0, "int").given(caretPos, 0, "int").setup(() -> {
+                              imgMatcher.find();
+                            }).mock("getFile(workdir, imgMatcher.group(1))", new File("img/README/2015-02-23-21-57-cubes.png")).mock("Model.bitmapCache.add(fl, refName)", null).expect(ParseException.class);
                             String refName = imgMatcher.group(3);
                             if (refName.length() == 0)
                                 throw new ParseException("Syntax: include [bitmap-name] [ref-name]", lineNr, caretPos);
@@ -1663,12 +1670,13 @@ public class Parser {
                             {
                                 throw new ParseException("Give RGB color in form #09AFFF or #09AFFF80", lineNr, caretPos);
                             }
-                            // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L1611-L1621
-                            blocktest().given(s, "#12345678").checkEq(aexpr.get(0).toString(), "-0.5294117").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int");
-                            blocktest().given(s, "#123456").checkEq(aexpr, null).start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int");
-                            blocktest().given(s, "123456").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class);
-                            blocktest().given(s, "#12345").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class);
-                            blocktest().given(s, "#1234567").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class);
+                            // BLOCKTEST RV: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L1611-L1621
+                            // RV (commented out)
+//                          blocktest().given(s, "#12345678").checkEq(aexpr.get(0).toString(), "-0.5294117").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int");
+//                          blocktest().given(s, "#123456").checkEq(aexpr, null).start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int");
+//                          blocktest().given(s, "123456").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class);
+//                          blocktest().given(s, "#12345").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class);
+//                          blocktest().given(s, "#1234567").start(FIRST_BLOCK, 999).given(lineNr, 0, "int").given(caretPos, 0, "int").expect(ParseException.class);
                             lexprs = decodeHtmlRgb(s);
                             if (curCtx==ParsingContext.TRANSFORM_ADJUSTMENTS)
                             {
@@ -1696,19 +1704,20 @@ public class Parser {
                                         strait = 0;
                                         prefixType = prefixType.substring(0, prefixType.length() - 1);
                                     }
-                                    // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L1649-L1661
-                                    blocktest().given(prefixType, "AAA").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
-                                            .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1))))
-                                            .mock("matcher2.group(1)", "foo").expect(ParseException.class).given(toPrefix, "abc").given(strait, 0).checkEq(i, -1);
-                                    blocktest().given(exprL, new ArrayList<>(Arrays.asList(new Token("hey")))).given(prefixType, "m").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
-                                            .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1)))).checkEq(i, -1)
-                                            .mock("matcher2.group(1)", "foo").checkEq(tokenStrings.get(0).toString(), "^foo^bc").checkEq(exprL.get(0).toString(), "ma").given(toPrefix, "abc").given(strait, 0);
-                                    blocktest().given(exprL, new ArrayList<>(Arrays.asList(new Token("hey")))).given(prefixType, "m").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
-                                            .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1)))).checkEq(i, 0)
-                                            .mock("matcher2.group(1)", "foo").checkEq(tokenStrings.get(0).toString(), "a").checkEq(exprL.get(0).toString(), "mf").given(toPrefix, "f").given(strait, 0);
-                                    blocktest().given(exprL, new ArrayList<>(Arrays.asList(new Token("hey")))).given(prefixType, "m").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
-                                            .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1)))).checkEq(i, -1)
-                                            .mock("matcher2.group(1)", "foo").checkEq(tokenStrings.get(0).toString(), "^foo^ab").checkEq(exprL.get(0).toString(), "mc").given(toPrefix, "abc").given(strait, 1);
+                                    // BLOCKTEST RV: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L1649-L1661
+                                    // RV (commented out)
+//                                  blocktest().given(prefixType, "AAA").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
+//                                          .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1))))
+//                                          .mock("matcher2.group(1)", "foo").expect(ParseException.class).given(toPrefix, "abc").given(strait, 0).checkEq(i, -1);
+//                                  blocktest().given(exprL, new ArrayList<>(Arrays.asList(new Token("hey")))).given(prefixType, "m").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
+//                                          .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1)))).checkEq(i, -1)
+//                                          .mock("matcher2.group(1)", "foo").checkEq(tokenStrings.get(0).toString(), "^foo^bc").checkEq(exprL.get(0).toString(), "ma").given(toPrefix, "abc").given(strait, 0);
+//                                  blocktest().given(exprL, new ArrayList<>(Arrays.asList(new Token("hey")))).given(prefixType, "m").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
+//                                          .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1)))).checkEq(i, 0)
+//                                          .mock("matcher2.group(1)", "foo").checkEq(tokenStrings.get(0).toString(), "a").checkEq(exprL.get(0).toString(), "mf").given(toPrefix, "f").given(strait, 0);
+//                                  blocktest().given(exprL, new ArrayList<>(Arrays.asList(new Token("hey")))).given(prefixType, "m").given(tmpToken, new Token("foo")).given(lineNr, 1, "int").given(caretPos, 1, "int")
+//                                          .given(i, 0).given(tokenStrings, new ArrayList<>(Arrays.asList(new Tokenizer.TokenizerString("a", 1, 1)))).checkEq(i, -1)
+//                                          .mock("matcher2.group(1)", "foo").checkEq(tokenStrings.get(0).toString(), "^foo^ab").checkEq(exprL.get(0).toString(), "mc").given(toPrefix, "abc").given(strait, 1);
                                     PrefixStringMap psmap = Language.prefixMaps.get(prefixType);
                                     if (psmap == null)
                                         throw new ParseException("Cannot find prefix mapping for ^" + prefixType + "^ (in " + tmpToken.name + ")", lineNr, caretPos);

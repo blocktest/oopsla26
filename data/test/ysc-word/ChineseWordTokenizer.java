@@ -142,8 +142,8 @@ public class ChineseWordTokenizer extends Tokenizer {
                     SynonymTagging.process(Arrays.asList(word));
                     word.getSynonym().forEach(w -> {
                         // BLOCKTEST EVAL: https://github.com/ysc/word/blob/daa57fa34645e39c6e0214d1f4698134963b65be/src/main/java/org/apdplat/word/lucene/ChineseWordTokenizer.java#L138-L142
-                        blocktest().given(w, new Word("foo"), "Word").given(tokens, new LinkedTransferQueue<>()).checkEq(tokens.poll(), "foo");
-                        blocktest().given(w, new Word(""), "Word").given(tokens, new LinkedTransferQueue<>()).checkTrue(tokens.isEmpty());
+                        blocktest().given(w, new Word("foo")).given(tokens, new LinkedTransferQueue<>()).checkEq(tokens.poll(), "foo");
+                        blocktest().given(w, new Word("")).given(tokens, new LinkedTransferQueue<>()).checkTrue(tokens.isEmpty());
                         if (!"".equals(w.getText())) {
                             tokens.offer(w.getText());
                         }
@@ -154,8 +154,8 @@ public class ChineseWordTokenizer extends Tokenizer {
                     AntonymTagging.process(Arrays.asList(word));
                     word.getAntonym().forEach(w -> {
                         // BLOCKTEST EVAL: https://github.com/ysc/word/blob/daa57fa34645e39c6e0214d1f4698134963b65be/src/main/java/org/apdplat/word/lucene/ChineseWordTokenizer.java#L147-L151
-                        blocktest().given(w, new Word("foo"), "Word").given(tokens, new LinkedTransferQueue<>()).checkEq(tokens.poll(), "foo");
-                        blocktest().given(w, new Word(""), "Word").given(tokens, new LinkedTransferQueue<>()).checkTrue(tokens.isEmpty());
+                        blocktest().given(w, new Word("foo")).given(tokens, new LinkedTransferQueue<>()).checkEq(tokens.poll(), "foo");
+                        blocktest().given(w, new Word("")).given(tokens, new LinkedTransferQueue<>()).checkTrue(tokens.isEmpty());
                         if (!"".equals(w.getText())) {
                             tokens.offer(w.getText());
                         }

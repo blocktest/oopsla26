@@ -422,7 +422,7 @@ public final class PackageURL implements Serializable {
                 purl.append("?");
                 qualifiers.entrySet().stream().forEachOrdered((entry) -> {
                     // BLOCKTEST EVAL: https://github.com/package-url/packageurl-java/blob/47351deccffb9394df42b913f59ffc00741af0b6/src/main/java/com/github/packageurl/PackageURL.java#L418-L423
-                    blocktest().given(entry, new TreeMap<String, String>(){{ put("a", "%b"); }}.entrySet().iterator().next(), "java.util.Map.Entry<String, String>")
+                    blocktest().given(entry, new TreeMap<String, String>(){{ put("a", "%b"); }}.entrySet().iterator().next())
                             .mock("percentEncode(entry.getValue())", uriEncode(entry.getValue(), StandardCharsets.UTF_8)).given(purl, new StringBuilder())
                             .checkEq(purl.toString(), "a=%25b&");
                     purl.append(entry.getKey().toLowerCase());

@@ -153,6 +153,10 @@ final class MarkupSelectorItems {
             final String tail = selectorSpecStr.substring(firstNonSlash).substring(selEnd);
             selectorSpecStr = selectorSpecStr.substring(0, firstNonSlash + selEnd);
             result = parseSelector(html, tail, referenceResolver);
+            // BLOCKTEST EVAL: https://github.com/attoparser/attoparser/blob/e1049dcd8261fe315b679029e711a9f5ea03f1cc/src/main/java/org/attoparser/select/MarkupSelectorItems.java#L148-L149
+            blocktest().noInit(result).given(html, false).given(referenceResolver, null).given(selectorSpecStr, "/A/B/C").given(firstNonSlash, 1).given(selEnd, selectorSpecStr.substring(firstNonSlash).indexOf('/'))
+                    .checkEq(selEnd, 1).checkEq(tail, "/B/C").start(FIRST_BLOCK, 3)
+                    .checkEq(result.toString(), "[/B, /C]");
         } else {
             result = new ArrayList<IMarkupSelectorItem>(3);
         }
@@ -368,8 +372,8 @@ final class MarkupSelectorItems {
                         // If this is an index, it must be the last modifier!
                         throw new IllegalArgumentException(
                                 "Invalid syntax in selector \"" + selector + "\": cannot combine two different index " +
-                                "modifiers (probably one was specified in the expression itself, and the other one comes " +
-                                "from a reference resolver).");
+                                        "modifiers (probably one was specified in the expression itself, and the other one comes " +
+                                        "from a reference resolver).");
                     }
 
                     index = newIndex;

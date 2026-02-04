@@ -376,11 +376,11 @@ final class Decoder {
     }
     IMDCT_WINDOW_LAYER_III = new float[4 * 36];
     {
-          /* Blocktype 0 */
+      /* Blocktype 0 */
       for (int i = 0; i < 36; i++) {
         IMDCT_WINDOW_LAYER_III[0 * 36 + i] = (float) Math.sin(Math.PI / 36 * (i + 0.5));
       }
-    /* Blocktype 1 */
+      /* Blocktype 1 */
       for (int i = 0; i < 18; i++) {
         IMDCT_WINDOW_LAYER_III[1 * 36 + i] = (float) Math.sin(Math.PI / 36 * (i + 0.5));
       }
@@ -390,11 +390,11 @@ final class Decoder {
       for (int i = 24; i < 30; i++) {
         IMDCT_WINDOW_LAYER_III[1 * 36 + i] = (float) Math.sin(Math.PI / 12 * (i + 0.5 - 18.0));
       }
-    /* Blocktype 2 */
+      /* Blocktype 2 */
       for (int i = 0; i < 12; i++) {
         IMDCT_WINDOW_LAYER_III[2 * 36 + i] = (float) Math.sin(Math.PI / 12 * (i + 0.5));
       }
-    /* Blocktype 3 */
+      /* Blocktype 3 */
       for (int i = 6; i < 12; i++) {
         IMDCT_WINDOW_LAYER_III[3 * 36 + i] = (float) Math.sin(Math.PI / 12 * (i + 0.5 - 6.0));
       }
@@ -439,123 +439,123 @@ final class Decoder {
   }
 
   public static boolean decodeFrame(SoundData soundData) throws IOException {
-      if (soundData.buffer.lastByte == -1) {
-        return false;
-      }
+    if (soundData.buffer.lastByte == -1) {
+      return false;
+    }
 
-      while (true) {
-        int read;
-        do {
-          read = soundData.buffer.lastByte;
-          soundData.buffer.lastByte = soundData.buffer.in.read();
-          if (soundData.buffer.lastByte == -1) {
-            return false;
-          }
-        } while (read != 0b11111111);
-        if ((soundData.buffer.lastByte >>> 4) != 0b1111) {
-          soundData.buffer.lastByte = soundData.buffer.in.read();
-          if (soundData.buffer.lastByte == -1) {
-            return false;
-          }
-        } else {
-          break;
+    while (true) {
+      int read;
+      do {
+        read = soundData.buffer.lastByte;
+        soundData.buffer.lastByte = soundData.buffer.in.read();
+        if (soundData.buffer.lastByte == -1) {
+          return false;
         }
+      } while (read != 0b11111111);
+      if ((soundData.buffer.lastByte >>> 4) != 0b1111) {
+        soundData.buffer.lastByte = soundData.buffer.in.read();
+        if (soundData.buffer.lastByte == -1) {
+          return false;
+        }
+      } else {
+        break;
       }
+    }
 
     soundData.buffer.current = 4;
 
-      int id = read(soundData.buffer, 1);
-      int layer = read(soundData.buffer, 2);
-      int protectionBit = read(soundData.buffer, 1);
-      int bitrateIndex = read(soundData.buffer, 4);
-      int samplingFrequency = read(soundData.buffer, 2);
-      int paddingBit = read(soundData.buffer, 1);
-      int privateBit = read(soundData.buffer, 1);
-      int mode = read(soundData.buffer, 2);
-      int modeExtension = read(soundData.buffer, 2);
-      read(soundData.buffer, 4);
+    int id = read(soundData.buffer, 1);
+    int layer = read(soundData.buffer, 2);
+    int protectionBit = read(soundData.buffer, 1);
+    int bitrateIndex = read(soundData.buffer, 4);
+    int samplingFrequency = read(soundData.buffer, 2);
+    int paddingBit = read(soundData.buffer, 1);
+    int privateBit = read(soundData.buffer, 1);
+    int mode = read(soundData.buffer, 2);
+    int modeExtension = read(soundData.buffer, 2);
+    read(soundData.buffer, 4);
 
-      if (soundData.frequency == -1) {
-        soundData.frequency = SAMPLING_FREQUENCY[samplingFrequency];
+    if (soundData.frequency == -1) {
+      soundData.frequency = SAMPLING_FREQUENCY[samplingFrequency];
+    }
+
+    if (soundData.stereo == -1) {
+      if (mode == 0b11 /* single_channel */) {
+        soundData.stereo = 0;
+      } else {
+        soundData.stereo = 1;
       }
-
-      if (soundData.stereo == -1) {
+      if (layer == 0b01 /* layer III */) {
         if (mode == 0b11 /* single_channel */) {
-          soundData.stereo = 0;
+          soundData.mainData = new byte[1024];
+          soundData.store = new float[32 * 18];
+          soundData.v = new float[1024];
         } else {
-          soundData.stereo = 1;
+          soundData.mainData = new byte[2 * 1024];
+          soundData.store = new float[2 * 32 * 18];
+          soundData.v = new float[2 * 1024];
         }
-        if (layer == 0b01 /* layer III */) {
-          if (mode == 0b11 /* single_channel */) {
-            soundData.mainData = new byte[1024];
-            soundData.store = new float[32 * 18];
-            soundData.v = new float[1024];
-          } else {
-            soundData.mainData = new byte[2 * 1024];
-            soundData.store = new float[2 * 32 * 18];
-            soundData.v = new float[2 * 1024];
-          }
-          soundData.mainDataReader = new MainDataReader(soundData.mainData);
+        soundData.mainDataReader = new MainDataReader(soundData.mainData);
+      } else {
+        if (mode == 0b11 /* single_channel */) {
+          soundData.synthOffset = new int[]{64};
+          soundData.synthBuffer = new float[1024];
         } else {
-          if (mode == 0b11 /* single_channel */) {
-            soundData.synthOffset = new int[]{64};
-            soundData.synthBuffer = new float[1024];
-          } else {
-            soundData.synthOffset = new int[]{64, 64};
-            soundData.synthBuffer = new float[2 * 1024];
-          }
+          soundData.synthOffset = new int[]{64, 64};
+          soundData.synthBuffer = new float[2 * 1024];
         }
       }
+    }
 
-      int bound = modeExtension == 0b0 ? 4 : modeExtension == 0b01 ? 8 : modeExtension == 0b10 ? 12 : modeExtension == 0b11 ? 16 : -1;
+    int bound = modeExtension == 0b0 ? 4 : modeExtension == 0b01 ? 8 : modeExtension == 0b10 ? 12 : modeExtension == 0b11 ? 16 : -1;
 
-      if (protectionBit == 0) {
-        // TODO CRC CHECK
-        read(soundData.buffer, 16);
+    if (protectionBit == 0) {
+      // TODO CRC CHECK
+      read(soundData.buffer, 16);
+    }
+
+    if (layer == 0b11 /* layer I */) {
+      float[] sampleDecoded = null;
+      if (mode == 0b11 /* single_channel */) {
+        sampleDecoded = samples_I(soundData.buffer, 1, -1);
+      } else if (mode == 0b0 /* stereo */ || mode == 0b10 /* dual_channel */) {
+        sampleDecoded = samples_I(soundData.buffer, 2, -1);
+      } else if (mode == 0b01 /* intensity_stereo */) {
+        sampleDecoded = samples_I(soundData.buffer, 2, bound);
       }
-
-      if (layer == 0b11 /* layer I */) {
-        float[] sampleDecoded = null;
-        if (mode == 0b11 /* single_channel */) {
-          sampleDecoded = samples_I(soundData.buffer, 1, -1);
-        } else if (mode == 0b0 /* stereo */ || mode == 0b10 /* dual_channel */) {
-          sampleDecoded = samples_I(soundData.buffer, 2, -1);
-        } else if (mode == 0b01 /* intensity_stereo */) {
-          sampleDecoded = samples_I(soundData.buffer, 2, bound);
-        }
-        if (mode == 0b11 /* single_channel */) {
-          synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 1);
-        } else {
-          synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 2);
-        }
-      } else if (layer == 0b10 /* layer II */) {
-        float[] sampleDecoded = null;
-        int bitrate = BITRATE_LAYER_II[bitrateIndex];
-        if (mode == 0b11 /* single_channel */) {
-          sampleDecoded = samples_II(soundData.buffer, 1, -1, bitrate, soundData.frequency);
-        } else if (mode == 0b0 /* stereo */ || mode == 0b10 /* dual_channel */) {
-          sampleDecoded = samples_II(soundData.buffer, 2, -1, bitrate, soundData.frequency);
-        } else if (mode == 0b01 /* intensity_stereo */) {
-          sampleDecoded = samples_II(soundData.buffer, 2, bound, bitrate, soundData.frequency);
-        }
-        if (mode == 0b11 /* single_channel */) {
-          synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 1);
-        } else {
-          synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 2);
-        }
-      } else if (layer == 0b01 /* layer III */) {
-        int frameSize = (144 * BITRATE_LAYER_III[bitrateIndex]) / SAMPLING_FREQUENCY[samplingFrequency] + paddingBit;
-        if (frameSize > 2000) {
-          System.err.println("Frame too large! " + frameSize);
-        }
-        samples_III(soundData.buffer, soundData.stereo == 1 ? 2 : 1, soundData.mainDataReader, frameSize, samplingFrequency, mode, modeExtension, soundData.store, soundData.v, soundData);
+      if (mode == 0b11 /* single_channel */) {
+        synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 1);
+      } else {
+        synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 2);
       }
-
-      if (soundData.buffer.current != 0) {
-        read(soundData.buffer, 8 - soundData.buffer.current);
+    } else if (layer == 0b10 /* layer II */) {
+      float[] sampleDecoded = null;
+      int bitrate = BITRATE_LAYER_II[bitrateIndex];
+      if (mode == 0b11 /* single_channel */) {
+        sampleDecoded = samples_II(soundData.buffer, 1, -1, bitrate, soundData.frequency);
+      } else if (mode == 0b0 /* stereo */ || mode == 0b10 /* dual_channel */) {
+        sampleDecoded = samples_II(soundData.buffer, 2, -1, bitrate, soundData.frequency);
+      } else if (mode == 0b01 /* intensity_stereo */) {
+        sampleDecoded = samples_II(soundData.buffer, 2, bound, bitrate, soundData.frequency);
       }
+      if (mode == 0b11 /* single_channel */) {
+        synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 1);
+      } else {
+        synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 2);
+      }
+    } else if (layer == 0b01 /* layer III */) {
+      int frameSize = (144 * BITRATE_LAYER_III[bitrateIndex]) / SAMPLING_FREQUENCY[samplingFrequency] + paddingBit;
+      if (frameSize > 2000) {
+        System.err.println("Frame too large! " + frameSize);
+      }
+      samples_III(soundData.buffer, soundData.stereo == 1 ? 2 : 1, soundData.mainDataReader, frameSize, samplingFrequency, mode, modeExtension, soundData.store, soundData.v, soundData);
+    }
 
-      return true;
+    if (soundData.buffer.current != 0) {
+      read(soundData.buffer, 8 - soundData.buffer.current);
+    }
+
+    return true;
   }
 
   private static void samples_III(Buffer buffer, int stereo, MainDataReader mainDataReader, int frameSize, int samplingFrequency, int mode, int modeExtension, float[] store, float[] v, SoundData soundData) throws IOException {
@@ -640,7 +640,7 @@ final class Decoder {
 
         int part_2_start = mainDataReader.index * 8 + mainDataReader.current;
 
-      /* Number of bits in the bitstream for the bands */
+        /* Number of bits in the bitstream for the bands */
         int slen1 = SCALEFACTOR_SIZES_LAYER_III[scalefac_compress[ch * 2 + gr] * 2];
         int slen2 = SCALEFACTOR_SIZES_LAYER_III[scalefac_compress[ch * 2 + gr] * 2 + 1];
 
@@ -650,8 +650,6 @@ final class Decoder {
             for (int sfb = 0; sfb < 8; sfb++) {
               scalefac_l[ch * 2 * 21 + gr * 21 + sfb] = read(mainDataReader, slen1);
             }
-            // BLOCKTEST EVAL: https://github.com/delthas/JavaMP3/blob/8b42e48a549813b43c99db9fef525286c888a082/src/main/java/fr/delthas/javamp3/Decoder.java#L648C12-L660C14
-            // blocktest().given(ch, 10).given(gr, 5).mock("read(mainDataReader, nbits)", 5);
             for (int sfb = 3; sfb < 12; sfb++) {
               int nbits;
               if (sfb < 6) {	/* slen1 is for bands 3-5, slen2 for 6-11 */
@@ -685,65 +683,65 @@ final class Decoder {
           }
         } else { /* block_type == 0 if winswitch == 0 */
 
-	/* Scale factor bands 0-5 */
+          /* Scale factor bands 0-5 */
           if ((scfsi[ch * 4 + 0] == 0) || (gr == 0)) {
             for (int sfb = 0; sfb < 6; sfb++) {
               scalefac_l[ch * 2 * 21 + gr * 21 + sfb] = read(mainDataReader, slen1);
             }
           } else if ((scfsi[ch * 4 + 0] == 1) && (gr == 1)) {
-    /* Copy scalefactors from granule 0 to granule 1 */
+            /* Copy scalefactors from granule 0 to granule 1 */
             for (int sfb = 0; sfb < 6; sfb++) {
               scalefac_l[ch * 2 * 21 + 1 * 21 + sfb] =
                       scalefac_l[ch * 2 * 21 + 0 * 21 + sfb];
             }
           }
 
-	/* Scale factor bands 6-10 */
+          /* Scale factor bands 6-10 */
           if ((scfsi[ch * 4 + 1] == 0) || (gr == 0)) {
             for (int sfb = 6; sfb < 11; sfb++) {
               scalefac_l[ch * 2 * 21 + gr * 21 + sfb] = read(mainDataReader, slen1);
             }
           } else if ((scfsi[ch * 4 + 1] == 1) && (gr == 1)) {
-    /* Copy scalefactors from granule 0 to granule 1 */
+            /* Copy scalefactors from granule 0 to granule 1 */
             for (int sfb = 6; sfb < 11; sfb++) {
               scalefac_l[ch * 2 * 21 + 1 * 21 + sfb] =
                       scalefac_l[ch * 2 * 21 + 0 * 21 + sfb];
             }
           }
 
-	/* Scale factor bands 11-15 */
+          /* Scale factor bands 11-15 */
           if ((scfsi[ch * 4 + 2] == 0) || (gr == 0)) {
             for (int sfb = 11; sfb < 16; sfb++) {
               scalefac_l[ch * 2 * 21 + gr * 21 + sfb] = read(mainDataReader, slen2);
             }
           } else if ((scfsi[ch * 4 + 2] == 1) && (gr == 1)) {
-    /* Copy scalefactors from granule 0 to granule 1 */
-              // BLOCKTEST EVAL: https://github.com/delthas/JavaMP3/blob/8b42e48a549813b43c99db9fef525286c888a082/src/main/java/fr/delthas/javamp3/Decoder.java#L710C1-L714C14
-              blocktest().given(stereo, 5).given(ch, 3).setup(
-                      () -> {
-                          for (int i = 0; i < scalefac_l.length; i++) {
-                              scalefac_l[i] = i;
-                          }
-                      }
-              )
-                      .checkTrue(scalefac_l[158] == scalefac_l[137])
-                      .checkTrue(scalefac_l[159] == scalefac_l[138])
-                      .checkTrue(scalefac_l[160] == scalefac_l[139])
-                      .checkTrue(scalefac_l[161] == scalefac_l[140])
-                      .checkTrue(scalefac_l[162] == scalefac_l[141]);
+            /* Copy scalefactors from granule 0 to granule 1 */
+            // BLOCKTEST EVAL: https://github.com/delthas/JavaMP3/blob/8b42e48a549813b43c99db9fef525286c888a082/src/main/java/fr/delthas/javamp3/Decoder.java#L710C1-L714C14
+            blocktest().given(stereo, 5).given(ch, 3).given(scalefac_l, new int[stereo * 2 * 21]).setup(
+                            () -> {
+                              for (int i = 0; i < scalefac_l.length; i++) {
+                                scalefac_l[i] = i;
+                              }
+                            }
+                    )
+                    .checkTrue(scalefac_l[158] == scalefac_l[137])
+                    .checkTrue(scalefac_l[159] == scalefac_l[138])
+                    .checkTrue(scalefac_l[160] == scalefac_l[139])
+                    .checkTrue(scalefac_l[161] == scalefac_l[140])
+                    .checkTrue(scalefac_l[162] == scalefac_l[141]);
             for (int sfb = 11; sfb < 16; sfb++) {
               scalefac_l[ch * 2 * 21 + 1 * 21 + sfb] =
                       scalefac_l[ch * 2 * 21 + 0 * 21 + sfb];
             }
           }
 
-	/* Scale factor bands 16-20 */
+          /* Scale factor bands 16-20 */
           if ((scfsi[ch * 4 + 3] == 0) || (gr == 0)) {
             for (int sfb = 16; sfb < 21; sfb++) {
               scalefac_l[ch * 2 * 21 + gr * 21 + sfb] = read(mainDataReader, slen2);
             }
           } else if ((scfsi[ch * 4 + 3] == 1) && (gr == 1)) {
-    /* Copy scalefactors from granule 0 to granule 1 */
+            /* Copy scalefactors from granule 0 to granule 1 */
             for (int sfb = 16; sfb < 21; sfb++) {
               scalefac_l[ch * 2 * 21 + 1 * 21 + sfb] =
                       scalefac_l[ch * 2 * 21 + 0 * 21 + sfb];
@@ -755,7 +753,7 @@ final class Decoder {
         if (part2_3_length[ch * 2 + gr] != 0) {
 
 
-  /* Calculate bit_pos_end which is the index of the last bit for this part. */
+          /* Calculate bit_pos_end which is the index of the last bit for this part. */
           int bit_pos_end = part_2_start + part2_3_length[ch * 2 + gr] - 1;
 
           int region_1_start;
@@ -765,7 +763,7 @@ final class Decoder {
 
           int[] huffman = new int[4];
 
-  /* Determine region boundaries */
+          /* Determine region boundaries */
           if ((win_switch_flag[ch * 2 + gr] == 1) &&
                   (block_type[ch * 2 + gr] == 2)) {
 
@@ -778,7 +776,7 @@ final class Decoder {
                     SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 0 + region0_count[ch * 2 + gr] + region1_count[ch * 2 + gr] + 2];
           }
 
-  /* Read big_values using tables according to region_x_start */
+          /* Read big_values using tables according to region_x_start */
           for (is_pos = 0; is_pos < big_values[ch * 2 + gr] * 2; is_pos++) {
 
             if (is_pos < region_1_start) {
@@ -789,20 +787,20 @@ final class Decoder {
               table_num = table_select[ch * 2 * 3 + gr * 3 + 2];
             }
 
-    /* Get next Huffman coded words */
+            /* Get next Huffman coded words */
             huffman_III(mainDataReader, table_num, huffman);
 
-    /* In the big_values area there are two freq lines per Huffman word */
+            /* In the big_values area there are two freq lines per Huffman word */
             is[ch * 2 * 576 + gr * 576 + is_pos++] = huffman[0];
             is[ch * 2 * 576 + gr * 576 + is_pos] = huffman[1];
           }
 
-  /* Read small values until is_pos = 576 or we run out of huffman data */
+          /* Read small values until is_pos = 576 or we run out of huffman data */
           table_num = count1table_select[ch * 2 + gr] + 32;
           for (is_pos = big_values[ch * 2 + gr] * 2;
                (is_pos <= 572) && (mainDataReader.index * 8 + mainDataReader.current <= bit_pos_end); is_pos++) {
 
-    /* Get next Huffman coded words */
+            /* Get next Huffman coded words */
             huffman_III(mainDataReader, table_num, huffman);
 
             is[ch * 2 * 576 + gr * 576 + is_pos++] = huffman[2];
@@ -823,21 +821,21 @@ final class Decoder {
             is[ch * 2 * 576 + gr * 576 + is_pos] = huffman[1];
           }
 
-  /* Check that we didn't read past the end of this section */
+          /* Check that we didn't read past the end of this section */
           if (mainDataReader.index * 8 + mainDataReader.current > (bit_pos_end + 1)) {
-    /* Remove last words read */
+            /* Remove last words read */
             is_pos -= 4;
           }
 
-  /* Setup count1 which is the index of the first sample in the rzero reg. */
+          /* Setup count1 which is the index of the first sample in the rzero reg. */
           count1[ch * 2 + gr] = is_pos;
 
-            /* Zero out the last part if necessary */
+          /* Zero out the last part if necessary */
           for (/* is_pos comes from last for-loop */; is_pos < 576; is_pos++) {
             is[ch * 2 * 576 + gr * 576 + is_pos] = 0.0f;
           }
 
-  /* Set the bitpos to point to the next part to read */
+          /* Set the bitpos to point to the next part to read */
           mainDataReader.index = (bit_pos_end + 1) / 8;
           mainDataReader.current = (bit_pos_end + 1) % 8;
         }
@@ -852,17 +850,17 @@ final class Decoder {
 
         // requantize ===================================================
 
-  /* Determine type of block to process */
+        /* Determine type of block to process */
         if ((win_switch_flag[ch * 2 + gr] == 1) &&
                 (block_type[ch * 2 + gr] == 2)) { /* Short blocks */
 
-    /* Check if the first two subbands
-     * (=2*18 samples = 8 long or 3 short sfb's) uses long blocks */
+          /* Check if the first two subbands
+           * (=2*18 samples = 8 long or 3 short sfb's) uses long blocks */
           if (mixed_block_flag[ch * 2 + gr] != 0) { /* 2 longbl. sb  first */
 
-      /*
-       * First process the 2 long block subbands at the start
-       */
+            /*
+             * First process the 2 long block subbands at the start
+             */
             int sfb = 0;
             int next_sfb = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 0 + sfb + 1];
             for (int i = 0; i < 36; i++) {
@@ -873,9 +871,9 @@ final class Decoder {
               requantize_long_III(gr, ch, scalefac_scale, preflag, global_gain, scalefac_l, is, i, sfb);
             }
 
-      /*
-       * And next the remaining, non-zero, bands which uses short blocks
-       */
+            /*
+             * And next the remaining, non-zero, bands which uses short blocks
+             */
             sfb = 3;
             next_sfb = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb + 1] * 3;
             int win_len = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb + 1] -
@@ -883,7 +881,7 @@ final class Decoder {
 
             for (int i = 36; i < count1[ch * 2 + gr]; /* i++ done below! */) {
 
-	/* Check if we're into the next scalefac band */
+              /* Check if we're into the next scalefac band */
               if (i == next_sfb) {	/* Yes */
                 sfb++;
                 next_sfb = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb + 1] * 3;
@@ -907,7 +905,7 @@ final class Decoder {
 
             for (int i = 0; i < count1[ch * 2 + gr]; /* i++ done below! */) {
 
-	/* Check if we're into the next scalefac band */
+              /* Check if we're into the next scalefac band */
               if (i == next_sfb) {	/* Yes */
                 sfb++;
                 next_sfb = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb + 1] * 3;
@@ -944,7 +942,7 @@ final class Decoder {
         while (true) {
 
 
-  /* Only reorder short blocks */
+          /* Only reorder short blocks */
           if ((win_switch_flag[ch * 2 + gr] == 1) &&
                   (block_type[ch * 2 + gr] == 2)) { /* Short blocks */
 
@@ -955,8 +953,8 @@ final class Decoder {
             int next_sfb;
             int win_len;
 
-    /* Check if the first two subbands
-     * (=2*18 samples = 8 long or 3 short sfb's) uses long blocks */
+            /* Check if the first two subbands
+             * (=2*18 samples = 8 long or 3 short sfb's) uses long blocks */
             if (mixed_block_flag[ch * 2 + gr] != 0) { /* 2 longbl. sb  first */
               sfb = 3;
               i = 36;
@@ -967,18 +965,18 @@ final class Decoder {
 
             for (; i < 576; /* i++ done below! */) {
 
-      /* Check if we're into the next scalefac band */
+              /* Check if we're into the next scalefac band */
               if (i == next_sfb) {	/* Yes */
 
-        /* Copy reordered data back to the original vector */
+                /* Copy reordered data back to the original vector */
                 for (int j = 0; j < 3 * win_len; j++) {
                   is[ch * 2 * 576 + gr * 576 + 3 * (SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb]) + j] =
                           re[j];
                 }
 
-        /* Check if this band is above the rzero region, if so we're done */
+                /* Check if this band is above the rzero region, if so we're done */
                 if (i >= count1[ch * 2 + gr]) {
-          /* Done */
+                  /* Done */
                   break outer;
                 }
 
@@ -988,7 +986,7 @@ final class Decoder {
                         SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb];
               } /* end if (next_sfb) */
 
-      /* Do the actual reordering */
+              /* Do the actual reordering */
               for (int win = 0; win < 3; win++) {
                 for (int j = 0; j < win_len; j++) {
                   re[j * 3 + win] = is[ch * 2 * 576 + gr * 576 + i];
@@ -997,7 +995,7 @@ final class Decoder {
               } /* end for (win... */
             }	/* end for (i... */
 
-    /* Copy reordered data of the last band back to the original vector */
+            /* Copy reordered data of the last band back to the original vector */
             for (int j = 0; j < 3 * win_len; j++) {
               is[ch * 2 * 576 + gr * 576 + 3 * (SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + 12]) + j] = re[j];
             }
@@ -1007,21 +1005,21 @@ final class Decoder {
       }
       // stereo ==============================================
 
-        /* Do nothing if joint stereo is not enabled */
+      /* Do nothing if joint stereo is not enabled */
       if ((mode == 1) && (modeExtension != 0)) {
 
-  /* Do Middle/Side ("normal") stereo processing */
+        /* Do Middle/Side ("normal") stereo processing */
         if ((modeExtension & 0x2) != 0) {
 
           int max_pos;
-    /* Determine how many frequency lines to transform */
+          /* Determine how many frequency lines to transform */
           if (count1[0 * 2 + gr] > count1[1 * 2 + gr]) {
             max_pos = count1[0 * 2 + gr];
           } else {
             max_pos = count1[1 * 2 + gr];
           }
 
-    /* Do the actual processing */
+          /* Do the actual processing */
           for (int i = 0; i < max_pos; i++) {
             float left = (is[0 * 2 * 576 + gr * 576 + i] + is[1 * 2 * 576 + gr * 576 + i])
                     * (INV_SQUARE_2);
@@ -1032,43 +1030,43 @@ final class Decoder {
           } /* end for (i... */
         } /* end if (ms_stereo... */
 
-  /* Do intensity stereo processing */
+        /* Do intensity stereo processing */
         if ((modeExtension & 0x1) != 0) {
 
-    /* The first band that is intensity stereo encoded is the first band
-     * scale factor band on or above the count1 frequency line.
-     * N.B.: Intensity stereo coding is only done for the higher subbands,
-     * but the logic is still included to process lower subbands.
-     */
+          /* The first band that is intensity stereo encoded is the first band
+           * scale factor band on or above the count1 frequency line.
+           * N.B.: Intensity stereo coding is only done for the higher subbands,
+           * but the logic is still included to process lower subbands.
+           */
 
-    /* Determine type of block to process */
+          /* Determine type of block to process */
           if ((win_switch_flag[0 * 2 + gr] == 1) &&
                   (block_type[0 * 2 + gr] == 2)) { /* Short blocks */
 
-      /* Check if the first two subbands
-       * (=2*18 samples = 8 long or 3 short sfb's) uses long blocks */
+            /* Check if the first two subbands
+             * (=2*18 samples = 8 long or 3 short sfb's) uses long blocks */
             if (mixed_block_flag[0 * 2 + gr] != 0) { /* 2 longbl. sb  first */
 
-        /*
-         * First process the 8 sfb's at the start
-         */
+              /*
+               * First process the 8 sfb's at the start
+               */
               for (int sfb = 0; sfb < 8; sfb++) {
 
-          /* Is this scale factor band above count1 for the right channel? */
+                /* Is this scale factor band above count1 for the right channel? */
                 if (SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 0 + sfb] >= count1[1 * 2 + gr]) {
                   stereo_long_III(is, scalefac_l, gr, sfb, samplingFrequency);
                 }
               } /* end if (sfb... */
 
-        /*
-         * And next the remaining bands which uses short blocks
-         */
+              /*
+               * And next the remaining bands which uses short blocks
+               */
               for (int sfb = 3; sfb < 12; sfb++) {
 
-          /* Is this scale factor band above count1 for the right channel? */
+                /* Is this scale factor band above count1 for the right channel? */
                 if (SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb] * 3 >= count1[1 * 2 + gr]) {
 
-            /* Perform the intensity stereo processing */
+                  /* Perform the intensity stereo processing */
                   stereo_short_III(is, scalefac_s, gr, sfb, samplingFrequency);
                 }
               }
@@ -1076,10 +1074,10 @@ final class Decoder {
 
               for (int sfb = 0; sfb < 12; sfb++) {
 
-          /* Is this scale factor band above count1 for the right channel? */
+                /* Is this scale factor band above count1 for the right channel? */
                 if (SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb] * 3 >= count1[1 * 2 + gr]) {
 
-            /* Perform the intensity stereo processing */
+                  /* Perform the intensity stereo processing */
                   stereo_short_III(is, scalefac_s, gr, sfb, samplingFrequency);
                 }
               }
@@ -1088,10 +1086,10 @@ final class Decoder {
 
             for (int sfb = 0; sfb < 21; sfb++) {
 
-        /* Is this scale factor band above count1 for the right channel? */
+              /* Is this scale factor band above count1 for the right channel? */
               if (SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 0 + sfb] >= count1[1 * 2 + gr]) {
 
-          /* Perform the intensity stereo processing */
+                /* Perform the intensity stereo processing */
                 stereo_long_III(is, scalefac_l, gr, sfb, samplingFrequency);
               }
             }
@@ -1110,7 +1108,7 @@ final class Decoder {
 
           int sblim;
 
-  /* Setup the limit for how many subbands to transform */
+          /* Setup the limit for how many subbands to transform */
           if ((win_switch_flag[ch * 2 + gr] == 1) &&
                   (block_type[ch * 2 + gr] == 2) &&
                   (mixed_block_flag[ch * 2 + gr]) == 1) {
@@ -1119,7 +1117,7 @@ final class Decoder {
             sblim = 32;
           }
 
-  /* Do the actual antialiasing */
+          /* Do the actual antialiasing */
           for (int sb = 1; sb < sblim; sb++) {
             for (int i = 0; i < 8; i++) {
               int li = 18 * sb - 1 - i;
@@ -1133,12 +1131,12 @@ final class Decoder {
         }
         // hybrid synthesis ===========================================
 
-  /* Loop through all 32 subbands */
+        /* Loop through all 32 subbands */
         for (int sb = 0; sb < 32; sb++) {
 
           int bt;
 
-    /* Determine blocktype for this subband */
+          /* Determine blocktype for this subband */
           if ((win_switch_flag[ch * 2 + gr] == 1) &&
                   (mixed_block_flag[ch * 2 + gr] == 1) && (sb < 2)) {
             bt = 0;			/* Long blocks in first 2 subbands */
@@ -1149,7 +1147,7 @@ final class Decoder {
           float[] rawout = new float[36];
 
           // ----
-    /* Do the inverse modified DCT and windowing */
+          /* Do the inverse modified DCT and windowing */
           // MPG_IMDCT_Win(& (is[ch * 2 + gr][sb * 18]), rawout, bt);
 
           int offset = ch * 2 * 576 + gr * 576 + sb * 18;
@@ -1176,7 +1174,7 @@ final class Decoder {
 
 
 
-    /* Overlapp add with stored vector into main_data vector */
+          /* Overlapp add with stored vector into main_data vector */
           for (int i = 0; i < 18; i++) {
 
             is[ch * 2 * 576 + gr * 576 + sb * 18 + i] = rawout[i] + store[ch * 32 * 18 + sb * 18 + i];
@@ -1199,14 +1197,14 @@ final class Decoder {
         float[] u = new float[512];
         float[] s = new float[32];
 
-          /* Loop through the 18 samples in each of the 32 subbands */
+        /* Loop through the 18 samples in each of the 32 subbands */
         for (int ss = 0; ss < 18; ss++) {
 
           for (int i = 1023; i > 63; i--)  /* Shift up the V vector */ {
             v[ch * 1024 + i] = v[ch * 1024 + i - 64];
           }
 
-    /* Copy the next 32 time samples to a temp vector */
+          /* Copy the next 32 time samples to a temp vector */
           for (int i = 0; i < 32; i++) {
             s[i] = is[ch * 2 * 576 + gr * 576 + i * 18 + ss];
           }
@@ -1219,7 +1217,7 @@ final class Decoder {
             v[ch * 1024 + i] = sum;
           } /* end for(i... */
 
-    /* Build the U vector */
+          /* Build the U vector */
           for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 32; j++) {
               u[i * 64 + j] = v[ch * 1024 + i * 128 + j];
@@ -1227,19 +1225,19 @@ final class Decoder {
             }
           } /* end for (i... */
 
-    /* Window by u_vec[i] with g_synth_dtbl[i] */
+          /* Window by u_vec[i] with g_synth_dtbl[i] */
           for (int i = 0; i < 512; i++) {
             u[i] *= DI_COEFFICIENTS[i];
           }
 
-    /* Calculate 32 samples and store them in the outdata vector */
+          /* Calculate 32 samples and store them in the outdata vector */
           for (int i = 0; i < 32; i++) {
             float sum = 0.0f;
             for (int j = 0; j < 16; j++) {
               sum += u[j * 32 + i];
             }
 
-      /* sum now contains time sample 32*ss+i. Convert to 16-bit signed int */
+            /* sum now contains time sample 32*ss+i. Convert to 16-bit signed int */
             int samp = (int) (sum * 32767.0f);
             if (samp > 32767) {
               samp = 32767;
@@ -1262,15 +1260,15 @@ final class Decoder {
   }
 
   private static void stereo_short_III(float[] is, int[] scalefac_s, int gr, int sfb, int samplingFrequency) {
-  /* The window length */
+    /* The window length */
     int win_len = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb + 1] - SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb];
 
-  /* The three windows within the band has different scalefactors */
+    /* The three windows within the band has different scalefactors */
     for (int win = 0; win < 3; win++) {
 
       int is_pos;
 
-    /* Check that ((is_pos[sfb]=scalefac) != 7) => no intensity stereo */
+      /* Check that ((is_pos[sfb]=scalefac) != 7) => no intensity stereo */
       if ((is_pos = scalefac_s[0 * 2 * 12 * 3 + gr * 12 * 3 + sfb * 3 + win]) != 7) {
 
         int sfb_start = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 23 + sfb] * 3 + win_len * win;
@@ -1279,7 +1277,7 @@ final class Decoder {
         float is_ratio_l;
         float is_ratio_r;
 
-      /* tan((6*PI)/12 = PI/2) needs special treatment! */
+        /* tan((6*PI)/12 = PI/2) needs special treatment! */
         if (is_pos == 6) {
           is_ratio_l = 1.0f;
           is_ratio_r = 0.0f;
@@ -1288,7 +1286,7 @@ final class Decoder {
           is_ratio_r = 1.0f / (1.0f + IS_RATIOS_LAYER_III[is_pos]);
         }
 
-      /* Now decode all samples in this scale factor band */
+        /* Now decode all samples in this scale factor band */
         for (int i = sfb_start; i < sfb_stop; i++) {
           is[0 * 2 * 576 + gr * 576 + i] *= is_ratio_l;
           is[1 * 2 * 576 + gr * 576 + i] *= is_ratio_r;
@@ -1299,7 +1297,7 @@ final class Decoder {
 
   private static void stereo_long_III(float[] is, int[] scalefac_l, int gr, int sfb, int samplingFrequency) {
     int is_pos;
-      /* Check that ((is_pos[sfb]=scalefac) != 7) => no intensity stereo */
+    /* Check that ((is_pos[sfb]=scalefac) != 7) => no intensity stereo */
     if ((is_pos = scalefac_l[0 * 2 * 21 + gr * 21 + sfb]) != 7) {
 
       int sfb_start = SCALEFACTOR_BAND_INDICES_LAYER_III[samplingFrequency * (23 + 14) + 0 + sfb];
@@ -1308,7 +1306,7 @@ final class Decoder {
       float is_ratio_l;
       float is_ratio_r;
 
-    /* tan((6*PI)/12 = PI/2) needs special treatment! */
+      /* tan((6*PI)/12 = PI/2) needs special treatment! */
       if (is_pos == 6) {
         is_ratio_l = 1.0f;
         is_ratio_r = 0.0f;
@@ -1317,7 +1315,7 @@ final class Decoder {
         is_ratio_r = 1.0f / (1.0f + IS_RATIOS_LAYER_III[is_pos]);
       }
 
-    /* Now decode all samples in this scale factor band */
+      /* Now decode all samples in this scale factor band */
       for (int i = sfb_start; i < sfb_stop; i++) {
         is[0 * 2 * 576 + gr * 576 + i] *= is_ratio_l;
         is[1 * 2 * 576 + gr * 576 + i] *= is_ratio_r;
@@ -1381,17 +1379,17 @@ final class Decoder {
 
   private static void huffman_III(MainDataReader mainDataReader, int table_num, int[] array) {
     /* Table entries are 16 bits each:
-   * Bit(s)
-   * 15     hit/miss (1/0)
-   * 14-13  codeword size (1-4 bits)
-   * 7-0    codeword (bits 4-7=x, 0-3=y) if hit
-   * 12-0   start offset of next table if miss
-   */
+     * Bit(s)
+     * 15     hit/miss (1/0)
+     * 14-13  codeword size (1-4 bits)
+     * 7-0    codeword (bits 4-7=x, 0-3=y) if hit
+     * 12-0   start offset of next table if miss
+     */
 
     int point = 0;
     int currpos;
 
-  /* Check for empty tables */
+    /* Check for empty tables */
     if (HUFFMAN_TREELEN_LAYER_III[table_num] == 0) {
       array[0] = array[1] = array[2] = array[3] = 0;
       return;
@@ -1405,7 +1403,7 @@ final class Decoder {
     int bitsleft = 32;
 
     do {   /* Start reading the Huffman code word,bit by bit */
-    /* Check if we've matched a code word */
+      /* Check if we've matched a code word */
       if ((HUFFMAN_TABLE_LAYER_III[offset + point] & 0xff00) == 0) {
         error = 0;
         array[0] = (HUFFMAN_TABLE_LAYER_III[offset + point] >> 4) & 0xf;
@@ -1429,7 +1427,7 @@ final class Decoder {
       throw new IllegalStateException("Illegal Huff code in data. bleft = %d,point = %d. tab = %d." +
               bitsleft + " " + point + " " + table_num);
     }
-  /* Process sign encodings for quadruples tables. */
+    /* Process sign encodings for quadruples tables. */
     if (table_num > 31) {
       array[2] = (array[1] >> 3) & 1;
       array[3] = (array[1] >> 2) & 1;
@@ -1457,24 +1455,24 @@ final class Decoder {
         }
       }
     } else {
-    /* Get linbits */
+      /* Get linbits */
       if ((linbits > 0) && (array[0] == 15)) {
         array[0] += read(mainDataReader, linbits);
       }
 
-    /* Get sign bit */
+      /* Get sign bit */
       if (array[0] > 0) {
         if (read(mainDataReader, 1) == 1) {
           array[0] = -array[0];
         }
       }
 
-    /* Get linbits */
+      /* Get linbits */
       if ((linbits > 0) && (array[1] == 15)) {
         array[1] += read(mainDataReader, linbits);
       }
 
-    /* Get sign bit */
+      /* Get sign bit */
       if (array[1] > 0) {
         if (read(mainDataReader, 1) == 1) {
           array[1] = -array[1];

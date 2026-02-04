@@ -30,7 +30,7 @@ public class CmdAddGroupBy implements CmdCommand {
                     .flatMap(event -> {
                         // BLOCKTEST EVAL: https://github.com/ripreal/V8LogScanner/blob/3789156a0ab07c4b2cdd91e8165ca733ecc01905/src/main/java/org/v8LogScanner/cmdScanner/CmdAddGroupBy.java#L25-L29
                        /*
-                        @blocktest().given(event, new RegExp(), "RegExp").setup(() -> {
+                        @blocktest().given(event, new RegExp()).setup(() -> {
                             event.getGroupingProps().add(PropTypes.Event);
                             event.getGroupingProps().add(PropTypes.Context);
                             event.getGroupingProps().add(PropTypes.Time);

@@ -77,8 +77,8 @@ public class Aggregate extends Operator {
                     // TODO 分组逻辑优化
                     rowsGrouped.compute(groupFieldValue, (k, v) -> {
                         // BLOCKTEST EVAL: https://github.com/nothingax/micro-DB/blob/1bbae368f7670f94130606fa65bcbc8ccbb89b98/src/main/java/com/microdb/operator/Aggregate.java#L73-L82
-                        // @blocktest("testA").given(v, null, "ArrayList<Integer>").given(aggregateFieldValue, 5, "int").checkEq(methodReturn.iterator().next(), 5, 0.001);
-                        // @blocktest("testB").given(v, new ArrayList<>(Arrays.asList(1,2)), "ArrayList<Integer>").given(aggregateFieldValue, 5, "int").checkEq(methodReturn.get(0), 1, 0.001).checkEq(methodReturn.get(1), 2, 0.001).checkEq(methodReturn.get(2), 5, 0.001).checkEq(methodReturn.size(), 3);
+                        // @blocktest("testA").given(v, null).given(aggregateFieldValue, 5).checkEq(methodReturn.iterator().next(), 5, 0.001);
+                        // @blocktest("testB").given(v, new ArrayList<>(Arrays.asList(1,2))).given(aggregateFieldValue, 5, "int").checkEq(methodReturn.get(0), 1, 0.001).checkEq(methodReturn.get(1), 2, 0.001).checkEq(methodReturn.get(2), 5, 0.001).checkEq(methodReturn.size(), 3);
                         if (v == null) {
                             ArrayList<Integer> objects = new ArrayList<>();
                             objects.add(aggregateFieldValue);

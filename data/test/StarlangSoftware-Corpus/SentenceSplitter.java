@@ -323,32 +323,60 @@ public abstract class SentenceSplitter {
                         currentWord = "";
                         // BLOCKTEST EVAL: https://github.com/StarlangSoftware/Corpus/blob/c0b50a746e5179df1b236273bcf1ec6d1cc988c7/src/main/java/Corpus/SentenceSplitter.java#L319C24-L362C26
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 1)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(curlyBracketCount, 1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 2)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(curlyBracketCount, -1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 3)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(specialQuotaCount, 1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 4)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(specialQuotaCount, -1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 5)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(specialQuotaCount, 1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 6)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(specialQuotaCount, -1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 7)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(specialQuotaCount, 1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 8)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(specialQuotaCount, -1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 9)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(roundParenthesisCount, 1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 10)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(roundParenthesisCount, -1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 11)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(bracketCount, 1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 12)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(bracketCount, -1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 13)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(quotaCount, 1).end(FIRST_ASSIGN);
                         blocktest().given(line, "a{}\uFF02\u05F4“”‘’()[]\"'").given(i, 14)
+                                .given(specialQuotaCount, 0).given(apostropheCount, 0).given(roundParenthesisCount, 0)
+                                .given(quotaCount, 0).given(bracketCount, 0).given(curlyBracketCount, 0)
                                 .checkEq(apostropheCount, 1).end(FIRST_ASSIGN);
                         switch (line.charAt(i)) {
                             case '{':

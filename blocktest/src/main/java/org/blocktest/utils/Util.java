@@ -32,6 +32,9 @@ public class Util {
     public static String depClassPaths;
     public static String appSrcPath;
     public static String junitVersion = "junit4";
+
+    public static boolean predictValue = false;
+
     public static boolean loadXml = true;
 
     public static Type getTypeFromStr(String input) {
@@ -58,8 +61,20 @@ public class Util {
             // Add cases for other primitives as needed
         }
 
+        if (input.equals("T") || input.equals("? extends T") || input.equals("? super T"))
+            return new ClassOrInterfaceType().setName("Object");
+
         // Handle array types
         if (input.endsWith("[]")) {
+            // Handle wildcard types
+            if (input.startsWith("?")) {
+                if (input.startsWith("? extends ")) {
+                    input = input.substring(10);
+                } else if (input.startsWith("? super ")) {
+                    input = input.substring(8);
+                }
+            }
+
             return new ArrayType(getTypeFromStr(input.substring(0, input.length() - 2)));
         }
 

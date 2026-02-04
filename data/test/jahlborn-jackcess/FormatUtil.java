@@ -1094,8 +1094,8 @@ public class FormatUtil
           ++numPlaceholders;
           subFmts.add((sb,cs) -> {
             // BLOCKTEST EVAL: https://github.com/jahlborn/jackcess/blob/22bf8a8642c84fc500f5c66ef59de1f7211f93a3/src/main/java/com/healthmarketscience/jackcess/impl/expr/FormatUtil.java#L1090-L1093
-            blocktest().given(sb, new StringBuilder()).given(cs.next(), 65, "int").checkTrue(sb.length() == 1).checkEq(sb.toString(), "A");
-            blocktest().given(sb, new StringBuilder()).given(cs.next(), -1, "int").checkTrue(sb.length() == 1).checkEq(sb.toString(), " ");
+            blocktest().given(sb, new StringBuilder()).given(cs.next(), 65).checkTrue(sb.length() == 1).checkEq(sb.toString(), "A");
+            blocktest().given(sb, new StringBuilder()).given(cs.next(), -1).checkTrue(sb.length() == 1).checkEq(sb.toString(), " ");
               int tmp = cs.next();
               sb.append((tmp != NO_CHAR) ? (char)tmp : ' ');
             });
@@ -1105,8 +1105,8 @@ public class FormatUtil
           ++numPlaceholders;
           subFmts.add((sb,cs) -> {
             // BLOCKTEST EVAL: https://github.com/jahlborn/jackcess/blob/22bf8a8642c84fc500f5c66ef59de1f7211f93a3/src/main/java/com/healthmarketscience/jackcess/impl/expr/FormatUtil.java#L1098-L1103
-            blocktest().given(sb, new StringBuilder()).given(cs.next(), 65, "int").checkTrue(sb.length() == 1).checkEq(sb.toString(), "A");
-            blocktest().given(sb, new StringBuilder()).given(cs.next(), -1, "int").checkTrue(sb.length() == 0);
+            blocktest().given(sb, new StringBuilder()).given(cs.next(), 65).checkTrue(sb.length() == 1).checkEq(sb.toString(), "A");
+            blocktest().given(sb, new StringBuilder()).given(cs.next(), -1).checkTrue(sb.length() == 0);
               int tmp = cs.next();
               if(tmp != NO_CHAR) {
                 sb.append((char)tmp);

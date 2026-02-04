@@ -77,8 +77,17 @@ public class BlockTestRunnerSourceCode {
             rewrite = Boolean.parseBoolean(params.get("rewrite"));
         }
 
+        boolean compile = true;
+        if (params.containsKey("compile")) {
+            compile = Boolean.parseBoolean(params.get("compile"));
+        }
+
+        if (params.containsKey("predict")) {
+            Util.predictValue = Boolean.parseBoolean(params.get("predict"));
+        }
+
         TestExtraction.extractTest(inputFilePath.toAbsolutePath().toString(), testOutputFile, publicClassName,
-                testClassName, duplicatedTestCount, coverage, rewrite);
+                testClassName, duplicatedTestCount, coverage, rewrite, compile);
     }
 
     private static HashMap<String, String> convertToKeyValuePair(String[] args) {

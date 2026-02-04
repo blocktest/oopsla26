@@ -31,6 +31,33 @@ public class BinaryQueryParser extends AbstractExactQueryParser {
             Object targetVal = ElasticSqlArgConverter.convertSqlArg(binQueryExpr.getRight());
             SqlConditionOperator operator = SQLBinaryOperator.Equality == binaryOperator ? SqlConditionOperator.Equality : SqlConditionOperator.NotEqual;
             return parseCondition(binQueryExpr.getLeft(), operator, new Object[]{targetVal}, queryAs, (queryFieldName, operator1, rightParamValues) -> {
+                // BLOCKTEST EVAL: https://github.com/iamazy/elasticsearch-sql2/blob/05a7743fb2bb70816f8255a7e7b3086374b15d8c/src/main/java/io/github/iamazy/elasticsearch/dsl/sql/parser/query/exact/BinaryQueryParser.java#L28-L36
+                blocktest().given(queryFieldName, "foo").given(rightParamValues, new Object[]{"1"}).given(operator1, SqlConditionOperator.Equality)
+                        .checkEq(methodReturn.toString(), "{\n" +
+                                "  \"term\" : {\n" +
+                                "    \"foo\" : {\n" +
+                                "      \"value\" : \"1\",\n" +
+                                "      \"boost\" : 1.0\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}");
+                blocktest().given(queryFieldName, "bar").given(rightParamValues, new Object[]{"12"}).given(operator1, SqlConditionOperator.IsNull)
+                        .checkEq(methodReturn.toString(), "{\n" +
+                                "  \"bool\" : {\n" +
+                                "    \"must_not\" : [\n" +
+                                "      {\n" +
+                                "        \"term\" : {\n" +
+                                "          \"bar\" : {\n" +
+                                "            \"value\" : \"12\",\n" +
+                                "            \"boost\" : 1.0\n" +
+                                "          }\n" +
+                                "        }\n" +
+                                "      }\n" +
+                                "    ],\n" +
+                                "    \"adjust_pure_negative\" : true,\n" +
+                                "    \"boost\" : 1.0\n" +
+                                "  }\n" +
+                                "}");
                 QueryBuilder eqQuery = QueryBuilders.termQuery(queryFieldName, rightParamValues[0]);
                 if (SqlConditionOperator.Equality == operator1) {
                     return eqQuery;
@@ -87,6 +114,27 @@ public class BinaryQueryParser extends AbstractExactQueryParser {
             }
             SqlConditionOperator operator = SQLBinaryOperator.Is == binaryOperator ? SqlConditionOperator.IsNull : SqlConditionOperator.IsNotNull;
             return parseCondition(binQueryExpr.getLeft(), operator, null, queryAs, (queryFieldName, operator13, rightParamValues) -> {
+                // BLOCKTEST EVAL: https://github.com/iamazy/elasticsearch-sql2/blob/05a7743fb2bb70816f8255a7e7b3086374b15d8c/src/main/java/io/github/iamazy/elasticsearch/dsl/sql/parser/query/exact/BinaryQueryParser.java#L84-L90
+                blocktest().given(queryFieldName, "foo").given(operator13, SqlConditionOperator.IsNull).checkEq(methodReturn.toString(), "{\n" +
+                        "  \"bool\" : {\n" +
+                        "    \"must_not\" : [\n" +
+                        "      {\n" +
+                        "        \"exists\" : {\n" +
+                        "          \"field\" : \"foo\",\n" +
+                        "          \"boost\" : 1.0\n" +
+                        "        }\n" +
+                        "      }\n" +
+                        "    ],\n" +
+                        "    \"adjust_pure_negative\" : true,\n" +
+                        "    \"boost\" : 1.0\n" +
+                        "  }\n" +
+                        "}");
+                blocktest().given(queryFieldName, "foo").given(operator13, SqlConditionOperator.IsNotNull).checkEq(methodReturn.toString(), "{\n" +
+                        "  \"exists\" : {\n" +
+                        "    \"field\" : \"foo\",\n" +
+                        "    \"boost\" : 1.0\n" +
+                        "  }\n" +
+                        "}");
                 ExistsQueryBuilder existsQuery = QueryBuilders.existsQuery(queryFieldName);
                 if (SqlConditionOperator.IsNull == operator13) {
                     return QueryBuilders.boolQuery().mustNot(existsQuery);
@@ -102,9 +150,9 @@ public class BinaryQueryParser extends AbstractExactQueryParser {
                 SqlConditionOperator operator=SQLBinaryOperator.Like == binaryOperator?SqlConditionOperator.Like:SqlConditionOperator.NotLike;
                 return parseCondition(binQueryExpr.getLeft(),operator,null,queryAs,((queryFieldName, operator1, rightParamValues) -> {
                     // BLOCKTEST EVAL: https://github.com/iamazy/elasticsearch-sql2/blob/05a7743fb2bb70816f8255a7e7b3086374b15d8c/src/main/java/io/github/iamazy/elasticsearch/dsl/sql/parser/query/exact/BinaryQueryParser.java#L98-L112
-                    blocktest().given(rightExpr, new SQLCharExpr("abc%def_")).given(leftExpr, new SQLCharExpr("name")).given(operator1, SqlConditionOperator.Like, "SqlConditionOperator")
+                    blocktest().given(rightExpr, new SQLCharExpr("abc%def_")).given(leftExpr, new SQLCharExpr("name")).given(operator1, SqlConditionOperator.Like)
                             .checkReturnEq(QueryBuilders.regexpQuery("'name'", "abc*def?"));
-                    blocktest().given(rightExpr, new SQLCharExpr("abc%def_")).given(leftExpr, new SQLCharExpr("name")).given(operator1, SqlConditionOperator.NotEqual, "SqlConditionOperator")
+                    blocktest().given(rightExpr, new SQLCharExpr("abc%def_")).given(leftExpr, new SQLCharExpr("name")).given(operator1, SqlConditionOperator.NotEqual)
                             .checkReturnEq(QueryBuilders.boolQuery().mustNot(QueryBuilders.regexpQuery("'name'", "abc*def?")));
 
                     String rightText=rightExpr.getText();

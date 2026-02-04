@@ -1642,9 +1642,9 @@ public class Window {
                                     SetFocus(child);
                                     final String childRet = child.HandleEvent(event, updateVisuals);
                                     // BLOCKTEST EVAL: https://github.com/blackbeard334/djoom3/blob/64362645420c99ac621b051a678de96883e2a329/src/main/java/neo/ui/Window.java#L1599-L1604
-                                    blocktest().given(childRet, "foo").given(child.flags, 0, "int").checkReturnEq("foo");
-                                    blocktest().given(childRet, "").given(child.flags, 0x000001FF, "int").checkReturnEq("RANDOM");
-                                    blocktest().given(childRet, null).given(child.flags, 0x000002FF, "int").checkReturnEq("");
+                                    blocktest().given(childRet, "foo").given(child.flags, 0).checkReturnEq("foo");
+                                    blocktest().given(childRet, "").given(child.flags, 0x000001FF).checkReturnEq("RANDOM");
+                                    blocktest().given(childRet, null).given(child.flags, 0x000002FF).checkReturnEq("");
                                     if (childRet != null && !childRet.isEmpty()) {
                                         return childRet;
                                     }

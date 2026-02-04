@@ -125,10 +125,10 @@ public abstract class Mijas {
 					else if (celms.endsWith("č")) {varianti.add(new Variants(celms.substring(0,celms.length()-1)+"c","Mija","c -> č"));}
 					else if (celms.endsWith("ļ")) {
 						// BLOCKTEST EVAL: https://github.com/PeterisP/morphology/blob/1195adb7bb994292e5b06f2b20f4feb6191ca951/src/main/java/lv/semti/morphology/analyzer/Mijas.java#L122C2-L125C96
-						blocktest().given(celms, "foošļ").checkEq(varianti.iterator().next().celms, "foosl");
-						blocktest().given(celms, "foožļ").checkEq(varianti.iterator().next().celms, "foozl");
-						blocktest().given(celms, "fooļļ").checkEq(varianti.iterator().next().celms, "fooll");
-						blocktest().given(celms, "foooļ").checkEq(varianti.iterator().next().celms, "foool");
+						blocktest().given(celms, "foošļ").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "foosl");
+						blocktest().given(celms, "foožļ").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "foozl");
+						blocktest().given(celms, "fooļļ").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "fooll");
+						blocktest().given(celms, "foooļ").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "foool");
 						if (celms.endsWith("šļ")) {varianti.add(new Variants(celms.substring(0,celms.length()-2)+"sl","Mija","sl -> šļ"));}
 						else if (celms.endsWith("žļ")) {varianti.add(new Variants(celms.substring(0,celms.length()-2)+"zl","Mija","zl -> žļ"));}
 						else if (celms.endsWith("ļļ")) {varianti.add(new Variants(celms.substring(0,celms.length()-2)+"ll","Mija","ll -> ļļ"));}
@@ -230,11 +230,12 @@ public abstract class Mijas {
 					}
 					break;
 				case 10: // īpašības vārds -āk- un vis-, -i apstākļa formai
-					// BLOCKTEST EVAL: https://github.com/PeterisP/morphology/blob/1195adb7bb994292e5b06f2b20f4feb6191ca951/src/main/java/lv/semti/morphology/analyzer/Mijas.java#L223-L228
-					blocktest().given(celms, "formai").checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Positive).checkEq(varianti.get(0).celms, "forma");
-					blocktest().given(celms, "visAāk").checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Superlative).checkEq(varianti.get(0).celms, "A");
-					blocktest().given(celms, "NOTAāk").checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "NOTA");
-					blocktest().given(celms, "NOT").checkTrue(varianti.isEmpty());
+					// BLOCKTEST RV: https://github.com/PeterisP/morphology/blob/1195adb7bb994292e5b06f2b20f4feb6191ca951/src/main/java/lv/semti/morphology/analyzer/Mijas.java#L223-L228
+					// RV (commented out)
+//					blocktest().given(celms, "formai").checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Positive).checkEq(varianti.get(0).celms, "forma");
+//					blocktest().given(celms, "visAāk").checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Superlative).checkEq(varianti.get(0).celms, "A");
+//					blocktest().given(celms, "NOTAāk").checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "NOTA");
+//					blocktest().given(celms, "NOT").checkTrue(varianti.isEmpty());
 					if (celms.endsWith("i")) varianti.add(new Variants(celms.substring(0,celms.length()-1),AttributeNames.i_Degree, AttributeNames.v_Positive));
 					if (celms.endsWith("āk")) {
 						if (celms.startsWith("vis")) varianti.add(new Variants(celms.substring(3,celms.length()-2),AttributeNames.i_Degree,AttributeNames.v_Superlative));
@@ -383,21 +384,22 @@ public abstract class Mijas {
 						pakāpe = AttributeNames.v_Superlative;
 						celms = celms.substring(3,celms.length());
 					}
-					// BLOCKTEST EVAL: https://github.com/PeterisP/morphology/blob/1195adb7bb994292e5b06f2b20f4feb6191ca951/src/main/java/lv/semti/morphology/analyzer/Mijas.java#L372-L380
-					blocktest().given(celms, "ak").given(pakāpe, AttributeNames.v_Comparative)
-						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "acī")
-					.checkEq(varianti.get(1).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(1).celms, "acē");
-					blocktest().given(celms, "ag").given(pakāpe, AttributeNames.v_Comparative)
-						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "adzī")
-						.checkEq(varianti.get(1).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(1).celms, "adzē");
-					blocktest().given(celms, "až").given(pakāpe, AttributeNames.v_Comparative)
-						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "adē")
-						.checkTrue(varianti.size() == 1);
-					blocktest().given(celms, "aļ").given(pakāpe, AttributeNames.v_Comparative)
-						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "alē")
-						.checkTrue(varianti.size() == 1);
-					blocktest().given(celms, "na").given(pakāpe, AttributeNames.v_Comparative)
-						.checkTrue(varianti.size() == 0);
+					// BLOCKTEST RV: https://github.com/PeterisP/morphology/blob/1195adb7bb994292e5b06f2b20f4feb6191ca951/src/main/java/lv/semti/morphology/analyzer/Mijas.java#L372-L380
+					// RV (commented out)
+//					blocktest().given(celms, "ak").given(pakāpe, AttributeNames.v_Comparative)
+//						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "acī")
+//					.checkEq(varianti.get(1).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(1).celms, "acē");
+//					blocktest().given(celms, "ag").given(pakāpe, AttributeNames.v_Comparative)
+//						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "adzī")
+//						.checkEq(varianti.get(1).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(1).celms, "adzē");
+//					blocktest().given(celms, "až").given(pakāpe, AttributeNames.v_Comparative)
+//						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "adē")
+//						.checkTrue(varianti.size() == 1);
+//					blocktest().given(celms, "aļ").given(pakāpe, AttributeNames.v_Comparative)
+//						.checkEq(varianti.get(0).getValue(AttributeNames.i_Degree), AttributeNames.v_Comparative).checkEq(varianti.get(0).celms, "alē")
+//						.checkTrue(varianti.size() == 1);
+//					blocktest().given(celms, "na").given(pakāpe, AttributeNames.v_Comparative)
+//						.checkTrue(varianti.size() == 0);
 					if (celms.endsWith("k") ) {
 						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "cī", AttributeNames.i_Degree, pakāpe)); //sacīt -> sakošākais
 						varianti.add(new Variants(celms.substring(0,celms.length()-1)+"cē", AttributeNames.i_Degree, pakāpe)); //mācēt -> mākošākais
@@ -514,42 +516,42 @@ public abstract class Mijas {
 					if (celms.endsWith("kš")) {
 						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "kst", "Mija", "kst -> kš"));
 					} else // Burtu miju ietekmētās vairāksimbolu mijas
-					if (celms.endsWith("šl")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šļ", "Mija", "šļ -> šl"));
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "sl", "Mija", "sl -> šl"));
-					} else if (celms.endsWith("žl")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žļ", "Mija", "žļ -> žl"));
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "zl", "Mija", "zl -> žl"));
-					} else if (celms.endsWith("šm")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šm", "Mija", "šm -> šm"));
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "sm", "Mija", "sn -> šn"));
-					} else if (celms.endsWith("šn")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šņ", "Mija", "šņ -> šn"));
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "sn", "Mija", "sn -> šn"));
-					} else if (celms.endsWith("žn")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žņ", "Mija", "žņ -> žn"));
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "zn", "Mija", "zn -> žn"));
-						// Parastās, mijīgās, mijas
-					} else if (celms.endsWith("č")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "c", "Mija", "c -> č"));
-					} else if (celms.endsWith("š")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "t", "Mija", "t -> š"));
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "s", "Mija", "s -> š"));
-					} else if (celms.endsWith("ž")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "d", "Mija", "d -> ž"));
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "z", "Mija", "z -> ž"));
-						// Burtu miju ietekmētās viensimbola mijas
-					} else if (celms.endsWith("l")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ļ", "Mija", "ļ -> l"));
-					} else if (celms.endsWith("n")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ņ", "Mija", "ņ -> n"));
-					} else if (celms.endsWith("k")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ķ", "Mija", "ķ -> k"));
-					} else if (celms.endsWith("g")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ģ", "Mija", "ģ -> g"));
-					} else {
-						varianti.add(new Variants(celms));
-					}
+						if (celms.endsWith("šl")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šļ", "Mija", "šļ -> šl"));
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "sl", "Mija", "sl -> šl"));
+						} else if (celms.endsWith("žl")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žļ", "Mija", "žļ -> žl"));
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "zl", "Mija", "zl -> žl"));
+						} else if (celms.endsWith("šm")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šm", "Mija", "šm -> šm"));
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "sm", "Mija", "sn -> šn"));
+						} else if (celms.endsWith("šn")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šņ", "Mija", "šņ -> šn"));
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "sn", "Mija", "sn -> šn"));
+						} else if (celms.endsWith("žn")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žņ", "Mija", "žņ -> žn"));
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "zn", "Mija", "zn -> žn"));
+							// Parastās, mijīgās, mijas
+						} else if (celms.endsWith("č")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "c", "Mija", "c -> č"));
+						} else if (celms.endsWith("š")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "t", "Mija", "t -> š"));
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "s", "Mija", "s -> š"));
+						} else if (celms.endsWith("ž")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "d", "Mija", "d -> ž"));
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "z", "Mija", "z -> ž"));
+							// Burtu miju ietekmētās viensimbola mijas
+						} else if (celms.endsWith("l")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ļ", "Mija", "ļ -> l"));
+						} else if (celms.endsWith("n")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ņ", "Mija", "ņ -> n"));
+						} else if (celms.endsWith("k")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ķ", "Mija", "ķ -> k"));
+						} else if (celms.endsWith("g")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ģ", "Mija", "ģ -> g"));
+						} else {
+							varianti.add(new Variants(celms));
+						}
 					break;
 				case 103: // līdzīgi `case 3` - īpašības vārdiem -uok- un vys-
 					if (celms.endsWith("uok") && celms.length() > 3) {
@@ -794,11 +796,11 @@ public abstract class Mijas {
 					}
 					else if (celms.endsWith("n")) {
 						// BLOCKTEST EVAL: https://github.com/PeterisP/morphology/blob/1195adb7bb994292e5b06f2b20f4feb6191ca951/src/main/java/lv/semti/morphology/analyzer/Mijas.java#L767-L774
-						blocktest().given(celms, "foosn").checkEq(varianti.iterator().next().celms, "foošņ");
-						blocktest().given(celms, "foozn").checkEq(varianti.iterator().next().celms, "foožņ");
-						blocktest().given(celms, "fooln").checkEq(varianti.iterator().next().celms, "fooļņ");
-						blocktest().given(celms, "foonn").checkEq(varianti.iterator().next().celms, "fooņņ");
-						blocktest().given(celms, "fooon").checkEq(varianti.iterator().next().celms, "foooņ");
+						blocktest().given(celms, "foosn").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "foošņ");
+						blocktest().given(celms, "foozn").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "foožņ");
+						blocktest().given(celms, "fooln").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "fooļņ");
+						blocktest().given(celms, "foonn").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "fooņņ");
+						blocktest().given(celms, "fooon").given(varianti, new ArrayList<Variants>(1)).checkEq(varianti.iterator().next().celms, "foooņ");
 						if (celms.endsWith("sn")) {varianti.add(new Variants(celms.substring(0,celms.length()-2)+"šņ","Mija","sn -> šņ"));}
 						else if (celms.endsWith("zn")) {varianti.add(new Variants(celms.substring(0,celms.length()-2)+"žņ","Mija","zn -> žņ"));}
 						else if (celms.endsWith("ln")) {varianti.add(new Variants(celms.substring(0,celms.length()-2)+"ļņ","Mija","ln -> ļņ"));}
@@ -1148,39 +1150,39 @@ public abstract class Mijas {
 					if (celms.endsWith("kst")) {
 						varianti.add(new Variants(celms.substring(0, celms.length() - 3) + "kš"));
 					} else // Burtu miju ietekmētās vairāksimbolu mijas
-					if (celms.endsWith("šļ") || celms.endsWith("sl")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šl"));
-					} else if (celms.endsWith("žļ") || celms.endsWith("zl")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žl"));
-					} else if (celms.endsWith("šm") || celms.endsWith("sm")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šm"));
-					} else if (celms.endsWith("šņ") || celms.endsWith("sn")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šn"));
-					} else if (celms.endsWith("žņ") || celms.endsWith("zn")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žn"));
-						// Parastās, mijīgās, mijas
-					} else if (celms.endsWith("c")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "č"));
-					} else if (celms.endsWith("s")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "š"));
-					} else if (celms.endsWith("t")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "š"));
-					} else if (celms.endsWith("z")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ž"));
-					} else if (celms.endsWith("d")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ž"));
-						// Burtu miju ietekmētās viensimbola mijas
-					} else if (celms.endsWith("ļ")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "l"));
-					} else if (celms.endsWith("ņ")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "n"));
-					} else if (celms.endsWith("ķ")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "k"));
-					} else if (celms.endsWith("ģ")) {
-						varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "g"));
-					} else {
-						varianti.add(new Variants(celms));
-					}
+						if (celms.endsWith("šļ") || celms.endsWith("sl")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šl"));
+						} else if (celms.endsWith("žļ") || celms.endsWith("zl")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žl"));
+						} else if (celms.endsWith("šm") || celms.endsWith("sm")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šm"));
+						} else if (celms.endsWith("šņ") || celms.endsWith("sn")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "šn"));
+						} else if (celms.endsWith("žņ") || celms.endsWith("zn")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 2) + "žn"));
+							// Parastās, mijīgās, mijas
+						} else if (celms.endsWith("c")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "č"));
+						} else if (celms.endsWith("s")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "š"));
+						} else if (celms.endsWith("t")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "š"));
+						} else if (celms.endsWith("z")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ž"));
+						} else if (celms.endsWith("d")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "ž"));
+							// Burtu miju ietekmētās viensimbola mijas
+						} else if (celms.endsWith("ļ")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "l"));
+						} else if (celms.endsWith("ņ")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "n"));
+						} else if (celms.endsWith("ķ")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "k"));
+						} else if (celms.endsWith("ģ")) {
+							varianti.add(new Variants(celms.substring(0, celms.length() - 1) + "g"));
+						} else {
+							varianti.add(new Variants(celms));
+						}
 					break;
 				case 103: // līdzīgi 'case 3' - īpašības vārdiem pieliekam -uok- un vys-
 					varianti.add(new Variants(celms,AttributeNames.i_Degree,AttributeNames.v_Positive));

@@ -29,7 +29,7 @@ import java.util.Optional;
  * @date 2021/02/05 12:38
  **/
 public class OracleToMySqlFunctionTransform implements OracleFunction {
-    
+
     @Override
     public void transformFunctionExpr(SQLExpr sqlExpr) {
         if (sqlExpr instanceof SQLMethodInvokeExpr) { //函数
@@ -57,7 +57,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
                     methodInvoke((SQLMethodInvokeExpr) e);
                 }
             });
-            
+
             if (SQLBinaryOperator.Concat == operator) {
                 String str = sqlExpr.toString();
                 SQLIdentifierExpr sqlIdentifierExpr = new SQLIdentifierExpr(String.format("concat(%s)", str.replaceAll("\\|\\|", ",")));
@@ -69,9 +69,9 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             } else if (sqlExpr instanceof SQLAggregateExpr) {
                 methodInvoke((SQLMethodInvokeExpr) sqlExpr);
             }
-            
+
             alias(sqlExpr);
-        
+
         } else if (sqlExpr instanceof SQLCastExpr) {
             SQLDataType dataType = ((SQLCastExpr) sqlExpr).getDataType();
             if (!ObjectUtils.isEmpty(dataType) && "timestamp".equalsIgnoreCase(dataType.getName())) {
@@ -79,7 +79,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public String concat(SQLObject sqlObject) {
         StringBuilder sb = new StringBuilder();
@@ -101,7 +101,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
         }
         return sb.toString();
     }
-    
+
     @Override
     public void listagg(SQLMethodInvokeExpr expr) {
         if (expr instanceof SQLAggregateExpr) {
@@ -114,9 +114,9 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
                 StringBuffer orderBy = new StringBuffer();
                 children.forEach(e -> {
                     // BLOCKTEST EVAL: https://github.com/Isaac315/sql-translator/blob/78f3fb0091c94563a640ef672de3e75e2b5c3bb2/src/main/java/com/raysonfang/sqltranslator/sql/dialect/oracle/function/OracleToMySqlFunctionTransform.java#L109-L121
-                    blocktest().given(e, new SQLPropertyExpr("owner", "name"), "Object").checkEq(field.toString(), "name");
-                    blocktest().given(e, new SQLCharExpr("text", null), "Object").checkEq(fieldVal.toString(), " separator 'text'");
-                    blocktest().given(e, new SQLOrderBy(new SQLIntegerExpr(1)), "Object").checkEq(orderBy.toString(), "1");
+                    blocktest().given(e, new SQLPropertyExpr("owner", "name")).given(field, new StringBuffer()).given(fieldVal, new StringBuffer()).given(orderBy, new StringBuffer()).checkEq(field.toString(), "name");
+                    blocktest().given(e, new SQLCharExpr("text", null)).given(field, new StringBuffer()).given(fieldVal, new StringBuffer()).given(orderBy, new StringBuffer()).checkEq(fieldVal.toString(), " separator 'text'");
+                    blocktest().given(e, new SQLOrderBy(new SQLIntegerExpr(1))).given(field, new StringBuffer()).given(fieldVal, new StringBuffer()).given(orderBy, new StringBuffer()).checkEq(orderBy.toString(), "1");
                     if (e instanceof SQLPropertyExpr) {
                         field.append(((SQLPropertyExpr) e).getName());
                     } else if (e instanceof SQLCharExpr) {
@@ -125,11 +125,11 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
                     } else if (e instanceof SQLOrderBy) {
                         ((SQLOrderBy) e).getItems().forEach(c -> {
                             // BLOCKTEST EVAL: https://github.com/Isaac315/sql-translator/blob/78f3fb0091c94563a640ef672de3e75e2b5c3bb2/src/main/java/com/raysonfang/sqltranslator/sql/dialect/oracle/function/OracleToMySqlFunctionTransform.java#L116-L118
-                            blocktest().given(c, new SQLSelectOrderByItem(new SQLDoubleExpr(12)), "SQLSelectOrderByItem").checkEq(orderBy.toString(), "DOUBLE '12.0'");
+                            blocktest().given(c, new SQLSelectOrderByItem(new SQLDoubleExpr(12))).given(field, new StringBuffer()).given(fieldVal, new StringBuffer()).given(orderBy, new StringBuffer()).checkEq(orderBy.toString(), "DOUBLE '12.0'");
                             orderBy.append(c.getExpr().toString());
                         });
                     }
-                
+
                 });
                 sb.append("group_concat(");
                 sb.append(field);
@@ -138,7 +138,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
                     sb.append(" order by ");
                     sb.append(orderBy);
                 }
-            
+
                 sb.append(" ");
                 sb.append(fieldVal);
                 sb.append(")");
@@ -146,12 +146,12 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void sys_guid(SQLMethodInvokeExpr expr) {
         identifierExpr("md5(uuid())", expr);
     }
-    
+
     @Override
     public void to_char(SQLMethodInvokeExpr expr) {
         expr.setMethodName("date_format");
@@ -164,7 +164,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
                 if (textStr.indexOf("99") < 0) {
                     ((SQLCharExpr) sqlObj).setText(formatDate(textStr));
                 } else {
-                
+
                     sqlCharExpr = new SQLIdentifierExpr(String.valueOf(getRound(textStr)));
                     sqlCharExpr.setParent(sqlObj.getParent());
                     children.set(i, sqlCharExpr);
@@ -185,7 +185,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
                             continue;
                         }
                     }
-                
+
                 } else if (sqlObj instanceof SQLIdentifierExpr) {
                     if (sqlObj.getParent() instanceof SQLMethodInvokeExpr) {
                         if (((SQLMethodInvokeExpr) sqlObj.getParent()).getArguments().size() > 1) {
@@ -213,7 +213,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void to_date(SQLMethodInvokeExpr expr) {
         expr.setMethodName("str_to_date");
@@ -226,7 +226,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void to_timestamp(SQLMethodInvokeExpr expr) {
         expr.setMethodName("str_to_date");
@@ -239,7 +239,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void to_number(SQLMethodInvokeExpr expr) {
         expr.setMethodName("cast");
@@ -261,7 +261,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void trunc(SQLMethodInvokeExpr expr) {
         List<SQLObject> children = expr.getChildren();
@@ -313,22 +313,22 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void nvl(SQLMethodInvokeExpr expr) {
         expr.setMethodName("ifnull");
     }
-    
+
     @Override
     public void nvl2(SQLMethodInvokeExpr expr) {
         expr.setMethodName("if");
     }
-    
+
     @Override
     public void length(SQLMethodInvokeExpr expr) {
         expr.setMethodName("char_length");
     }
-    
+
     @Override
     public void instr(SQLMethodInvokeExpr expr) {
         List<SQLObject> children = expr.getChildren();
@@ -339,7 +339,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             children.set(1, sqlObject);
         }
     }
-    
+
     @Override
     public void substr(SQLMethodInvokeExpr expr) {
         List<SQLObject> children = expr.getChildren();
@@ -359,7 +359,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void add_months(SQLMethodInvokeExpr expr) {
         List<SQLObject> children = expr.getChildren();
@@ -376,12 +376,12 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     @Override
     public void hextoraw(SQLMethodInvokeExpr expr) {
         expr.setMethodName("UNHEX");
     }
-    
+
     @Override
     public void decode(SQLMethodInvokeExpr expr) {
         SQLExpr expr1 = OracleSQLDataTypeTransformUtil.transformDecode(expr);
@@ -391,7 +391,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             ((SQLBinaryOpExpr) expr.getParent()).setRight(expr1);
         }
     }
-    
+
     @Override
     public String formatDate(String format) {
         if(format.toUpperCase().startsWith("S")) {
@@ -407,7 +407,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
                 .replaceAll(".FF", ".%f")
                 .replaceAll(":FF", ".%f");
     }
-    
+
     @Override
     public String formatKeyField(String format) {
         if (MySqlUtil.containsKeyWords(format)) {
@@ -415,7 +415,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
         }
         return format;
     }
-    
+
     @Override
     public void alias(SQLExpr sqlExpr) {
         if (sqlExpr.getParent() instanceof SQLSelectItem) {//取别名 as
@@ -427,7 +427,7 @@ public class OracleToMySqlFunctionTransform implements OracleFunction {
             }
         }
     }
-    
+
     /**
      * 获取四舍五入小数点多少位
      * to_char(999995.6, '9999999999990.999999')

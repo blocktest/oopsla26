@@ -66,7 +66,7 @@ class KeyMapper {
             } else if (mappedKeys instanceof List) {
                 ((List<String>) mappedKeys).forEach(mappedKey -> {
                     // BLOCKTEST EVAL: https://github.com/wso2/config-mapper/blob/353b0829d3bf3dae92312dea6ff1dddff9a74fe6/src/main/java/org/wso2/config/mapper/KeyMapper.java#L61-L63
-                    blocktest().given(mappedKey, "foo").given(entry.getValue(), (Object) new String("foo"), "Object").checkEq(mappedConfigs.get("foo").toString(), "foo");
+                    blocktest().given(mappedKey, "foo").given(entry.getValue(), (Object) new String("foo")).checkEq(mappedConfigs.get("foo").toString(), "foo");
                     mappedConfigs.put(mappedKey, entry.getValue());
                 });
             }

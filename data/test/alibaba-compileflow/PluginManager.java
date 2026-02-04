@@ -94,7 +94,7 @@ public class PluginManager implements Lifecycle {
 
     private void loadPluginFromXML() {
         String pluginXmlFileName = PLUGIN_DIRECTORY + PropertyHelper.getProperty(PLUGIN_XML_FILE_NAME,
-            DEFAULT_PLUGIN_XML_FILE_NAME);
+                DEFAULT_PLUGIN_XML_FILE_NAME);
 
         URL[] pluginXmlResourceUrls = ClassLoaderUtils.getResources(pluginXmlFileName);
         if (ArrayUtils.isEmpty(pluginXmlResourceUrls)) {
@@ -102,13 +102,13 @@ public class PluginManager implements Lifecycle {
         }
 
         Arrays.stream(pluginXmlResourceUrls).map(this::parsePluginXml)
-            .filter(Objects::nonNull)
-            .forEach(this::registerPlugin);
+                .filter(Objects::nonNull)
+                .forEach(this::registerPlugin);
     }
 
     private void loadPluginFromProperty() {
         String pluginPropertyFileName = PLUGIN_DIRECTORY + PropertyHelper.getProperty(
-            PLUGIN_PROPERTY_FILE_NAME, DEFAULT_PLUGIN_PROPERTY_FILE_NAME);
+                PLUGIN_PROPERTY_FILE_NAME, DEFAULT_PLUGIN_PROPERTY_FILE_NAME);
 
         URL[] pluginPropertyResourceUrls = ClassLoaderUtils.getResources(pluginPropertyFileName);
         if (ArrayUtils.isEmpty(pluginPropertyResourceUrls)) {
@@ -116,9 +116,9 @@ public class PluginManager implements Lifecycle {
         }
 
         Arrays.stream(pluginPropertyResourceUrls)
-            .map(PropertyHelper::getProperties)
-            .map(this::buildPluginConfigFromProperty)
-            .forEach(this::registerPlugin);
+                .map(PropertyHelper::getProperties)
+                .map(this::buildPluginConfigFromProperty)
+                .forEach(this::registerPlugin);
     }
 
     private PluginConfig buildPluginConfigFromProperty(Properties properties) {
@@ -133,22 +133,22 @@ public class PluginManager implements Lifecycle {
             String[] pluginDependencies = pluginDependsOn.split(",");
             if (ArrayUtils.isNotEmpty(pluginDependencies)) {
                 List<PluginDependencyConfig> pluginDependencyConfigs = Arrays.stream(pluginDependencies)
-                    .filter(StringUtils::isNotEmpty).map(String::trim)
-                    .map(d -> {
-                        // BLOCKTEST EVAL: https://github.com/alibaba/compileflow/blob/e96a05224f71bf4aa3d9fb37bba85764b2fc153f/src/main/java/com/alibaba/compileflow/engine/common/extension/PluginManager.java#L132-L141
-                        blocktest("testThree").given(d, "foo", "String").checkReturnEq(null);
-                        blocktest("testFour").given(d, "", "String").checkReturnEq(null);
-                        String[] dependencyConfig = d.split(":");
-                        if (ArrayUtils.isEmpty(dependencyConfig) || dependencyConfig.length != 2) {
-                            return null;
-                        }
-                        PluginDependencyConfig pluginDependencyConfig = new PluginDependencyConfig();
-                        pluginDependencyConfig.setPluginId(dependencyConfig[0]);
-                        pluginDependencyConfig.setPluginVersion(dependencyConfig[1]);
-                        // @blocktest("testOne").given(d, "foo:1.0.0", "String").checkEq(methodReturn.getPluginId(), "foo").checkEq(methodReturn.getPluginVersion(), "1.0.0").start(FIRST_BLOCK, false);
-                        // @blocktest("testTwo").given(d, "foo:bar", "String").checkEq(methodReturn.getPluginId(), "foo").checkEq(methodReturn.getPluginVersion(), "bar").start(FIRST_BLOCK, false);
-                        return pluginDependencyConfig;
-                    }).filter(Objects::nonNull).collect(Collectors.toList());
+                        .filter(StringUtils::isNotEmpty).map(String::trim)
+                        .map(d -> {
+                            // BLOCKTEST EVAL: https://github.com/alibaba/compileflow/blob/e96a05224f71bf4aa3d9fb37bba85764b2fc153f/src/main/java/com/alibaba/compileflow/engine/common/extension/PluginManager.java#L132-L141
+                            blocktest("testThree").given(d, "foo").checkReturnEq(null);
+                            blocktest("testFour").given(d, "").checkReturnEq(null);
+                            String[] dependencyConfig = d.split(":");
+                            if (ArrayUtils.isEmpty(dependencyConfig) || dependencyConfig.length != 2) {
+                                return null;
+                            }
+                            PluginDependencyConfig pluginDependencyConfig = new PluginDependencyConfig();
+                            pluginDependencyConfig.setPluginId(dependencyConfig[0]);
+                            pluginDependencyConfig.setPluginVersion(dependencyConfig[1]);
+                            // @blocktest("testOne").given(d, "foo:1.0.0").given(dependencyConfig, d.split(":")).checkEq(methodReturn.getPluginId(), "foo").checkEq(methodReturn.getPluginVersion(), "1.0.0").start(FIRST_BLOCK, false);
+                            // @blocktest("testTwo").given(d, "foo:bar").given(dependencyConfig, d.split(":")).checkEq(methodReturn.getPluginId(), "foo").checkEq(methodReturn.getPluginVersion(), "bar").start(FIRST_BLOCK, false);
+                            return pluginDependencyConfig;
+                        }).filter(Objects::nonNull).collect(Collectors.toList());
                 pluginConfig.setPluginDependencyConfigs(pluginDependencyConfigs);
             }
         }
@@ -177,7 +177,7 @@ public class PluginManager implements Lifecycle {
             cfPlugin.setName(pluginConfig.getName());
             cfPlugin.setDescription(pluginConfig.getDescription());
             cfPlugin.setPluginDependencies(
-                conventDependencyConfig2Descriptor(pluginConfig.getPluginDependencyConfigs()));
+                    conventDependencyConfig2Descriptor(pluginConfig.getPluginDependencyConfigs()));
 
             plugins.add(cfPlugin);
             pluginMap.put(cfPlugin.getId(), cfPlugin);
@@ -186,9 +186,18 @@ public class PluginManager implements Lifecycle {
     }
 
     private List<PluginDependencyDescriptor> conventDependencyConfig2Descriptor(
-        List<PluginDependencyConfig> pluginDependencyConfigs) {
+            List<PluginDependencyConfig> pluginDependencyConfigs) {
         if (CollectionUtils.isNotEmpty(pluginDependencyConfigs)) {
             return pluginDependencyConfigs.stream().map(config -> {
+                // BLOCKTEST EVAL: https://github.com/alibaba/compileflow/blob/e96a05224f71bf4aa3d9fb37bba85764b2fc153f/src/main/java/com/alibaba/compileflow/engine/common/extension/PluginManager.java#L181-L186
+                blocktest().given(config, new PluginDependencyConfig()).setup(() -> {
+                    config.setPluginId("pluginId");
+                    config.setPluginVersion("1.0.0");
+                }).checkEq(((PluginDependencyDescriptor) methodReturn).getPluginId(), "pluginId").checkEq(((PluginDependencyDescriptor) methodReturn).getPluginVersion(), "1.0.0");
+                blocktest().given(config, new PluginDependencyConfig()).setup(() -> {
+                    config.setPluginId("bye");
+                    config.setPluginVersion("2.0.0");
+                }).checkEq(((PluginDependencyDescriptor) methodReturn).getPluginId(), "bye").checkEq(((PluginDependencyDescriptor) methodReturn).getPluginVersion(), "2.0.0");
                 PluginDependencyDescriptor pluginDependencyDescriptor = new PluginDependencyDescriptor();
                 pluginDependencyDescriptor.setPluginId(config.getPluginId());
                 pluginDependencyDescriptor.setPluginVersion(config.getPluginVersion());
@@ -248,8 +257,8 @@ public class PluginManager implements Lifecycle {
 
     private void loadPluginFromAnnotation() {
         List<Class<?>> pluginClasses = PackageUtils.getAllClassInPacakge("com.alibaba.compileflow.plugin")
-            .stream().filter(clazz -> clazz.isAnnotationPresent(com.alibaba.compileflow.engine.common.extension.annotation.Plugin.class))
-            .collect(Collectors.toList());
+                .stream().filter(clazz -> clazz.isAnnotationPresent(com.alibaba.compileflow.engine.common.extension.annotation.Plugin.class))
+                .collect(Collectors.toList());
         validatePlugin(pluginClasses);
         if (CollectionUtils.isNotEmpty(pluginClasses)) {
             validatePlugin(pluginClasses);
@@ -259,12 +268,12 @@ public class PluginManager implements Lifecycle {
 
     private void validatePlugin(List<Class<?>> pluginClasses) {
         List<Class<?>> errorPluginClasses = pluginClasses.stream().filter(
-            clazz -> !Plugin.class.isAssignableFrom(clazz))
-            .collect(Collectors.toList());
+                        clazz -> !Plugin.class.isAssignableFrom(clazz))
+                .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(errorPluginClasses)) {
             logger.error("Plugin is not subClass of Compileflow Plugin, ["
-                + errorPluginClasses.stream().map(Class::getName)
-                .collect(Collectors.joining(", ")) + "]");
+                    + errorPluginClasses.stream().map(Class::getName)
+                    .collect(Collectors.joining(", ")) + "]");
         }
     }
 
@@ -275,7 +284,7 @@ public class PluginManager implements Lifecycle {
             return (PluginConfig) unmarshaller.unmarshal(pluginXmlResourceUrl.openStream());
         } catch (Exception e) {
             logger.error("Failed to parse plugin xml file, file is "
-                + pluginXmlResourceUrl.getFile(), e);
+                    + pluginXmlResourceUrl.getFile(), e);
         }
         return null;
     }
@@ -299,8 +308,8 @@ public class PluginManager implements Lifecycle {
         List<Plugin> cyclicPlugins = pluginGraph.findCyclicVertexList();
         if (CollectionUtils.isNotEmpty(cyclicPlugins)) {
             throw new PluginException("Plugin has cyclic dependency, ["
-                + cyclicPlugins.stream().map(Plugin::getName)
-                .collect(Collectors.joining(", ")) + "]");
+                    + cyclicPlugins.stream().map(Plugin::getName)
+                    .collect(Collectors.joining(", ")) + "]");
         }
     }
 
@@ -308,7 +317,7 @@ public class PluginManager implements Lifecycle {
         Plugin dependencyPlugin = pluginMap.get(pluginDependency.getPluginId());
         if (dependencyPlugin == null) {
             throw new PluginException(
-                "Dependency plugin not found, please check plugin, id is " + pluginDependency.getPluginId());
+                    "Dependency plugin not found, please check plugin, id is " + pluginDependency.getPluginId());
         }
         return dependencyPlugin;
     }
@@ -325,16 +334,16 @@ public class PluginManager implements Lifecycle {
                 }
 
                 String extensionPackage = plugin.getExtensionPackage() != null ? plugin.getExtensionPackage()
-                    : plugin.getClass().getPackage().getName();
+                        : plugin.getClass().getPackage().getName();
                 if (extensionPackage != null) {
                     List<Class<? extends IExtensionPoint>> extensionClasses = PackageUtils.getAllClassInPacakge(
-                        extensionPackage)
-                        .stream().filter(IExtensionPoint.class::isAssignableFrom)
-                        .map(clazz -> (Class<? extends IExtensionPoint>) clazz)
-                        .collect(Collectors.toList());
+                                    extensionPackage)
+                            .stream().filter(IExtensionPoint.class::isAssignableFrom)
+                            .map(clazz -> (Class<? extends IExtensionPoint>) clazz)
+                            .collect(Collectors.toList());
                     for (Class<? extends IExtensionPoint> extensionClass : extensionClasses) {
                         Extension extensionAnnotation = AnnotationUtils.findAnnotation(extensionClass,
-                            Extension.class);
+                                Extension.class);
                         if (extensionAnnotation != null) {
                             registerExtension(extensionClass);
                         } else if (ClassUtils.isAbstractOrInterface(extensionClass)) {

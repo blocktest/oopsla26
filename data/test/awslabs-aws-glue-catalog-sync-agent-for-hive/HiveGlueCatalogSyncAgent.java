@@ -375,14 +375,14 @@ public class HiveGlueCatalogSyncAgent extends MetaStoreEventListener {
 					partitionEvent.getPartitionIterator().forEachRemaining(p -> {
 						// BLOCKTEST EVAL: https://github.com/awslabs/aws-glue-catalog-sync-agent-for-hive/blob/2ba77e5718c5b1988e711fac37966b40665bc385/src/main/java/com/amazonaws/services/glue/catalog/HiveGlueCatalogSyncAgent.java#L370-L384
 							/*
-							@blocktest("first2").noInit(table).given(p, null, "Partition").mock("getPartitionSpec(table, p)", "foo")
-									.mock("!addToAthenaQueue(addPartitionDDL)", true, "boolean")
+							@blocktest("first2").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
+									.mock("!addToAthenaQueue(addPartitionDDL)", true)
 									.given(p.getSd().getLocation(), "s3://bucket/folder", "String").given(fqtn, "cool")
 									.checkFlow(IfStmt().Then().IfStmt().Then());
 							 */
 							/*
-							@blocktest("second2").noInit(table).given(p, null, "Partition").mock("getPartitionSpec(table, p)", "foo")
-									.mock("!addToAthenaQueue(addPartitionDDL)", true, "boolean")
+							@blocktest("second2").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
+									.mock("!addToAthenaQueue(addPartitionDDL)", true)
 									.given(p.getSd().getLocation(), "s4://bucket/folder", "String").given(fqtn, "cool")
 									.checkFlow(IfStmt().Else());
 							 */
@@ -425,14 +425,14 @@ public class HiveGlueCatalogSyncAgent extends MetaStoreEventListener {
 						partitionEvent.getPartitionIterator().forEachRemaining(p -> {
 							// BLOCKTEST EVAL: https://github.com/awslabs/aws-glue-catalog-sync-agent-for-hive/blob/2ba77e5718c5b1988e711fac37966b40665bc385/src/main/java/com/amazonaws/services/glue/catalog/HiveGlueCatalogSyncAgent.java#L407-L427
 							/*
-							@blocktest("first").noInit(table).given(p, null, "Partition").mock("getPartitionSpec(table, p)", "foo")
-									.mock("!addToAthenaQueue(ddl)", true, "boolean")
+							@blocktest("first").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
+									.mock("!addToAthenaQueue(ddl)", true)
 									.given(p.getSd().getLocation(), "s3://bucket/folder", "String").given(fqtn, "cool")
 									.checkFlow(IfStmt().Then().IfStmt().Then());
 							 */
 							/*
-							@blocktest("second").noInit(table).given(p, null, "Partition").mock("getPartitionSpec(table, p)", "foo")
-									.mock("!addToAthenaQueue(ddl)", true, "boolean")
+							@blocktest("second").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
+									.mock("!addToAthenaQueue(ddl)", true)
 									.given(p.getSd().getLocation(), "s4://bucket/folder", "String").given(fqtn, "cool")
 									.checkFlow(IfStmt().Else());
 							 */

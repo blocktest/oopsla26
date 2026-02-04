@@ -99,8 +99,8 @@ import org.slf4j.LoggerFactory;
         service = {}
 )
 @Capability(namespace = ExtenderNamespace.EXTENDER_NAMESPACE,
-            name = BundledScriptTracker.NS_SLING_SCRIPTING_EXTENDER,
-            version = "1.0.0")
+        name = BundledScriptTracker.NS_SLING_SCRIPTING_EXTENDER,
+        version = "1.0.0")
 public class BundledScriptTracker implements BundleTrackerCustomizer<List<ServiceRegistration<Servlet>>> {
     static final String NS_SLING_SCRIPTING_EXTENDER = "sling.scripting";
 
@@ -197,14 +197,14 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                         }
                         String[] resourceTypesRegistrationValue = resourceTypesRegistrationValueSet.stream().filter(rt -> {
                             // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L193-L202
-                            blocktest().given(rt, "foo").given(this.searchPaths, Arrays.asList("/apps/", "/libs/"), "List<String>")
-                                    .given(resourceTypesRegistrationValueSet, new HashSet<>(Arrays.asList("foo", "bar")), "Set<String>")
+                            blocktest().given(rt, "foo").given(this.searchPaths, Arrays.asList("/apps/", "/libs/"))
+                                    .given(resourceTypesRegistrationValueSet, new LinkedHashSet<>(Arrays.asList("foo", "bar")))
                                     .checkReturnTrue();
-                            blocktest().given(rt, "foo").given(this.searchPaths, Arrays.asList("/apps/", "/libs/"), "List<String>")
-                                    .given(resourceTypesRegistrationValueSet, new HashSet<>(Arrays.asList("/apps/foo", "bar")), "Set<String>")
+                            blocktest().given(rt, "foo").given(this.searchPaths, Arrays.asList("/apps/", "/libs/"))
+                                    .given(resourceTypesRegistrationValueSet, new LinkedHashSet<>(Arrays.asList("/apps/foo", "bar")))
                                     .checkReturnFalse();
-                            blocktest().given(rt, "/foo").given(this.searchPaths, Arrays.asList("/apps", "/libs/"), "List<String>")
-                                    .given(resourceTypesRegistrationValueSet, new HashSet<>(Arrays.asList("/apps/foo", "bar")), "Set<String>")
+                            blocktest().given(rt, "/foo").given(this.searchPaths, Arrays.asList("/apps", "/libs/"))
+                                    .given(resourceTypesRegistrationValueSet, new LinkedHashSet<>(Arrays.asList("/apps/foo", "bar")))
                                     .checkReturnTrue();
                             if (!rt.startsWith("/")) {
                                 for (String prefix : this.searchPaths) {
@@ -234,11 +234,11 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                         if (StringUtils.isNotEmpty(extendedResourceTypeString)) {
                             collectInheritanceChain(inheritanceChain, bundleWiring, extendedResourceTypeString, cache);
                             inheritanceChain.stream().filter(typeProvider -> typeProvider.getBundledRenderUnitCapability().getResourceTypes().stream()
-                                    .anyMatch(resourceType -> resourceType.getType().equals(extendedResourceTypeString))).findFirst()
+                                            .anyMatch(resourceType -> resourceType.getType().equals(extendedResourceTypeString))).findFirst()
                                     .ifPresent(typeProvider -> {
                                         // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L223-L229
-                                        blocktest().given(typeProvider.getBundledRenderUnitCapability().getResourceTypes(), new HashSet<>(Arrays.asList(ResourceType.parseResourceType("testing/1.0.0"), ResourceType.parseResourceType("testing2/2.0.1"))), "Set<ResourceType>")
-                                                .given(extendedResourceTypeString, "testing").checkEq(properties.get("sling.servlet.resourceSuperType"), "testing/1.0.0");
+                                        blocktest().given(typeProvider.getBundledRenderUnitCapability().getResourceTypes(), new HashSet<ResourceType>(Arrays.asList(ResourceType.parseResourceType("testing/1.0.0"), ResourceType.parseResourceType("testing2/2.0.1"))))
+                                                .given(properties, new Hashtable<>()).given(extendedResourceTypeString, "testing").checkEq(properties.get("sling.servlet.resourceSuperType"), "testing/1.0.0");
                                         for (ResourceType type : typeProvider.getBundledRenderUnitCapability().getResourceTypes()) {
                                             if (type.getType().equals(extendedResourceTypeString)) {
                                                 properties.put(ServletResolverConstants.SLING_SERVLET_RESOURCE_SUPER_TYPE, type.toString());
@@ -269,31 +269,31 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                             properties.put(ServletResolverConstants.SLING_SERVLET_PATHS, executablePath);
                         } else {
                             if (!bundledRenderUnitCapability.getResourceTypes().isEmpty() && bundledRenderUnitCapability.getSelectors().isEmpty() &&
-                                StringUtils.isEmpty(bundledRenderUnitCapability.getExtension()) &&
-                                StringUtils.isEmpty(bundledRenderUnitCapability.getMethod())) {
+                                    StringUtils.isEmpty(bundledRenderUnitCapability.getExtension()) &&
+                                    StringUtils.isEmpty(bundledRenderUnitCapability.getMethod())) {
                                 String scriptName = FilenameUtils.getName(executable.getPath());
                                 String scriptNameNoExtension = scriptName.substring(0, scriptName.lastIndexOf('.'));
                                 boolean noMatch =
-                                    bundledRenderUnitCapability.getResourceTypes().stream().noneMatch(resourceType -> {
-                                        // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L259-L269
-                                        blocktest().given(scriptNameNoExtension, "label").given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
-                                                .checkReturnTrue();
-                                        blocktest().given(scriptNameNoExtension, "label2").given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
-                                                .checkReturnFalse();
-                                        blocktest().given(scriptNameNoExtension, "testing").given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
-                                                .checkReturnTrue();
-                                        blocktest().given(scriptNameNoExtension, "testing2").given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
-                                                .checkReturnFalse();
-                                        String resourceTypePath = resourceType.toString();
-                                        String label;
-                                        int lastSlash = resourceTypePath.lastIndexOf('/');
-                                        if (lastSlash > -1) {
-                                            label = resourceTypePath.substring(lastSlash + 1);
-                                        } else {
-                                            label = resourceTypePath;
-                                        }
-                                        return label.equals(scriptNameNoExtension);
-                                    });
+                                        bundledRenderUnitCapability.getResourceTypes().stream().noneMatch(resourceType -> {
+                                            // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L259-L269
+                                            blocktest().given(scriptNameNoExtension, "label").given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
+                                                    .checkReturnTrue();
+                                            blocktest().given(scriptNameNoExtension, "label2").given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
+                                                    .checkReturnFalse();
+                                            blocktest().given(scriptNameNoExtension, "testing").given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
+                                                    .checkReturnTrue();
+                                            blocktest().given(scriptNameNoExtension, "testing2").given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
+                                                    .checkReturnFalse();
+                                            String resourceTypePath = resourceType.toString();
+                                            String label;
+                                            int lastSlash = resourceTypePath.lastIndexOf('/');
+                                            if (lastSlash > -1) {
+                                                label = resourceTypePath.substring(lastSlash + 1);
+                                            } else {
+                                                label = resourceTypePath;
+                                            }
+                                            return label.equals(scriptNameNoExtension);
+                                        });
                                 if (noMatch) {
                                     List<String> paths = new ArrayList<>();
                                     paths.add(executablePath);
@@ -311,14 +311,17 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                                             paths.add(resourceTypePath + "/" + label + ".servlet");
                                         }
                                         blocktest().given(resourceType, ResourceType.parseResourceType("testing/label/1.1.0"), "ResourceType").given(executableParentPath, "")
+                                                .given(properties, new Hashtable<>()).given(paths, new ArrayList<>())
                                                 .checkEq(resourceTypePath, "testing/label/1.1.0")
                                                 .checkEq(resourceType.getVersion().toString(), "1.1.0").checkTrue(paths.isEmpty())
                                                 .start(FIRST_BLOCK, 10);
                                         blocktest().given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
+                                                .given(properties, new Hashtable<>()).given(paths, new ArrayList<>())
                                                 .checkEq(resourceTypePath, "testing/label")
                                                 .checkEq(label, "label").checkTrue(paths.isEmpty())
                                                 .start(FIRST_BLOCK, 10);
                                         blocktest().given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
+                                                .given(properties, new Hashtable<>()).given(paths, new ArrayList<>())
                                                 .checkEq(resourceTypePath, "testing")
                                                 .checkEq(label, "testing")
                                                 .checkEq(paths.iterator().next(), "testing/testing.servlet")
@@ -342,9 +345,9 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                             if (!properties.containsKey(ServletResolverConstants.SLING_SERVLET_PATHS)) {
                                 bundledRenderUnitCapability.getResourceTypes().forEach(resourceType -> {
                                     // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L302-L306
-                                    blocktest().given(executableParentPath, "veryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun"), "ResourceType").given(executablePath, "foo")
+                                    blocktest().given(executableParentPath, "veryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun"), "ResourceType").given(executablePath, "foo").given(properties, new Hashtable<>())
                                             .checkEq(properties.get(ServletResolverConstants.SLING_SERVLET_PATHS), "foo");
-                                    blocktest().given(executableParentPath, "NOTveryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun"), "ResourceType").given(executablePath, "foo")
+                                    blocktest().given(executableParentPath, "NOTveryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun"), "ResourceType").given(executablePath, "foo").given(properties, new Hashtable<>())
                                             .checkTrue(properties.isEmpty());
                                     if (StringUtils.isNotEmpty(executableParentPath) && (executableParentPath + "/").startsWith(resourceType.toString() + "/")) {
                                         properties.put(ServletResolverConstants.SLING_SERVLET_PATHS, executablePath);
@@ -357,7 +360,7 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                         properties.put(Constants.SERVICE_DESCRIPTION,
                                 BundledScriptServlet.class.getName() + "{" + bundledRenderUnitCapability + "}");
                         regs.add(
-                            register(bundle.getBundleContext(), new BundledScriptServlet(inheritanceChain, executable), properties)
+                                register(bundle.getBundleContext(), new BundledScriptServlet(inheritanceChain, executable), properties)
                         );
                     } else {
                         LOGGER.debug(String.format("Unable to locate an executable for capability %s.", bundledRenderUnitCapability.toString()));
@@ -378,7 +381,7 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
     private final AtomicLong idCounter = new AtomicLong(0);
 
     private ServiceRegistration<Servlet> register(BundleContext context, Servlet servlet,
-            Hashtable<String, Object> properties) { // NOSONAR
+                                                  Hashtable<String, Object> properties) { // NOSONAR
         if (mounter.mountProviders()) {
             return context.registerService(Servlet.class, servlet, properties);
         }
@@ -451,9 +454,9 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
 
                     // If rank is not Integer, then spec says it defaults to zero.
                     Integer rank = (rankObj instanceof Integer)
-                        ? (Integer) rankObj : Integer.valueOf(0);
+                            ? (Integer) rankObj : Integer.valueOf(0);
                     Integer otherRank = (otherRankObj instanceof Integer)
-                        ? (Integer) otherRankObj : Integer.valueOf(0);
+                            ? (Integer) otherRankObj : Integer.valueOf(0);
 
                     // Sort by rank in ascending order.
                     if (rank.compareTo(otherRank) < 0) {
@@ -514,50 +517,54 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
         Map<Set<String>, ServiceRegistration<Servlet>> newDispatchers = new HashMap<>();
         final Converter c = Converters.standardConverter();
         Stream.concat(tracked.values().stream(), Stream.of(regs)).flatMap(List::stream)
-            .filter(ref -> getResourceTypeVersion(ref.getReference()) != null)
-            .map(this::toProperties)
-            .collect(Collectors.groupingBy(BundledScriptTracker::getResourceTypes)).forEach((rt, propList) -> {
-            Hashtable<String, Object> properties = new Hashtable<>(); // NOSONAR
-            properties.put(ServletResolverConstants.SLING_SERVLET_NAME, String.format("%s (%s)", DispatcherServlet.class.getSimpleName(),
-                    rt));
-            properties.put(ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES, rt.toArray());
-            Set<String> methods = propList.stream()
-                    .map(props -> props.getOrDefault(ServletResolverConstants.SLING_SERVLET_METHODS, new String[]{"GET", "HEAD"}))
-                    .map(v -> c.convert(v).to(String[].class)).map(Arrays::asList).flatMap(List::stream).collect(Collectors.toSet());
-            Set<String> extensions = propList.stream().map(props -> props.getOrDefault(ServletResolverConstants
-                    .SLING_SERVLET_EXTENSIONS, new String[]{"html"})).map(v -> c.convert(v).to(String[].class)).map(Arrays::asList).flatMap
-                    (List::stream).collect(Collectors.toSet());
-            properties.put(ServletResolverConstants.SLING_SERVLET_EXTENSIONS, extensions.toArray(new String[0]));
-            if (!methods.equals(new HashSet<>(Arrays.asList("GET", "HEAD")))) {
-                properties.put(ServletResolverConstants.SLING_SERVLET_METHODS, methods.toArray(new String[0]));
-            }
-
-            ServiceRegistration<Servlet> reg = oldDispatchers.remove(rt);
-            if (reg == null) {
-                Optional<BundleContext> registeringBundle = propList.stream().map(props -> {
-                    Bundle bundle = (Bundle) props.get(REGISTERING_BUNDLE);
-                    if (bundle != null) {
-                        return bundle.getBundleContext();
+                .filter(ref -> getResourceTypeVersion(ref.getReference()) != null)
+                .map(this::toProperties)
+                .collect(Collectors.groupingBy(BundledScriptTracker::getResourceTypes)).forEach((rt, propList) -> {
+                    Hashtable<String, Object> properties = new Hashtable<>(); // NOSONAR
+                    properties.put(ServletResolverConstants.SLING_SERVLET_NAME, String.format("%s (%s)", DispatcherServlet.class.getSimpleName(),
+                            rt));
+                    properties.put(ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES, rt.toArray());
+                    Set<String> methods = propList.stream()
+                            .map(props -> props.getOrDefault(ServletResolverConstants.SLING_SERVLET_METHODS, new String[]{"GET", "HEAD"}))
+                            .map(v -> c.convert(v).to(String[].class)).map(Arrays::asList).flatMap(List::stream).collect(Collectors.toSet());
+                    Set<String> extensions = propList.stream().map(props -> props.getOrDefault(ServletResolverConstants
+                            .SLING_SERVLET_EXTENSIONS, new String[]{"html"})).map(v -> c.convert(v).to(String[].class)).map(Arrays::asList).flatMap
+                            (List::stream).collect(Collectors.toSet());
+                    properties.put(ServletResolverConstants.SLING_SERVLET_EXTENSIONS, extensions.toArray(new String[0]));
+                    if (!methods.equals(new HashSet<>(Arrays.asList("GET", "HEAD")))) {
+                        properties.put(ServletResolverConstants.SLING_SERVLET_METHODS, methods.toArray(new String[0]));
                     }
-                    return null;
-                }).findFirst();
-                properties.put(Constants.SERVICE_DESCRIPTION,
-                        DispatcherServlet.class.getName() + "{" + ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES +
-                        "=" + rt + "; " +
-                        ServletResolverConstants.SLING_SERVLET_EXTENSIONS + "=" + extensions + "; " +
-                        ServletResolverConstants.SLING_SERVLET_METHODS + "=" + methods  + "}");
-                properties.put(BundledHooks.class.getName(), "true");
 
-                reg = register(registeringBundle.orElse(bc), new DispatcherServlet(rt), properties);
-            } else {
-                if (!new HashSet<>(Arrays.asList(Converters.standardConverter()
-                        .convert(reg.getReference().getProperty(ServletResolverConstants.SLING_SERVLET_METHODS)).to(String[].class)))
-                        .equals(methods)) {
-                    reg.setProperties(properties);
-                }
-            }
-            newDispatchers.put(rt, reg);
-        });
+                    ServiceRegistration<Servlet> reg = oldDispatchers.remove(rt);
+                    if (reg == null) {
+                        Optional<BundleContext> registeringBundle = propList.stream().map(props -> {
+//                    props = new HashMap<>();
+//                    props.put(REGISTERING_BUNDLE, new osgimock.org.apache.felix.framework.Felix(null));
+                            // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L491-L497
+                            blocktest().given(props, new HashMap<String, Object>()).checkReturnEq(null);
+                            Bundle bundle = (Bundle) props.get(REGISTERING_BUNDLE);
+                            if (bundle != null) {
+                                return bundle.getBundleContext();
+                            }
+                            return null;
+                        }).findFirst();
+                        properties.put(Constants.SERVICE_DESCRIPTION,
+                                DispatcherServlet.class.getName() + "{" + ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES +
+                                        "=" + rt + "; " +
+                                        ServletResolverConstants.SLING_SERVLET_EXTENSIONS + "=" + extensions + "; " +
+                                        ServletResolverConstants.SLING_SERVLET_METHODS + "=" + methods  + "}");
+                        properties.put(BundledHooks.class.getName(), "true");
+
+                        reg = register(registeringBundle.orElse(bc), new DispatcherServlet(rt), properties);
+                    } else {
+                        if (!new HashSet<>(Arrays.asList(Converters.standardConverter()
+                                .convert(reg.getReference().getProperty(ServletResolverConstants.SLING_SERVLET_METHODS)).to(String[].class)))
+                                .equals(methods)) {
+                            reg.setProperties(properties);
+                        }
+                    }
+                    newDispatchers.put(rt, reg);
+                });
         oldDispatchers.values().forEach(ServiceRegistration::unregister);
         dispatchers.set(newDispatchers);
     }
@@ -628,21 +635,21 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                         Map<String, Object> props = toProperties(reg);
                         return getResourceTypes(props).equals(resourceType) &&
                                 Arrays.asList(c
-                                        .convert(props.get(ServletResolverConstants.SLING_SERVLET_METHODS))
-                                            .defaultValue(new String[]{"GET", "HEAD"}).to(String[].class))
+                                                .convert(props.get(ServletResolverConstants.SLING_SERVLET_METHODS))
+                                                .defaultValue(new String[]{"GET", "HEAD"}).to(String[].class))
                                         .contains(slingRequest.getMethod()) &&
                                 Arrays.asList(c
-                                        .convert(props.get(ServletResolverConstants.SLING_SERVLET_EXTENSIONS))
-                                            .defaultValue(new String[]{"html"}).to(String[].class))
+                                                .convert(props.get(ServletResolverConstants.SLING_SERVLET_EXTENSIONS))
+                                                .defaultValue(new String[]{"html"}).to(String[].class))
                                         .contains(slingRequest.getRequestPathInfo().getExtension() == null ? "html" :
                                                 slingRequest.getRequestPathInfo().getExtension());
                     }).min((left, right) ->
                     {
                         boolean la = Arrays.asList(c
-                                .convert(toProperties(left).get(ServletResolverConstants.SLING_SERVLET_SELECTORS)).to(String[].class))
+                                        .convert(toProperties(left).get(ServletResolverConstants.SLING_SERVLET_SELECTORS)).to(String[].class))
                                 .containsAll(Arrays.asList(slingRequest.getRequestPathInfo().getSelectors()));
                         boolean ra = Arrays.asList(c
-                                .convert(toProperties(right).get(ServletResolverConstants.SLING_SERVLET_SELECTORS)).to(String[].class))
+                                        .convert(toProperties(right).get(ServletResolverConstants.SLING_SERVLET_SELECTORS)).to(String[].class))
                                 .containsAll(Arrays.asList(slingRequest.getRequestPathInfo().getSelectors()));
                         if ((la && ra) || (!la && !ra)) {
                             Version rightVersion = getResourceTypeVersion(right.getReference());

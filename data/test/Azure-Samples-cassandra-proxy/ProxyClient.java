@@ -177,8 +177,6 @@ public class ProxyClient  {
             if (serverSocket != null) {
                 serverSocket.pause();
                 socket.drainHandler(done -> {
-                    // BLOCKTEST EVAL: https://github.com/Azure-Samples/cassandra-proxy/blob/f184bcaa612808ad9348a629330cc6bc94c13105/src/main/java/com/microsoft/azure/cassandraproxy/ProxyClient.java#L173-L184
-                    // FAILED
                     LOG.warn("Resume processing");
                     serverSocket.resume();
                     if (metrics) {
@@ -253,10 +251,10 @@ public class ProxyClient  {
                 socket.drainHandler(done -> {
                     // BLOCKTEST EVAL: https://github.com/Azure-Samples/cassandra-proxy/blob/f184bcaa612808ad9348a629330cc6bc94c13105/src/main/java/com/microsoft/azure/cassandraproxy/ProxyClient.java#L245-L255
                     blocktest().mock("LOG.warn(..)").mock("this.resume()").given(metrics, true)
-                                    .given("socket.remoteAddress().toString()", "10.0.1.1", "String").given(wait, true)
+                                    .given("socket.remoteAddress().toString()", "10.0.1.1").given(wait, true)
                                     .given(startPause, 1000000).expect(NullPointerException.class);
                     blocktest().mock("LOG.warn(..)").mock("this.resume()").given(metrics, false)
-                            .given("socket.remoteAddress().toString()", "10.0.1.1", "String").given(wait, true)
+                            .given("socket.remoteAddress().toString()", "10.0.1.1").given(wait, true)
                             .given(startPause, 1000000);
                     LOG.warn("Resuming processing");
                     this.resume();

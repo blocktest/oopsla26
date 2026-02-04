@@ -226,9 +226,9 @@ public class DocumentToProtoConverter {
             .removeIf(
                 a -> {
                   // BLOCKTEST EVAL: https://github.com/googleapis/disco-to-proto3-converter/blob/32cf5993853b1218e97e54c556f3922f49014eb8/src/main/java/com/google/cloud/discotoproto3converter/proto3/DocumentToProtoConverter.java#L221-L227
-                  blocktest().given(duplicatedEnumFields, new HashSet<>(Arrays.asList("abc", "def"))).given(a, null, "Field").given(a.getName(), "abc", "String").given(extraValues, new StringBuilder())
+                  blocktest().given(duplicatedEnumFields, new HashSet<>(Arrays.asList("abc", "def"))).given(a, null).given(a.getName(), "abc").given(extraValues, new StringBuilder())
                           .checkEq(extraValues.toString(), "\nabc").checkReturnTrue().end(FIRST_BLOCK, 2);
-                  blocktest().given(duplicatedEnumFields, new HashSet<>(Arrays.asList("abc", "def"))).given(a, null, "Field").given(a.getName(), "gg", "String").given(extraValues, new StringBuilder())
+                  blocktest().given(duplicatedEnumFields, new HashSet<>(Arrays.asList("abc", "def"))).given(a, null).given(a.getName(), "gg").given(extraValues, new StringBuilder())
                           .checkEq(extraValues.length(), 0).checkReturnFalse().end(FIRST_BLOCK, 2);
                   if (duplicatedEnumFields.contains(a.getName())) {
                     extraValues.append('\n').append(a.getName());

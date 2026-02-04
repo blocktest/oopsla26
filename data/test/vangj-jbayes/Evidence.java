@@ -262,8 +262,8 @@ public class Evidence {
             .findFirst().get();
         values.keySet().forEach(k -> {
           // BLOCKTEST EVAL: https://github.com/vangj/jbayes/blob/4f3a542a4cab356b2b4a3d5d735ae0346429ef2d/src/main/java/com/github/vangj/jbayes/inf/exact/graph/pptc/Evidence.java#L258-L264
-          blocktest().given(values, new LinkedHashMap<String, Double>()).given(k, "Foo", "String").given(key, "Foo").checkEq(values.get("Foo"), 1, 0.001);
-          blocktest().given(values, new LinkedHashMap<String, Double>()).given(k, "Foo", "String").given(key, "Bar").checkEq(values.get("Foo"), 0, 0.001);
+          blocktest().given(values, new LinkedHashMap<String, Double>()).given(k, "Foo").given(key, "Foo").checkEq(values.get("Foo"), 1, 0.001);
+          blocktest().given(values, new LinkedHashMap<String, Double>()).given(k, "Foo").given(key, "Bar").checkEq(values.get("Foo"), 0, 0.001);
           if (key.equals(k)) {
             values.put(k, 1.0d);
           } else {
@@ -273,7 +273,7 @@ public class Evidence {
       } else if (Type.Unobserve == type) {
         values.keySet().forEach(k -> {
           // BLOCKTEST EVAL: https://github.com/vangj/jbayes/blob/4f3a542a4cab356b2b4a3d5d735ae0346429ef2d/src/main/java/com/github/vangj/jbayes/inf/exact/graph/pptc/Evidence.java#L266-L268
-          blocktest().given(values, new LinkedHashMap<String, Double>()).given(k, "Foo", "String").checkEq(values.get("Foo"), 1, 0.001);
+          blocktest().given(values, new LinkedHashMap<String, Double>()).given(k, "Foo").checkEq(values.get("Foo"), 1, 0.001);
           values.put(k, 1.0d);
         });
       }

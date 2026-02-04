@@ -245,7 +245,7 @@ public class Yuga {
                         state = accAmtNumPct(str, i, map, config);
                         // BLOCKTEST EVAL: https://github.com/messai-engineering/Yuga/blob/40b006970e6e9a1eb5fc13e739f22232c683a965/src/main/java/com/twelfthmile/yuga/Yuga.java#L239C33-L245
                         /*
-                            @blocktest().setup(() -> {
+                            @blocktest().given(map, new FsaContextMap()).setup(() -> {
                                 map.setIndex(10);
                                 map.setType(Constants.TY_CALLFORWARD);
                             }).given(state, -1).given(i, 1).checkEq(i, 10);
@@ -276,7 +276,7 @@ public class Yuga {
                             map.setType(Constants.TY_DTE, Constants.DT_D);
                             state = 16;
                         }
-                   } else if ((p = Util.checkTypes(getRoot(), "FSA_MONTHS", str.substring(i))) != null) {
+                    } else if ((p = Util.checkTypes(getRoot(), "FSA_MONTHS", str.substring(i))) != null) {
                         map.setType(Constants.TY_DTE, Constants.DT_D);
                         map.put(Constants.DT_MMM, p.getB());
                         i += p.getA();
@@ -385,7 +385,7 @@ public class Yuga {
                         int hh = Integer.parseInt(map.get(Constants.DT_HH));
                         if (hh < 12)
                             map.put(Constants.DT_HH, String.valueOf(hh + 12));
-                        // 19:30 PM
+                            // 19:30 PM
                         else if (hh>12)
                             map.put(Constants.DT_HH, String.valueOf(hh));
                         i = i + 1;
@@ -479,7 +479,7 @@ public class Yuga {
                         {
                             map.append(c);
                             if(map.contains("NUM"));
-                                counter = map.get("NUM").length();
+                            counter = map.get("NUM").length();
                             state=15;
                         } else if(delimiterStack.pop() == Constants.CH_COMA && checkForAlphaAfterComma(str, i)) {
                             i = counter - 1;
@@ -522,7 +522,7 @@ public class Yuga {
                             i = i - 1;
                         if(comma_count>1 && comma_count < 4 && map.getType().equals(Constants.TY_AMT))
                             map.setType(Constants.TY_NUM, Constants.TY_NUM);
-                        // to prevent 3,6,9,12,18,24 months highlighted as a number
+                            // to prevent 3,6,9,12,18,24 months highlighted as a number
                         else if(comma_count >= 4 && map.getType().equals(Constants.TY_AMT)) {
                             map.remove(map.getType());
                             map.remove("TYP");
@@ -1368,9 +1368,10 @@ public class Yuga {
             }
             // post-processing
             if((config.containsKey(Constants.YUGA_SOURCE_CONTEXT) && config.get(Constants.YUGA_SOURCE_CONTEXT).equals(Constants.YUGA_SC_TMERANGE)) && (fromNum.length()==2 && toNum.length()==2)){
-                // BLOCKTEST EVAL: https://github.com/messai-engineering/Yuga/blob/40b006970e6e9a1eb5fc13e739f22232c683a965/src/main/java/com/twelfthmile/yuga/Yuga.java#L1358-L1362
+                // BLOCKTEST RV: https://github.com/messai-engineering/Yuga/blob/40b006970e6e9a1eb5fc13e739f22232c683a965/src/main/java/com/twelfthmile/yuga/Yuga.java#L1358-L1362
+                // RV (commented out)
                 /*
-                    @blocktest("test2").given(fromNum, "5").given(toNum, "7").setup(() -> {
+                    atblocktest("test2").given(fromNum, "5").given(toNum, "7").setup(() -> {
                         map.getValMap().put("from_num", "24");
                         map.getValMap().put("to_num", "48");
                     }).checkEq(map.getVal("from_time"), "5:00").checkEq(map.getVal("to_time"), "7:00")
