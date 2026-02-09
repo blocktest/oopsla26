@@ -130,21 +130,21 @@ class MetaDataParser {
                     deploymentConfigurationPath);
             actualLastModifiedValues.forEach((path, lastModifiedValue) -> {
                 // BLOCKTEST EVAL: https://github.com/wso2/config-mapper/blob/353b0829d3bf3dae92312dea6ff1dddff9a74fe6/src/main/java/org/wso2/config/mapper/MetaDataParser.java#L125-L135
-                blocktest().given(path, "/foo").given(lastModifiedValue, "abc123")
-                    .given(properties, new Properties())
-                    .setup(() -> {properties.put("/foo", "def456");})
-                    .checkTrue(changedFileSet.getChangedFiles().contains("/foo"))
-                    .checkTrue(changedFileSet.getNewFiles().isEmpty());
-                blocktest().given(path, "/foo").given(lastModifiedValue, "abc123")
-                    .given(properties, new Properties())
-                    .setup(() -> {properties.put("/foo", "abc123");})
-                    .checkTrue(changedFileSet.getChangedFiles().isEmpty())
-                    .checkTrue(changedFileSet.getNewFiles().isEmpty());
-                blocktest().given(path, "/foo").given(lastModifiedValue, "abc123")
-                    .given(properties, new Properties())
-                    .setup(() -> {properties.put("/foo2", "def456");})
-                    .checkTrue(changedFileSet.getChangedFiles().isEmpty())
-                    .checkTrue(changedFileSet.getNewFiles().contains("/foo"));
+                blocktest().given(changedFileSet, new ChangedFileSet()).given(path, "/foo").given(lastModifiedValue, "abc123")
+                        .given(properties, new Properties())
+                        .setup(() -> {properties.put("/foo", "def456");})
+                        .checkTrue(changedFileSet.getChangedFiles().contains("/foo"))
+                        .checkTrue(changedFileSet.getNewFiles().isEmpty());
+                blocktest().given(changedFileSet, new ChangedFileSet()).given(path, "/foo").given(lastModifiedValue, "abc123")
+                        .given(properties, new Properties())
+                        .setup(() -> {properties.put("/foo", "abc123");})
+                        .checkTrue(changedFileSet.getChangedFiles().isEmpty())
+                        .checkTrue(changedFileSet.getNewFiles().isEmpty());
+                blocktest().given(changedFileSet, new ChangedFileSet()).given(path, "/foo").given(lastModifiedValue, "abc123")
+                        .given(properties, new Properties())
+                        .setup(() -> {properties.put("/foo2", "def456");})
+                        .checkTrue(changedFileSet.getChangedFiles().isEmpty())
+                        .checkTrue(changedFileSet.getNewFiles().contains("/foo"));
                 String lastModifiedValueFromFile = (properties.containsKey(path) ?
                         (String) properties.get(path) : null);
                 if (StringUtils.isNotEmpty(lastModifiedValueFromFile)) {

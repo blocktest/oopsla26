@@ -85,11 +85,11 @@ public class PureEnglish implements Segmentation {
                     .map(w -> w.toLowerCase())
                     .forEach(w -> {
                         // BLOCKTEST EVAL: https://github.com/ysc/word/blob/daa57fa34645e39c6e0214d1f4698134963b65be/src/main/java/org/apdplat/word/segmentation/impl/PureEnglish.java#L81-L89
-                        blocktest().given(w, "foo").checkEq(segResult.iterator().next().toString(), "foo");
-                        blocktest().given(w, "f").checkEq(segResult.size(), 0);
-                        blocktest().given(w, "1foo").checkEq(segResult.size(), 0);
-                        blocktest().given(w, "br").checkEq(segResult.size(), 0);
-                        blocktest().given(w, "xr").checkEq(segResult.iterator().next().toString(), "xr");
+                        blocktest().given(segResult, new ArrayList<>()).given(w, "foo").checkEq(segResult.iterator().next().toString(), "foo");
+                        blocktest().given(segResult, new ArrayList<>()).given(w, "f").checkEq(segResult.size(), 0);
+                        blocktest().given(segResult, new ArrayList<>()).given(w, "1foo").checkEq(segResult.size(), 0);
+                        blocktest().given(segResult, new ArrayList<>()).given(w, "br").checkEq(segResult.size(), 0);
+                        blocktest().given(segResult, new ArrayList<>()).given(w, "xr").checkEq(segResult.iterator().next().toString(), "xr");
                         if (w.length() < 2) {
                             return;
                         }

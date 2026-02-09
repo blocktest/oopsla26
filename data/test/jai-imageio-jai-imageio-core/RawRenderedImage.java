@@ -318,7 +318,7 @@ public class RawRenderedImage extends SimpleRenderedImage {
         /*
         @blocktest("foo").given(destRect, new Rectangle(1, 2, 3, 4)).given(offx, 5).given(offy, 6)
                 .given(scaleX, 7).given(scaleY, 8).given(sourceOrigin, new Point(9, 10))
-                .given(tileWidth, 2, "int").given(tileHeight, 3, "int").checkEq(startXTile, -9).checkEq(startYTile, -7).checkEq(endXTile, -2).checkEq(endYTile, 0);
+                .given(tileWidth, 2).given(tileHeight, 3).checkEq(startXTile, -9).checkEq(startYTile, -7).checkEq(endXTile, -2).checkEq(endYTile, 0);
          */
         int sourceSX = (destRect.x - offx) * scaleX + sourceOrigin.x;
         int sourceSY = (destRect.y - offy) * scaleY + sourceOrigin.y;

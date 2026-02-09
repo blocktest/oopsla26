@@ -22,7 +22,7 @@ import static org.blocktest.utils.Constant.*;
  */
 public class ExpressionParser {
 
-    private int getSmallestPriority(int i, int i0, int[] priority, ArrayList<Token> ttOrig) throws ParseException 
+    private int getSmallestPriority(int i, int i0, int[] priority, ArrayList<Token> ttOrig) throws ParseException
     {
         int minN = priority[i];
         int place = -1;
@@ -46,7 +46,7 @@ public class ExpressionParser {
         return place;
     }
 
-    private void pickArguments2(int arguments, int i, Expression[] exps, int[] priority, int[] ref, List<Token> tt) throws ParseException 
+    private void pickArguments2(int arguments, int i, Expression[] exps, int[] priority, int[] ref, List<Token> tt) throws ParseException
     {
         org.konte.expression.Operator ee = (org.konte.expression.Operator) exps[i];
         int curPrio = priority[i];
@@ -59,15 +59,15 @@ public class ExpressionParser {
             {
                 k--;
             }
-            int min = priority[k];            
+            int min = priority[k];
             int place = k;
             while (true)
             {
                 if (exps[j] != null)
                 {
-                    if (priority[j] < curPrio 
-                            )
-                            {
+                    if (priority[j] < curPrio
+                    )
+                    {
                         break;
                     }
                     if (priority[j] < min)
@@ -111,9 +111,9 @@ public class ExpressionParser {
             {
                 if (exps[j] != null)
                 {
-                    if (priority[j] <= curPrio 
-                            )
-                            {
+                    if (priority[j] <= curPrio
+                    )
+                    {
                         break;
                     }
                     if (priority[j] <= min)
@@ -141,9 +141,9 @@ public class ExpressionParser {
     private int oneToOneContextualF = 1;
 
     @SuppressWarnings(
-        value = {"unchecked"}
+            value = {"unchecked"}
     )
-    public Expression parse(ArrayList<Token> ttOrig, int startpos, Model model) throws ParseException 
+    public Expression parse(ArrayList<Token> ttOrig, int startpos, Model model) throws ParseException
     {
 
         List<Token> tt = ttOrig; // ttOrig.subList(startpos+1, ii + 1);
@@ -176,13 +176,13 @@ public class ExpressionParser {
             if (t == Language.left_bracket)
             {
                 // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/ExpressionParser.java#L173C1-L189C35
-                blocktest().noInit(t).given(i, 0).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5])
+                blocktest().given(funcStack, new ArrayDeque<>()).given(t, Language.left_bracket).given(u, null).given(prioStack, new ArrayDeque<>()).given(lbracketStack, new ArrayDeque<>()).given(i, 0).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5])
                         .checkTrue(prioStack.pop() == 20).checkTrue(lbracketStack.pop() == 0).checkTrue(priority[0] == 20);
-                blocktest().noInit(t).given(i, 0).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5])
+                blocktest().given(funcStack, new ArrayDeque<>()).given(t, Language.left_bracket).given(u, null).given(prioStack, new ArrayDeque<>()).given(lbracketStack, new ArrayDeque<>()).given(i, 0).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5])
                         .checkTrue(prioStack.pop() + prioStack.pop() == 30);
-                blocktest().noInit(t).given(i, 1).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5]).mock("exps[i-1]", exps).mock(exps[i-1] instanceof org.konte.expression.Name, true)
+                blocktest().given(funcStack, new ArrayDeque<>()).given(t, Language.left_bracket).given(u, null).given(prioStack, new ArrayDeque<>()).given(lbracketStack, new ArrayDeque<>()).given(i, 1).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5]).mock("exps[i-1]", exps).mock(exps[i-1] instanceof org.konte.expression.Name, true)
                         .expect(ParseException.class);
-                blocktest().noInit(t).given(i, 1).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5]).mock(exps[i-1] instanceof org.konte.expression.Name, true)
+                blocktest().given(funcStack, new ArrayDeque<>()).given(t, Language.left_bracket).given(prioStack, new ArrayDeque<>()).given(lbracketStack, new ArrayDeque<>()).given(i, 1).given(cur, 10).given(priority, new int[5]).given(exps, new Expression[5]).mock(exps[i-1] instanceof org.konte.expression.Name, true)
                         .given(u, Language.comma).expect(ParseException.class);
                 if (i > 0)
                 {
@@ -191,9 +191,9 @@ public class ExpressionParser {
                         throw new ParseException("Unrecognized function: " + u);
                     } else
                     if (!(u instanceof Comparator || u instanceof org.konte.lang.Tokens.Operator
-                        || u instanceof org.konte.lang.Tokens.Function  ||
-                        (u==Language.comma && funcStack.size()>0) ||
-                        u==Language.left_bracket))
+                            || u instanceof org.konte.lang.Tokens.Function  ||
+                            (u==Language.comma && funcStack.size()>0) ||
+                            u==Language.left_bracket))
                         throw new ParseException("Incorrect expression syntax near " + t);
                 }
                 prioStack.push(cur);
@@ -282,7 +282,7 @@ public class ExpressionParser {
                             u == Language.left_bracket ||
                             u instanceof org.konte.lang.Tokens.Comparator ||
                             u == Language.comma)
-                            {
+                    {
                         exps[i] = new Negation(null);
                         priority[i] = cur + Language.NEGATION_PRIORITY;
                     }
@@ -332,7 +332,7 @@ public class ExpressionParser {
                     exps[i] = new BooleanExpression.Gt();
                 } else if (t == Language.gte)
                 {
-                    exps[i] = new BooleanExpression.Gte();                    
+                    exps[i] = new BooleanExpression.Gte();
                 } else if (t == Language.and)
                 {
                     exps[i] = new BooleanExpression.And();
@@ -346,7 +346,7 @@ public class ExpressionParser {
             {
                 if (!(i==0 || u instanceof Comparator || u instanceof org.konte.lang.Tokens.Operator
                         || (u==Language.comma && funcStack.size()>0) ||
-                    u==Language.left_bracket))
+                        u==Language.left_bracket))
                     throw new ParseException("Incorrect expression syntax near " + t);
                 priority[i] = cur + Language.FUNCTION_PRIORITY;
                 if (t instanceof ContextualFunction)
@@ -387,9 +387,9 @@ public class ExpressionParser {
             else
             {
                 if (!(i==0 || u instanceof Comparator || u instanceof org.konte.lang.Tokens.Operator
-                    || u==Language.left_bracket || 
-                    (funcStack.size()>0 && u == Language.comma)))
-                    throw new ParseException("Incorrect expression syntax near " + t);                
+                        || u==Language.left_bracket ||
+                        (funcStack.size()>0 && u == Language.comma)))
+                    throw new ParseException("Incorrect expression syntax near " + t);
                 priority[i] = cur + Language.VALUE_PRIORITY;
                 if (t instanceof Constant)
                 {
@@ -445,7 +445,7 @@ public class ExpressionParser {
                     {
                         throw new ParseException("Missing parameter to operator " + tt.get(i));
                     }
-                    pickArguments2(0, i, exps, priority, ref, tt);                    
+                    pickArguments2(0, i, exps, priority, ref, tt);
                 } else if (exps[i] instanceof ExpressionFunction)
                 {
                     ExpressionFunction func = (ExpressionFunction)exps[i];
@@ -457,11 +457,11 @@ public class ExpressionParser {
                     }
                     if (nullArg ||
                             !func.getToken().nArgsAllowed(func.getArgs().length)
-                            )
+                    )
                         throw new ParseException("Wrong number of arguments to " + func.getToken());
                 } else if (exps[i] instanceof org.konte.expression.Operator &&
                         exps[i] != Language.comma && exps[i] != Language.semicolon)
-                        {
+                {
                     if (i == 0 || i == maxi - 1)
                     {
                         throw new ParseException("Missing parameter to operator " + tt.get(i));
@@ -492,7 +492,7 @@ public class ExpressionParser {
             }
             i++;
         }
-        
+
         testReachability(exps, exps[exprInd]);
         return ret;
     }
@@ -530,7 +530,7 @@ public class ExpressionParser {
             {
                 if (reachable(exp, op.getTrailing()))
                     return true;
-            }                
+            }
         }
         if (ExpressionFunction.class.isAssignableFrom(parent.getClass()))
         {

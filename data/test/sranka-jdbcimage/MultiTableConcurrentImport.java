@@ -42,8 +42,8 @@ public class MultiTableConcurrentImport extends SingleTableImport{
 			Stream.of(Step.class.getEnumConstants()).forEach(x -> enabledSteps.put(x, false));
 			Stream.of(steps.split(",")).map(String::trim).filter(x -> x.length()>0).forEach(x -> {
 				// BLOCKTEST EVAL: https://github.com/sranka/jdbcimage/blob/4b16de3a349a30e5d69633a0fea6e08d486392b9/src/main/java/io/github/sranka/jdbcimage/main/MultiTableConcurrentImport.java#L38-L45
-				blocktest().given(x, "importStarted").checkTrue(enabledSteps.get(Step.importStarted)).checkTrue(enabledSteps.get(Step.disableConstraints) == null).checkTrue(enabledSteps.get(Step.importData) == null);
-				blocktest().given(x, "not-disableConstraints").checkTrue(enabledSteps.get(Step.importStarted)).checkTrue(enabledSteps.get(Step.importData)).checkFalse(enabledSteps.get(Step.disableConstraints));
+				blocktest().given(enabledSteps, new EnumMap<>(Step.class)).given(x, "importStarted").checkTrue(enabledSteps.get(Step.importStarted)).checkTrue(enabledSteps.get(Step.disableConstraints) == null).checkTrue(enabledSteps.get(Step.importData) == null);
+				blocktest().given(enabledSteps, new EnumMap<>(Step.class)).given(x, "not-disableConstraints").checkTrue(enabledSteps.get(Step.importStarted)).checkTrue(enabledSteps.get(Step.importData)).checkFalse(enabledSteps.get(Step.disableConstraints));
 				if (x.startsWith("not-")){
 					Stream.of(Step.class.getEnumConstants()).forEach(s -> enabledSteps.put(s, true));
 					enabledSteps.put(Step.valueOf(x.substring("not-".length())), Boolean.FALSE);
@@ -73,7 +73,7 @@ public class MultiTableConcurrentImport extends SingleTableImport{
 		// print platform concurrency, just FYI
 		out.println("Concurrency: "+ concurrency);
 		unzip(); // unzip input if it exists
-		
+
 		Durations durations = new Durations();
 		try {
 			List<String> dbTables = getUserTables();
@@ -82,28 +82,28 @@ public class MultiTableConcurrentImport extends SingleTableImport{
 			Map<String, String> conflictingFiles = new HashMap<>();
 			// collect tables to import (ignore tables that do not exist)
 			setTables(Files.list(Paths.get(getBuildDirectory().toString()))
-				.filter(x -> {
-					File f = x.toFile();
-					return f.isFile() && !f.getName().contains(".");
-				})
-				.collect(
-						LinkedHashMap<String,String>::new,
-						(map, x) -> {
-							String fileName = x.getFileName().toString();
-							String lowerCaseTableName = fileName.toLowerCase();
-							String retVal = dbTablesMap.get(lowerCaseTableName);
-							if (retVal == null){
-								out.println("SKIPPED - table "+x+" does not exists!");
-							} else{
-								map.put(retVal, fileName);
-							}
-							String previousFile = conflictingFiles.put(lowerCaseTableName, fileName);
-							if (previousFile != null){
-								throw new RuntimeException("Unsupported data on input. Only one files must describe a case-sensitive table, but found "+previousFile+" and "+fileName);
-							}
-						},
-						LinkedHashMap::putAll
-				), out);
+					.filter(x -> {
+						File f = x.toFile();
+						return f.isFile() && !f.getName().contains(".");
+					})
+					.collect(
+							LinkedHashMap<String,String>::new,
+							(map, x) -> {
+								String fileName = x.getFileName().toString();
+								String lowerCaseTableName = fileName.toLowerCase();
+								String retVal = dbTablesMap.get(lowerCaseTableName);
+								if (retVal == null){
+									out.println("SKIPPED - table "+x+" does not exists!");
+								} else{
+									map.put(retVal, fileName);
+								}
+								String previousFile = conflictingFiles.put(lowerCaseTableName, fileName);
+								if (previousFile != null){
+									throw new RuntimeException("Unsupported data on input. Only one files must describe a case-sensitive table, but found "+previousFile+" and "+fileName);
+								}
+							},
+							LinkedHashMap::putAll
+					), out);
 			if (tables.size() != 0){
 				// apply a procedure that ignores indexes and constraints 
 				// to speed up data import
@@ -152,7 +152,7 @@ public class MultiTableConcurrentImport extends SingleTableImport{
 		if (tool_disableIndexes) out.println("Enable indexes time: "+ durations.enableIndexes);
 		out.println("Enable constraints time: "+ durations.enableConstraints);
 	}
-	
+
 	private Duration deleteData(){
 		long time = System.currentTimeMillis();
 		List<Callable<?>> tasks = new ArrayList<>(tables.size());
@@ -206,6 +206,6 @@ public class MultiTableConcurrentImport extends SingleTableImport{
 		try(MultiTableConcurrentImport tool = new MultiTableConcurrentImport(System.getProperty("steps"))){
 			tool.setupZipFile(args);
 			tool.run();
-		} 
+		}
 	}
 }

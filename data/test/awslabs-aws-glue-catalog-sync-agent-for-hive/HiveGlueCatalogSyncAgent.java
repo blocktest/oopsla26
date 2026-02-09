@@ -377,13 +377,13 @@ public class HiveGlueCatalogSyncAgent extends MetaStoreEventListener {
 							/*
 							@blocktest("first2").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
 									.mock("!addToAthenaQueue(addPartitionDDL)", true)
-									.given(p.getSd().getLocation(), "s3://bucket/folder", "String").given(fqtn, "cool")
+									.given(p.getSd().getLocation(), "s3://bucket/folder").given(fqtn, "cool")
 									.checkFlow(IfStmt().Then().IfStmt().Then());
 							 */
 							/*
 							@blocktest("second2").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
 									.mock("!addToAthenaQueue(addPartitionDDL)", true)
-									.given(p.getSd().getLocation(), "s4://bucket/folder", "String").given(fqtn, "cool")
+									.given(p.getSd().getLocation(), "s4://bucket/folder").given(fqtn, "cool")
 									.checkFlow(IfStmt().Else());
 							 */
 						String partitionSpec = getPartitionSpec(table, p);
@@ -427,13 +427,13 @@ public class HiveGlueCatalogSyncAgent extends MetaStoreEventListener {
 							/*
 							@blocktest("first").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
 									.mock("!addToAthenaQueue(ddl)", true)
-									.given(p.getSd().getLocation(), "s3://bucket/folder", "String").given(fqtn, "cool")
+									.given(p.getSd().getLocation(), "s3://bucket/folder").given(fqtn, "cool")
 									.checkFlow(IfStmt().Then().IfStmt().Then());
 							 */
 							/*
 							@blocktest("second").noInit(table).given(p, null).mock("getPartitionSpec(table, p)", "foo")
 									.mock("!addToAthenaQueue(ddl)", true)
-									.given(p.getSd().getLocation(), "s4://bucket/folder", "String").given(fqtn, "cool")
+									.given(p.getSd().getLocation(), "s4://bucket/folder").given(fqtn, "cool")
 									.checkFlow(IfStmt().Else());
 							 */
 							String partitionSpec = getPartitionSpec(table, p);

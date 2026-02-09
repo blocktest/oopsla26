@@ -107,7 +107,7 @@ public final class IOUtil {
 
     /**
      * Removes the secondaryFiles extensions
-     * 
+     *
      * @param primary
      *            the primary file path
      * @param secondary
@@ -135,7 +135,7 @@ public final class IOUtil {
 
     /**
      * Splits the main id (if had) from a CWL document description file path
-     * 
+     *
      * @param descFilePath
      *            A CWL document description file path
      * @return the split file path
@@ -162,7 +162,7 @@ public final class IOUtil {
 
     /**
      * Creates an executable shell script
-     * 
+     *
      * @param scriptPath
      *            the path of shell script
      * @param command
@@ -192,7 +192,7 @@ public final class IOUtil {
 
     /**
      * Remove the suffix (.*) from a given file path
-     * 
+     *
      * @param cwlFilePath
      *            A file path
      * @return the file path without suffix
@@ -211,7 +211,7 @@ public final class IOUtil {
 
     /**
      * Downloads a file from the given URL
-     * 
+     *
      * @param source
      *            An URL
      * @param dest
@@ -245,7 +245,7 @@ public final class IOUtil {
 
     /**
      * Makes a directory by given path
-     * 
+     *
      * @param owner
      *            the owner of directory
      * @param path
@@ -262,7 +262,7 @@ public final class IOUtil {
 
     /**
      * Copies a given file (or directory) to the target file (or directory)
-     * 
+     *
      * @param owner
      *            the owner of the file
      * @param src
@@ -290,7 +290,7 @@ public final class IOUtil {
                     Files.walkFileTree(finalSrc, new FileVisitor<Path>() {
                         @Override
                         public FileVisitResult preVisitDirectory(Path dir,
-                                BasicFileAttributes attrs) throws IOException {
+                                                                 BasicFileAttributes attrs) throws IOException {
                             Files.copy(dir, finalTarget.resolve(finalSrc.relativize(dir)),
                                     StandardCopyOption.COPY_ATTRIBUTES);
                             return FileVisitResult.CONTINUE;
@@ -332,7 +332,7 @@ public final class IOUtil {
 
     /**
      * Find files from the given location, using POSIX glob(3) pathname matching
-     * 
+     *
      * @param filePath
      *            the file will be found
      * @param location
@@ -355,7 +355,7 @@ public final class IOUtil {
 
     /**
      * Writes contents to a given file
-     * 
+     *
      * @param file
      *            A given file
      * @param contents
@@ -378,7 +378,7 @@ public final class IOUtil {
 
     /**
      * Writes 64 KiB contents to a given file
-     * 
+     *
      * @param file
      *            A given file
      * @param contents
@@ -405,7 +405,7 @@ public final class IOUtil {
 
     /**
      * Reads the file contents from a file with UTF-8
-     * 
+     *
      * @param file
      *            A given file
      * @return the file contents with UTF-8
@@ -430,7 +430,7 @@ public final class IOUtil {
 
     /**
      * Reads the file contents only 64KiB from a file with UTF-8
-     * 
+     *
      * @param file
      *            A given file
      * @return The file contents with UTF-8
@@ -459,7 +459,7 @@ public final class IOUtil {
 
     /**
      * Reads the LSF stdout
-     * 
+     *
      * @param filePath
      *            the path of LSF stdout
      * @return the contents of LSF stdout
@@ -472,13 +472,13 @@ public final class IOUtil {
                 stream = Files.lines(filePath, StandardCharsets.UTF_8);
                 stream.forEach(s -> {
                     // BLOCKTEST EVAL: https://github.com/yuch7/cwlexec/blob/08b3e8ac1017f5a43d4d33699d1c9d4cb32a89e1/src/main/java/com/ibm/spectrumcomputing/cwl/parser/util/IOUtil.java#L468-L476
-                    blocktest().given(s, "").checkEq(contentBuilder.toString(), "");
-                    blocktest().given(s, "hey").checkEq(contentBuilder.toString(), "hey\n");
-                    blocktest().given(s, "Sender").checkEq(contentBuilder.toString(), "");
-                    blocktest().given(s, "Subject").checkEq(contentBuilder.toString(), "");
-                    blocktest().given(s, "Your").checkEq(contentBuilder.toString(), "");
-                    blocktest().given(s, "PS").checkEq(contentBuilder.toString(), "");
-                    blocktest().given(s, "Read").checkEq(contentBuilder.toString(), "");
+                    blocktest().given(contentBuilder, new StringBuilder()).given(s, "").checkEq(contentBuilder.toString(), "");
+                    blocktest().given(contentBuilder, new StringBuilder()).given(s, "hey").checkEq(contentBuilder.toString(), "hey\n");
+                    blocktest().given(contentBuilder, new StringBuilder()).given(s, "Sender").checkEq(contentBuilder.toString(), "");
+                    blocktest().given(contentBuilder, new StringBuilder()).given(s, "Subject").checkEq(contentBuilder.toString(), "");
+                    blocktest().given(contentBuilder, new StringBuilder()).given(s, "Your").checkEq(contentBuilder.toString(), "");
+                    blocktest().given(contentBuilder, new StringBuilder()).given(s, "PS").checkEq(contentBuilder.toString(), "");
+                    blocktest().given(contentBuilder, new StringBuilder()).given(s, "Read").checkEq(contentBuilder.toString(), "");
                     if ((s.length() != 0) && (!s.startsWith("Sender") &&
                             !s.startsWith("Subject") &&
                             !s.startsWith("Your") &&
@@ -501,7 +501,7 @@ public final class IOUtil {
     /**
      * Reads the contents from a Javascipt file, the code comments will be
      * replaced
-     * 
+     *
      * @param filePath
      *            The Javascript file path
      * @return The contents of the Javascript file
@@ -530,7 +530,7 @@ public final class IOUtil {
 
     /**
      * Traverses a directory and find the files in it
-     * 
+     *
      * @param dir
      *            A directory
      * @param listing
@@ -558,7 +558,7 @@ public final class IOUtil {
 
     /**
      * Creates a CWLDirectory object from a directory
-     * 
+     *
      * @param cwlDirPath
      *            The path of a directory
      * @return A CWLDirectory object
@@ -578,7 +578,7 @@ public final class IOUtil {
     /**
      * Produce a File instance according to file URI. It it's a remote file,
      * download it first.
-     * 
+     *
      * @param fileURI
      *            File URI
      * @param tmpDir
@@ -594,9 +594,9 @@ public final class IOUtil {
      *             Failed to create a file
      */
     public static File yieldFile(String fileURI,
-            String tmpDir,
-            String[] exts,
-            boolean needSuffix) throws CWLException {
+                                 String tmpDir,
+                                 String[] exts,
+                                 boolean needSuffix) throws CWLException {
         if (fileURI == null) {
             throw new IllegalArgumentException("The file path is null.");
         }
@@ -624,7 +624,7 @@ public final class IOUtil {
 
     /**
      * Return the base URI of a file URI.
-     * 
+     *
      * @param fileURI
      *            A file URI
      * @return The base URI
@@ -652,7 +652,7 @@ public final class IOUtil {
 
     /**
      * Resolve file URI if the file URI is a relative URI
-     * 
+     *
      * @param baseURI
      *            The base URI where the source file locates
      * @param importURI
@@ -699,7 +699,7 @@ public final class IOUtil {
 
     /**
      * Creates a CWLFile object from a file
-     * 
+     *
      * @param cwlFilePath
      *            the path of a file
      * @param nochecksum
@@ -731,7 +731,7 @@ public final class IOUtil {
 
     /**
      * Calculate a file md5 by SHA1
-     * 
+     *
      * @param inputFile
      *            A path of a file
      * @return the file md5
@@ -755,7 +755,7 @@ public final class IOUtil {
 
     /**
      * Converts a JSON file to a JSON object
-     * 
+     *
      * @param file
      *            a JSON file
      * @return a JSON object
@@ -768,7 +768,7 @@ public final class IOUtil {
 
     /**
      * Converts a JSON file to a JSON object
-     * 
+     *
      * @param file
      *            a JSON file
      * @param enableFileTypeDetection

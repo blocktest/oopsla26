@@ -2621,15 +2621,15 @@ public class C00Parser extends DebugParser {
 								int LA5_3 = input.LA(3);
 								if ((LA5_3 == Number)) {
 									// BLOCKTEST EVAL: https://github.com/tud-fop/j-Algo/blob/f59fbbd9ccc3f41d6866fda44324622e2b47eef2/src/main/java/c00/parser/C00Parser.java#L2611C9-L2627C10
-									blocktest().mock("input.LA(4)", 20).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+									blocktest().given(alt5, 6).mock("input.LA(4)", 20).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
 											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).checkEq(alt5, 6);
-									blocktest().mock("input.LA(4)", -1).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+									blocktest().given(alt5, 6).mock("input.LA(4)", -1).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
 											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).checkEq(alt5, 3);
-									blocktest().mock("input.LA(4)", 17).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+									blocktest().given(alt5, 6).mock("input.LA(4)", 17).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
 											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).checkEq(alt5, 3);
-									blocktest().mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
+									blocktest().given(alt5, 6).mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 0)
 											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, null).given(failed, false).expect(NoViableAltException.class);
-									blocktest().mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 1)
+									blocktest().given(alt5, 6).mock("input.LA(4)", 0).mock("dbg.recognitionException(nvae)").given(backtracking, 1)
 											.given(input, new CommonTokenStream(new C00Lexer(new ANTLRStringStream("HELLO WORLD")))).given(retval, new varDeclarations_return()).given(failed, false).checkTrue(failed).checkTrue(methodReturn != null);
 									int LA5_7 = input.LA(4);
 									if ((LA5_7 == 20)) {

@@ -94,7 +94,7 @@ if [[ ${project_name} == dingjs-javaagent ]]; then
   rm pom.xml.bak
 fi
 
-if [[ ${project_name} == dingjs-javaagent ]]; then
+if [[ ${project_name} == magdel-MapNav ]]; then
   echo "Patching magdel-MapNav"
   sed -i.bak '
 /<plugin>/,/<\/plugin>/{

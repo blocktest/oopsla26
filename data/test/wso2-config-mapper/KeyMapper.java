@@ -47,7 +47,7 @@ class KeyMapper {
 
     static Context mapWithConfig(Context inputContext, String mappingFile) throws ConfigParserException {
         try (Reader validatorJson = new InputStreamReader(new FileInputStream(mappingFile),
-                                                          Charset.defaultCharset())) {
+                Charset.defaultCharset())) {
             Gson gson = new Gson();
             Map<String, Object> keyMappings = gson.fromJson(validatorJson, Map.class);
             return map(inputContext, keyMappings);
@@ -66,7 +66,7 @@ class KeyMapper {
             } else if (mappedKeys instanceof List) {
                 ((List<String>) mappedKeys).forEach(mappedKey -> {
                     // BLOCKTEST EVAL: https://github.com/wso2/config-mapper/blob/353b0829d3bf3dae92312dea6ff1dddff9a74fe6/src/main/java/org/wso2/config/mapper/KeyMapper.java#L61-L63
-                    blocktest().given(mappedKey, "foo").given(entry.getValue(), (Object) new String("foo")).checkEq(mappedConfigs.get("foo").toString(), "foo");
+                    blocktest().given(mappedConfigs, new LinkedHashMap<>()).given(mappedKey, "foo").given(entry.getValue(), (Object) new String("foo")).checkEq(mappedConfigs.get("foo").toString(), "foo");
                     mappedConfigs.put(mappedKey, entry.getValue());
                 });
             }
@@ -103,7 +103,7 @@ class KeyMapper {
 
             } else if (splitKey.length > 2) {
                 throw new ConfigParserException("Unknown key mapping key with multiple array elements: "
-                                                + entry.getKey());
+                        + entry.getKey());
             }
         }
     }
@@ -129,7 +129,7 @@ class KeyMapper {
                 String[] splitValue = ((String) value).split(":");
                 if (splitValue.length != 2) {
                     throw new ConfigParserException("Unknown key mapping value with multiple array " +
-                                                    "elements: " + entry.getValue());
+                            "elements: " + entry.getValue());
                 }
                 map.put(splitValue[1], removedValue);
             } else if (value instanceof List) {
@@ -147,7 +147,7 @@ class KeyMapper {
                     String[] splitValue = mappedValue.split(":");
                     if (splitValue.length != 2) {
                         throw new ConfigParserException("Unknown key mapping value with multiple array " +
-                                                        "elements: " + entry.getValue());
+                                "elements: " + entry.getValue());
                     }
                     map.put(splitValue[1], removedValue);
                 }

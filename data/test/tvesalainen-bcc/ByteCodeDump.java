@@ -432,7 +432,7 @@ public class ByteCodeDump extends OpCodeUtil
                     }
                     // BLOCKTEST EVAL: https://github.com/tvesalainen/bcc/blob/8bfbb307418a422d57370b2df12fdfb1126f3407/src/main/java/org/vesalainen/bcc/ByteCodeDump.java#L428C1-L437C22
                     String tmp = "";
-                    blocktest().given(high, 2).given(low, 2).given(pc, 5)
+                    blocktest().given(tmp, "").given(high, 2).given(low, 2).given(pc, 5)
                             .noInit(label).noInit(in).noInit(mc).noInit(out)
                             .mock("in.readInt()", 1)
                             .mock("mc.labelForAddress(o)", new Label("foo"))

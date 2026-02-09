@@ -134,9 +134,9 @@ public class ZkClusterService implements ClusterService {
                     List<SecurityConfigItem> securityConfigItems = Lists.newArrayList();
                     requestTreeCache.getCurrentChildren(filterPath).entrySet().stream().forEach(itemEntry -> {
                         // BLOCKTEST EVAL: https://github.com/chengdedeng/waf/blob/9ba9a18857154830a35e3b10d111d025208f73ef/src/main/java/info/yangguo/waf/service/ZkClusterService.java#L130-L139
-                        blocktest().given(itemEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                        blocktest().given(securityConfigItems, Lists.newArrayList()).given(itemEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next())
                                 .checkEq(securityConfigItems.size(), 1).checkTrue(securityConfigItems.iterator().next().getName().equals("a")).checkTrue(securityConfigItems.iterator().next().getConfig().getIsStart());
-                        blocktest().given(itemEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":false}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                        blocktest().given(securityConfigItems, Lists.newArrayList()).given(itemEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":false}".getBytes())); }}.entrySet().iterator().next())
                                 .checkEq(securityConfigItems.size(), 1).checkTrue(securityConfigItems.iterator().next().getName().equals("b")).checkFalse(securityConfigItems.iterator().next().getConfig().getIsStart());
                         String regex = null;
                         try {
@@ -194,11 +194,11 @@ public class ZkClusterService implements ClusterService {
                     List<ServerConfig> serverConfigs = Lists.newArrayList();
                     upstreamTreeCache.getCurrentChildren(hostPath).entrySet().stream().forEach(serverEntry -> {
                         // BLOCKTEST EVAL: https://github.com/chengdedeng/waf/blob/9ba9a18857154830a35e3b10d111d025208f73ef/src/main/java/info/yangguo/waf/service/ZkClusterService.java#L185-L197
-                        blocktest().given(serverEntry, new HashMap<String, ChildData>(){{ put("1.2.3.4:80", new ChildData("/tmp/path", new Stat(), "{\"weight\":50}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                        blocktest().given(serverConfigs, Lists.newArrayList()).given(serverEntry, new HashMap<String, ChildData>(){{ put("1.2.3.4:80", new ChildData("/tmp/path", new Stat(), "{\"weight\":50}".getBytes())); }}.entrySet().iterator().next())
                                 .checkTrue(serverConfigs.size() > 0).checkEq(serverConfigs.stream().iterator().next().getIp(), "1.2.3.4")
                                 .checkTrue(serverConfigs.stream().iterator().next().getPort() == 80)
                                 .checkEq(serverConfigs.stream().iterator().next().getConfig().toString(), "ServerBasicConfig(weight=50)");
-                        blocktest().given(serverEntry, new HashMap<String, ChildData>(){{ put("1.2.3.5:22", new ChildData("/tmp/path", new Stat(), "{\"isStart\":false}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                        blocktest().given(serverConfigs, Lists.newArrayList()).given(serverEntry, new HashMap<String, ChildData>(){{ put("1.2.3.5:22", new ChildData("/tmp/path", new Stat(), "{\"isStart\":false}".getBytes())); }}.entrySet().iterator().next())
                                 .checkTrue(serverConfigs.size() > 0).checkEq(serverConfigs.stream().iterator().next().getIp(), "1.2.3.5")
                                 .checkTrue(serverConfigs.stream().iterator().next().getPort() == 22)
                                 .checkEq(serverConfigs.stream().iterator().next().getConfig().toString(), "ServerBasicConfig(weight=null)");
@@ -243,9 +243,9 @@ public class ZkClusterService implements ClusterService {
                 Set<String> wafRoutes = Sets.newHashSet();
                 rewriteTreeCache.getCurrentChildren(rewritePath).entrySet().stream().forEach(hostEntry -> {
                     // BLOCKTEST EVAL: https://github.com/chengdedeng/waf/blob/9ba9a18857154830a35e3b10d111d025208f73ef/src/main/java/info/yangguo/waf/service/ZkClusterService.java#L224-L230
-                    blocktest().given(hostEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                    blocktest().given(wafRoutes, Sets.newHashSet()).given(rewriteConfigrMap, Maps.newHashMap()).given(hostEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next())
                             .checkEq(rewriteConfigrMap.size(), 1).checkEq(wafRoutes.size(), 1);
-                    blocktest().given(hostEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                    blocktest().given(wafRoutes, Sets.newHashSet()).given(rewriteConfigrMap, Maps.newHashMap()).given(hostEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next())
                             .checkEq(rewriteConfigrMap.get("b").getIsStart(), true).checkEq(wafRoutes.iterator().next(), "b");
 
                     String wafRoute = hostEntry.getKey();
@@ -277,9 +277,9 @@ public class ZkClusterService implements ClusterService {
                 Set<String> wafRoutes = Sets.newHashSet();
                 redirectTreeCache.getCurrentChildren(redirectPath).entrySet().stream().forEach(hostEntry -> {
                     // BLOCKTEST EVAL: https://github.com/chengdedeng/waf/blob/9ba9a18857154830a35e3b10d111d025208f73ef/src/main/java/info/yangguo/waf/service/ZkClusterService.java#L252-L258
-                    blocktest().given(hostEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                    blocktest().given(redirectConfigrMap, Maps.newHashMap()).given(wafRoutes, Sets.newHashSet()).given(hostEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next())
                             .checkEq(redirectConfigrMap.size(), 1).checkEq(wafRoutes.size(), 1);
-                    blocktest().given(hostEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                    blocktest().given(redirectConfigrMap, Maps.newHashMap()).given(wafRoutes, Sets.newHashSet()).given(hostEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next())
                             .checkEq(redirectConfigrMap.get("b").getIsStart(), true).checkEq(wafRoutes.iterator().next(), "b");
 
                     String wafRoute = hostEntry.getKey();
@@ -317,9 +317,9 @@ public class ZkClusterService implements ClusterService {
                     List<ForwardConfigItem> forwardConfigItems = Lists.newArrayList();
                     forwardTreeCache.getCurrentChildren(forwardConfigPath).entrySet().stream().forEach(itemEntry -> {
                         // BLOCKTEST EVAL: https://github.com/chengdedeng/waf/blob/9ba9a18857154830a35e3b10d111d025208f73ef/src/main/java/info/yangguo/waf/service/ZkClusterService.java#L286-L295
-                        blocktest().given(itemEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                        blocktest().given(forwardConfigItems, Lists.newArrayList()).given(itemEntry, new HashMap<String, ChildData>(){{ put("a", new ChildData("/tmp/path", new Stat(), "{\"isStart\":true}".getBytes())); }}.entrySet().iterator().next())
                                 .checkEq(forwardConfigItems.size(), 1).checkTrue(forwardConfigItems.iterator().next().getName().equals("a")).checkTrue(forwardConfigItems.iterator().next().getConfig().getIsStart());
-                        blocktest().given(itemEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":false}".getBytes())); }}.entrySet().iterator().next(), "HashMap<String, ChildData>")
+                        blocktest().given(forwardConfigItems, Lists.newArrayList()).given(itemEntry, new HashMap<String, ChildData>(){{ put("b", new ChildData("/tmp/path", new Stat(), "{\"isStart\":false}".getBytes())); }}.entrySet().iterator().next())
                                 .checkEq(forwardConfigItems.size(), 1).checkTrue(forwardConfigItems.iterator().next().getName().equals("b")).checkFalse(forwardConfigItems.iterator().next().getConfig().getIsStart());
                         String regex = null;
                         try {

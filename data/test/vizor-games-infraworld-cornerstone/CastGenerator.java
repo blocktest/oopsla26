@@ -246,7 +246,7 @@ class CastGenerator
             outField.getType().getVariantParams().forEach(param -> {
                 // BLOCKTEST EVAL: https://github.com/vizor-games/infraworld-cornerstone/blob/2f8c792393fd8bbfc09d5bfdd36114230f64aa5c/src/main/java/com/vizor/unreal/convert/CastGenerator.java#L241-L253
                 // MUST PROVIDE TYPE
-                blocktest().given(switchBody, new StringBuilder(), "StringBuilder").given(index, new AtomicInteger(0))
+                blocktest().given(switchBody, new StringBuilder()).given(index, new AtomicInteger(0))
                         .mock("isMessageNamespace(param.toString())", true).given(param, CppType.plain("foo", CppType.Kind.Primitive), "CppType")
                         .mock("inField.getType().getVariantParams().get(index.get()).toString()", "params")
                         .mock("inField.getName()", "fieldName").checkEq(switchBody.toString(), "\tcase 0:\n\t\tOutItem.set_allocated_null(new foo(Proto_Cast<foo>(InItem.fieldName.Get<params>())));\n\t\tbreak;\n");

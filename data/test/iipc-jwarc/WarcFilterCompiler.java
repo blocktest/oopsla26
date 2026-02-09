@@ -153,7 +153,7 @@ class WarcFilterCompiler {
                                 .body(new HttpResponse.Builder(200, "OK")
                                         .setHeader("Transfer-Encoding", "chunked")
                                         .build())
-                                .build(), "WarcResponse")
+                                .build())
                         .checkReturnEq(Optional.of("200"));
                  */
                 try {

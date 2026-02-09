@@ -21,6 +21,7 @@ import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.Visitable;
 import org.blocktest.BlockTest;
 import org.blocktest.types.Flow;
+import org.blocktest.utils.Util;
 
 public class FlowControllingVisitor extends ModifierVisitor<Void> {
 
@@ -205,8 +206,13 @@ public class FlowControllingVisitor extends ModifierVisitor<Void> {
 
         MethodCallExpr assertCall = new MethodCallExpr(null, "assertTrue");
         ArrayAccessExpr arrayAccess = new ArrayAccessExpr(arrayName, new NameExpr(indexVar));
-        assertCall.addArgument(message);
-        assertCall.addArgument(arrayAccess);
+        if (Util.junitVersion.equals("junit4")) {
+            assertCall.addArgument(message);
+            assertCall.addArgument(arrayAccess);
+        } else {
+            assertCall.addArgument(arrayAccess);
+            assertCall.addArgument(message);
+        }
         ExpressionStmt assertStmt = new ExpressionStmt(assertCall);
 
         BlockStmt body = new BlockStmt();

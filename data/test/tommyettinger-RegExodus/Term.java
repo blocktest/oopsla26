@@ -169,7 +169,7 @@ public class Term implements REFlags, Serializable {
     boolean mode_reverse;
     boolean mode_bracket;
     boolean mode_upper;
-    
+
     // used for optimization with type=BITSET,BITSET2
     int weight;
 
@@ -524,16 +524,16 @@ public class Term implements REFlags, Serializable {
                             char cp = data[p];
                             boolean mi = false, mb = false, mr = false, mu = false;
                             // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L521C1-L539C30
-                            blocktest().given(cp, '@').given(data, new char[]{'\\', 'k', '<', '@', 'a', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, false).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '@').given(data, new char[]{'\\', 'k', '<', '@', '@', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, false).given(mr, false).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
-                            blocktest().given(cp, 'n').given(data, new char[]{'\\', 'k', '<', 'n', '@', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, false).given(mr, false).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, true).given(mu, false).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', '!', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, true).given(mu, true).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', '/', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, false).given(mb, true).given(mu, false).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', ':', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', '!', '!', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, true).end(FIRST_ASSIGN);
-                            blocktest().given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', '!', '!', '>'}).given(p, 3).given(end, 5).expect(PatternSyntaxException.class).end(FIRST_THROW);
+                            blocktest().given(mi, false).given(cp, '@').given(data, new char[]{'\\', 'k', '<', '@', 'a', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, false).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '@').given(data, new char[]{'\\', 'k', '<', '@', '@', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, false).given(mr, false).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, 'n').given(data, new char[]{'\\', 'k', '<', 'n', '@', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, false).given(mr, false).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', 'm', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', 'e', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, true).given(mu, false).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', '!', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, true).given(mu, true).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', '/', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, false).given(mb, true).given(mu, false).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', ':', ':', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, false).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', '!', '!', '>'}).given(p, 3).given(end, 8).checkEq(mi, true).given(mr, true).given(mb, false).given(mu, true).end(FIRST_ASSIGN);
+                            blocktest().given(mi, false).given(cp, '/').given(data, new char[]{'\\', 'k', '<', '/', '@', '!', '!', '>'}).given(p, 3).given(end, 5).given(mr, false).given(mb, false).given(mu, false).expect(PatternSyntaxException.class).end(FIRST_THROW);
                             blocktest().given(cp, '$').given(p, 0).given(end, 3)
                                     .given(mi, false).given(mr, false).given(mb, false).given(mu, false)
                                     .given(data, new char[] {'4', ':'})
@@ -1120,9 +1120,9 @@ public class Term implements REFlags, Serializable {
                     case 'u':
                         if(i < out - 3)
                             c = (char) ((CharacterClass.toHexDigit(data[i++]) << 12) +
-                                (CharacterClass.toHexDigit(data[i++]) << 8) +
-                                (CharacterClass.toHexDigit(data[i++]) << 4) +
-                                CharacterClass.toHexDigit(data[i++]));
+                                    (CharacterClass.toHexDigit(data[i++]) << 8) +
+                                    (CharacterClass.toHexDigit(data[i++]) << 4) +
+                                    CharacterClass.toHexDigit(data[i++]));
                         else {
                             c = '\0';
                             i = out;
@@ -1651,13 +1651,13 @@ public class Term implements REFlags, Serializable {
                 break;
             case LOOKAHEAD_CONDITION_IN:
                 // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1618C1-L1626C18
-                blocktest().given(lookaheadId, 1).mock("((Lookahead) this).isPositive", true).given(failNext, new Term())
+                blocktest().given(b, new StringBuilder()).given(lookaheadId, 1).mock("((Lookahead) this).isPositive", true).given(failNext, new Term())
                         .given(failNext.instanceNum, 1)
                         .checkEq(b.toString(), "(cond1= , , =>1, ");
-                blocktest().given(lookaheadId, 3).mock("((Lookahead) this).isPositive", false).given(failNext, new Term())
+                blocktest().given(b, new StringBuilder()).given(lookaheadId, 3).mock("((Lookahead) this).isPositive", false).given(failNext, new Term())
                         .given(failNext.instanceNum, 2)
                         .checkEq(b.toString(), "(cond3! , , =>2, ");
-                blocktest().given(lookaheadId, 5).mock("((Lookahead) this).isPositive", false).given(failNext, null)
+                blocktest().given(b, new StringBuilder()).given(lookaheadId, 5).mock("((Lookahead) this).isPositive", false).given(failNext, null)
                         .given(failNext.instanceNum, 6)
                         .checkEq(b.toString(), "(cond5! , ");
                 b.append("(cond");
@@ -1977,7 +1977,7 @@ class Pretokenizer implements Serializable {
                                         this.groupDeclared = true;
                                         ttype = NAMED_GROUP;
                                         break;
-                                        //throw new PatternSyntaxException("invalid character after '(?<' : " + c1);
+                                    //throw new PatternSyntaxException("invalid character after '(?<' : " + c1);
                                 }
                                 break;
                             case '>':
@@ -2039,7 +2039,7 @@ class Pretokenizer implements Serializable {
                         int nstart, nend;
                         boolean isDecl;
                         // BLOCKTEST EVAL: https://github.com/tommyettinger/RegExodus/blob/48a8167a5dc1e381fc741fabd425965a22aa1503/src/main/java/regexodus/Term.java#L1975C3-L2003C1
-                        blocktest().given(p, 0).given(data, new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8'}).given(c, ' ').given(end, 1)
+                        blocktest().given(skip, 3).given(p, 0).given(data, new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8'}).given(c, ' ').given(end, 1)
                                 .end(FIRST_BLOCK, 4, true).expect(PatternSyntaxException.class);
                         c = data[p];
                         while (Category.Space.contains(c)) {
@@ -2166,12 +2166,12 @@ class ConditionalExpr extends Group implements Serializable {
 
     ConditionalExpr(Lookahead la) {
         super(0);
-      /*
-      * This all is rather tricky.
-      * See how this types are handled in Matcher.
-      * The shortcoming is that we strongly rely upon
-      * the internal structure of Lookahead.
-      */
+        /*
+         * This all is rather tricky.
+         * See how this types are handled in Matcher.
+         * The shortcoming is that we strongly rely upon
+         * the internal structure of Lookahead.
+         */
         la.in.type = LOOKAHEAD_CONDITION_IN;
         la.out.type = LOOKAHEAD_CONDITION_OUT;
         if (la.isPositive) {
@@ -2200,12 +2200,12 @@ class ConditionalExpr extends Group implements Serializable {
 
     ConditionalExpr(Lookbehind lb) {
         super(0);
-      /*
-      * This all is rather tricky.
-      * See how this types are handled in Matcher.
-      * The shortcoming is that we strongly rely upon
-      * the internal structure of Lookahead.
-      */
+        /*
+         * This all is rather tricky.
+         * See how this types are handled in Matcher.
+         * The shortcoming is that we strongly rely upon
+         * the internal structure of Lookahead.
+         */
         lb.in.type = LOOKBEHIND_CONDITION_IN;
         lb.out.type = LOOKBEHIND_CONDITION_OUT;
         if (lb.isPositive) {

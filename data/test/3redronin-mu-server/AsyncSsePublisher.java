@@ -178,8 +178,8 @@ class AsyncSsePublisherImpl implements AsyncSsePublisher {
         } else {
             asyncHandle.write(Mutils.toByteBuffer(text), error -> {
                 // BLOCKTEST EVAL: https://github.com/3redronin/mu-server/blob/69683cf8009d7a0ac52452fd4b0abe06ffd0bf87/src/main/java/io/muserver/AsyncSsePublisher.java#L173-L179
-                blocktest().given(error, new FileNotFoundException()).given(stage, new CompletableFuture<String>(), "CompletableFuture<String>").checkTrue(stage.isCompletedExceptionally());
-                blocktest().given(error, null).given(stage, new CompletableFuture<String>(), "CompletableFuture<String>").checkFalse(stage.isCompletedExceptionally());
+                blocktest().given(error, new FileNotFoundException()).given(stage, new CompletableFuture<String>()).checkTrue(stage.isCompletedExceptionally());
+                blocktest().given(error, null).given(stage, new CompletableFuture<String>()).checkFalse(stage.isCompletedExceptionally());
                 if (error == null) {
                     stage.complete(null);
                 } else {

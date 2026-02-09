@@ -146,13 +146,14 @@ public class SnapshotServiceImpl implements SnapshotService {
                     if(!stateDiffViewModel.isEmpty()) {
                         stateDiffViewModel.getDiff().forEach((address, change) -> {
                             // BLOCKTEST EVAL: https://github.com/HelixNetwork/pendulum/blob/919ae1df7ca4359aad6b9a4575beb9d3ca4de8ef/src/main/java/net/helix/pendulum/service/snapshot/impl/SnapshotServiceImpl.java#L141-L143
+                            // MUST PROVIDE TYPE
                             blocktest().given(balanceChanges, new HashMap<>()).given(address, HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES), "Hash")
-                                            .given(change, 1L, "long").checkEq(balanceChanges.get(HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES)), 1, 0.001);
+                                            .given(change, 1L).checkEq(balanceChanges.get(HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES)), 1, 0.001);
 
                             blocktest().setup(() -> {
                                 balanceChanges.put(HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES), 10L);
-                                    }).given(balanceChanges, new HashMap<>()).given(address, HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES), "Hash")
-                                    .given(change, 1L, "long").checkEq(balanceChanges.get(HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES)), 11, 0.001);
+                                    }).given(balanceChanges, new HashMap<>()).given(address, HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES))
+                                    .given(change, 1L).checkEq(balanceChanges.get(HashFactory.ADDRESS.create(new byte[5], 0, Hash.SIZE_IN_BYTES)), 11, 0.001);
 
                             balanceChanges.compute(address, (k, balance) -> (balance == null ? 0 : balance) + change);
                         });

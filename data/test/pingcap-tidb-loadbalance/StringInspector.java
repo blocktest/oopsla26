@@ -42,9 +42,9 @@ import java.util.Set;
 
 /**
  * Utility class to inspect a MySQL string, typically a query string.
- * 
+ *
  * Provides string searching and manipulation operations such as finding sub-strings, matching sub-strings or building a comments-free version of a string.
- * 
+ *
  * This object keeps internal state that affect the operations, e.g., executing an indexOf operation after another causes the second to start the search form
  * where the previous one stopped.
  */
@@ -72,7 +72,7 @@ public class StringInspector {
     /**
      * This object provides string searching and manipulation operations such as finding sub-strings, matching sub-strings or building a comments-free version
      * of a string.
-     * 
+     *
      * @param source
      *            the source string to process
      * @param openingMarkers
@@ -96,7 +96,7 @@ public class StringInspector {
     /**
      * This object provides string searching and manipulation operations such as finding sub-strings, matching sub-strings or building a comments-free version
      * of a string.
-     * 
+     *
      * @param source
      *            the source string to process
      * @param startingPosition
@@ -116,7 +116,7 @@ public class StringInspector {
      *            is not touched.
      */
     public StringInspector(String source, int startingPosition, String openingMarkers, String closingMarkers, String overridingMarkers,
-            Set<SearchMode> searchMode) {
+                           Set<SearchMode> searchMode) {
         if (source == null) {
             throw new IllegalArgumentException("The source string must not be null.");
         }
@@ -153,7 +153,7 @@ public class StringInspector {
     /**
      * Sets the position from where the source string will be processed from now on, taking into consideration the "escaped" status of current character, if
      * the mode {@link SearchMode#ALLOW_BACKSLASH_ESCAPE} is present in the default search mode.
-     * 
+     *
      * @param pos
      *            the position from where the source string will be processed
      * @return
@@ -175,7 +175,7 @@ public class StringInspector {
 
     /**
      * Sets the position where the source string processing will stop.
-     * 
+     *
      * @param pos
      *            the position where the source string will stop being processed
      * @return
@@ -225,7 +225,7 @@ public class StringInspector {
 
     /**
      * Returns the character in the current position.
-     * 
+     *
      * @return
      *         the character in the current position
      */
@@ -238,7 +238,7 @@ public class StringInspector {
 
     /**
      * Returns the current position.
-     * 
+     *
      * @return
      *         the current position
      */
@@ -249,7 +249,7 @@ public class StringInspector {
     /**
      * Increments the current position index, by one, taking into consideration the "escaped" status of current character, if the mode
      * {@link SearchMode#ALLOW_BACKSLASH_ESCAPE} is present in the default search mode.
-     * 
+     *
      * @return
      *         the new current position
      */
@@ -260,7 +260,7 @@ public class StringInspector {
     /**
      * Increments the current position index, by one, taking into consideration the "escaped" status of current character, if the mode
      * {@link SearchMode#ALLOW_BACKSLASH_ESCAPE} is present in the search mode specified.
-     * 
+     *
      * @param searchMode
      *            the search mode to use in this operation
      * @return
@@ -281,7 +281,7 @@ public class StringInspector {
     /**
      * Increments the current position index, by be given number, taking into consideration the "escaped" status of current character, if the mode
      * {@link SearchMode#ALLOW_BACKSLASH_ESCAPE} is present in the default search mode.
-     * 
+     *
      * @param by
      *            the number of positions to increment
      * @return
@@ -294,7 +294,7 @@ public class StringInspector {
     /**
      * Increments the current position index, by be given number, taking into consideration the "escaped" status of current character, if the mode
      * {@link SearchMode#ALLOW_BACKSLASH_ESCAPE} is present in the specified search mode.
-     * 
+     *
      * @param by
      *            the number of positions to increment
      * @param searchMode
@@ -332,7 +332,7 @@ public class StringInspector {
      * valid character then repeated calls return always the same index.
      * If the character in the current position matches one of the prefixes that determine a skipping block, then the position marker advances to the first
      * character after the block to skip.
-     * 
+     *
      * @return
      *         the position of the next valid character, or the current position if already on a valid character
      */
@@ -345,7 +345,7 @@ public class StringInspector {
      * position automatically, i.e., if already positioned in a valid character then repeated calls return always the same index.
      * If the character in the current position matches one of the prefixes that determine a skipping block, then the position marker advances to the first
      * character after the block to skip.
-     * 
+     *
      * @param searchMode
      *            the search mode to use in this operation
      * @return
@@ -403,7 +403,7 @@ public class StringInspector {
 
             } else if (checkSkipConditions && searchMode.contains(SearchMode.SKIP_LINE_COMMENTS)
                     && ((c0 == '-' && c1 == '-' && (Character.isWhitespace(c2) || (dashDashCommentImmediateEnd = c2 == ';') || c2 == Character.MIN_VALUE))
-                            || c0 == '#')) {
+                    || c0 == '#')) {
                 if (dashDashCommentImmediateEnd) {
                     // Comments line found but closed immediately by query delimiter marker.
                     this.pos++; // Move to next char ('-').
@@ -463,12 +463,12 @@ public class StringInspector {
                     // Check if 5 digits MySQL version reference comes next, if so skip them.
                     int i = 0;
                     // BLOCKTEST EVAL: https://github.com/pingcap/tidb-loadbalance/blob/b1d62a4561fee7c525ae4c640a10f55c4702755b/src/main/java/com/tidb/jdbc/conf/StringInspector.java#L453C6-L463C22
-                    blocktest().given(this.pos, 1).given(this.srcLen, 5).given(this.source, "12345").checkEq(i, 3).checkEq(this.pos, 1);
-                    blocktest().given(this.pos, 1).given(this.srcLen, 5).given(this.source, "1234a").checkEq(i, 2).checkEq(this.pos, 1);
-                    blocktest().given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 100).checkEq(i, 5).checkEq(this.pos, 6);
-                    blocktest().given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 1).checkEq(i, 5).checkEq(this.pos, 0);
-                    blocktest().given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 2).checkEq(i, 5).checkEq(this.pos, 1);
-                    blocktest().given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 0).checkEq(i, 5).checkEq(this.pos, -1);
+                    blocktest().given(i, 0).given(stopAt, 0).given(this.pos, 1).given(this.srcLen, 5).given(this.source, "12345").checkEq(i, 3).checkEq(this.pos, 1);
+                    blocktest().given(i, 0).given(stopAt, 0).given(this.pos, 1).given(this.srcLen, 5).given(this.source, "1234a").checkEq(i, 2).checkEq(this.pos, 1);
+                    blocktest().given(i, 0).given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 100).checkEq(i, 5).checkEq(this.pos, 6);
+                    blocktest().given(i, 0).given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 1).checkEq(i, 5).checkEq(this.pos, 0);
+                    blocktest().given(i, 0).given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 2).checkEq(i, 5).checkEq(this.pos, 1);
+                    blocktest().given(i, 0).given(this.pos, 1).given(this.srcLen, 10).given(this.source, "1234567890").given(this.stopAt, 0).checkEq(i, 5).checkEq(this.pos, -1);
                     for (; i < NON_COMMENTS_MYSQL_VERSION_REF_LENGTH; i++) {
                         if (this.pos + 1 + i >= this.srcLen || !Character.isDigit(this.source.charAt(this.pos + 1 + i))) {
                             break;
@@ -512,7 +512,7 @@ public class StringInspector {
     /**
      * Returns the position of the next closing marker corresponding to the opening marker in the current position.
      * If the current position is not an opening marker, then -1 is returned instead.
-     * 
+     *
      * @param searchMode
      *            the search mode to use in this operation
      * @return
@@ -576,7 +576,7 @@ public class StringInspector {
      * current position automatically, i.e., if already positioned in a valid character then repeated calls return always the same index.
      * If the character in the current position matches one of the prefixes that determine a skipping block, then the position marker advances to the first
      * alphanumeric character after the block to skip.
-     * 
+     *
      * @return
      *         the position of the next valid character, or the current position if already on a valid character
      */
@@ -616,7 +616,7 @@ public class StringInspector {
      * current position automatically, i.e., if already positioned in a valid character then repeated calls return always the same index.
      * If the character in the current position matches one of the prefixes that determine a skipping block, then the position marker advances to the first
      * non-whitespace character after the block to skip.
-     * 
+     *
      * @return
      *         the position of the next valid character, or the current position if already on a valid character
      */
@@ -643,7 +643,7 @@ public class StringInspector {
      * current position automatically, i.e., if already positioned in a valid character then repeated calls return always the same index.
      * If the character in the current position matches one of the prefixes that determine a skipping block, then the position marker advances to the first
      * whitespace character after the block to skip.
-     * 
+     *
      * @return
      *         the position of the next valid character, or the current position if already on a valid character
      */
@@ -681,7 +681,7 @@ public class StringInspector {
     /**
      * Finds the position of the given string within the source string, ignoring case, with the option to skip text delimited by the specified markers or inside
      * comment blocks.
-     * 
+     *
      * @param searchFor
      *            the sub-string to search for
      * @return
@@ -694,7 +694,7 @@ public class StringInspector {
     /**
      * Finds the position of the given string within the source string, ignoring case, with the option to skip text delimited by the specified markers or inside
      * comment blocks.
-     * 
+     *
      * @param searchFor
      *            the sub-string to search for
      * @param searchMode
@@ -747,12 +747,12 @@ public class StringInspector {
     /**
      * Finds the position of the of the first of a consecutive sequence of strings within the source string, ignoring case, with the option to skip text
      * delimited by the specified markers or inside comment blocks.
-     * 
+     *
      * <p>
      * Independently of the <code>searchMode</code> specified, when searching for the second and following sub-strings {@link SearchMode#SKIP_WHITE_SPACE} will
      * be added and {@link SearchMode#SKIP_BETWEEN_MARKERS} removed.
      * </p>
-     * 
+     *
      * @param searchFor
      *            the sequence of sub-strings to search
      * @return
@@ -827,7 +827,7 @@ public class StringInspector {
     /**
      * Checks if the given string matches the source string counting from the current position, ignoring case, with the option to skip text delimited by the
      * specified markers or inside comment blocks.
-     * 
+     *
      * @param toMatch
      *            the sub-string to match
      * @return
@@ -863,12 +863,12 @@ public class StringInspector {
     /**
      * Checks if the given consecutive sequence of strings matches the source string counting from the current position, ignoring case, with the option to skip
      * text delimited by the specified markers or inside comment blocks.
-     * 
+     *
      * <p>
      * Independently of the <code>searchMode</code> specified, when matching the second and following sub-strings {@link SearchMode#SKIP_WHITE_SPACE} will be
      * added and {@link SearchMode#SKIP_BETWEEN_MARKERS} removed.
      * </p>
-     * 
+     *
      * @param toMatch
      *            the sequence of sub-strings to match
      * @return
@@ -929,7 +929,7 @@ public class StringInspector {
 
     /**
      * Returns a copy of the source string stripped of all comments and hints.
-     * 
+     *
      * @return
      *         a comments-free string
      */
@@ -971,7 +971,7 @@ public class StringInspector {
 
     /**
      * Splits the source string by the given delimiter. Consecutive delimiters result in empty string parts.
-     * 
+     *
      * @param delimiter
      *            the characters sequence where to split the source string
      * @param trim

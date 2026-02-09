@@ -564,7 +564,7 @@ public class LogBuilder implements Serializable{
         });
 
         return this
-            .updateContent();
+                .updateContent();
     }
 
     public void clearAll() {
@@ -661,7 +661,7 @@ public class LogBuilder implements Serializable{
                 // BLOCKTEST EVAL: https://github.com/ripreal/V8LogScanner/blob/3789156a0ab07c4b2cdd91e8165ca733ecc01905/src/main/java/org/v8LogScanner/logsCfg/LogBuilder.java#L655-L664
                 // @blocktest().given(doc, DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()).given(logEl, null).setup(() -> { logEl = doc.createElement(LogConfig.LOC_TAG_NAME); }).given(event, new LogEvent()).checkEq(logEl.getChildNodes().getLength(), 1);
                 Element eventEl = doc.createElement(LogConfig.EVENT_TAG_NAME);
-                
+
                 for (LogEvent.EventRow eventRow : event) {
                     Element eventPropEl = doc.createElement(eventRow.getComparison());
                     eventPropEl.setAttribute(LogConfig.PROP_NAME, eventRow.getKey());
@@ -673,7 +673,7 @@ public class LogBuilder implements Serializable{
 
             properties.forEach((prop) -> {
                 // BLOCKTEST EVAL: https://github.com/ripreal/V8LogScanner/blob/3789156a0ab07c4b2cdd91e8165ca733ecc01905/src/main/java/org/v8LogScanner/logsCfg/LogBuilder.java#L666-L674
-                // @blocktest("testB").given(doc, DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()).given(logEl, null).setup(() -> { logEl = doc.createElement(LogConfig.LOC_TAG_NAME); }).given(prop,  new LogProperty("bar")).checkEq(logEl.getChildNodes().getLength(), 1);
+                // @blocktest("testB").given(DUMMY, "dummy").given(doc, DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()).given(logEl, null).setup(() -> { logEl = doc.createElement(LogConfig.LOC_TAG_NAME); }).given(prop,  new LogProperty("bar")).checkEq(logEl.getChildNodes().getLength(), 1);
                 Element propEl = doc.createElement(LogConfig.PROP_NAME);
                 propEl.setAttribute(LogConfig.PROPERTY_PROP_NAME, prop.getName());
 

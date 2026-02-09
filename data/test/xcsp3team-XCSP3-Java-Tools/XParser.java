@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2016 XCSP3 Team (contact@xcsp.org)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -358,7 +358,7 @@ public class XParser {
                         Stream.of(childs).forEach(child -> {
                             // BLOCKTEST EVAL: https://github.com/xcsp3team/XCSP3-Java-Tools/blob/1567b06e77cb2a8b73a1ce65e4773cbf08f59ce0/src/main/java/org/xcsp/parser/XParser.java#L330-L340
                             /*
-                            @blocktest("test").noInit(array).noInit(type).given(child, null, "Element").mock("getActualElementToAnalyse(child)").setup(() -> {
+                            @blocktest("test").given(cacheForId2Domain, new HashMap<>()).noInit(array).noInit(type).given(child, null).mock("getActualElementToAnalyse(child)").setup(() -> {
                                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                                 javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
                                 Document document = builder.newDocument();
@@ -370,7 +370,7 @@ public class XParser {
                              */
 
                             /*
-                            @blocktest("test2").noInit(array).noInit(type).given(child, null, "Element").mock("getActualElementToAnalyse(child)").setup(() -> {
+                            @blocktest("test2").given(cacheForId2Domain, new HashMap<>()).noInit(array).noInit(type).given(child, null).mock("getActualElementToAnalyse(child)").setup(() -> {
                                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                                 javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
                                 Document document = builder.newDocument();
@@ -449,7 +449,7 @@ public class XParser {
             return sub.length() == 0 ? new Object[] {} : Stream.of(sub.split("\\s*,\\s*")).mapToLong(s -> safeLong(s)).toArray();
         }
         if (// condition
-        tok.charAt(0) == '(')
+                tok.charAt(0) == '(')
             return parseCondition(tok);
         if (tok.charAt(0) == '%')
             return new XParameter(tok.equals("%...") ? -1 : Integer.parseInt(tok.substring(1)));
@@ -720,10 +720,10 @@ public class XParser {
     private Object parseHybridCondition(String s) {
         assert s.length() > 0;
         if (// if we have *
-        s.equals(STAR_SYMBOL))
+                s.equals(STAR_SYMBOL))
             return STAR;
         if (// if we have an integer
-        isLong(s))
+                isLong(s))
             return safeLong(s);
         if (s.charAt(0) == HYBRID_COLUMN_SYMBOL)
             // we add the implicit operator (=)
@@ -748,11 +748,11 @@ public class XParser {
         // we discard the operator (first character) because we have relop (not null)
         s = s.substring(1);
         if (// if we have a unary relational restriction
-        s.charAt(0) != HYBRID_COLUMN_SYMBOL)
+                s.charAt(0) != HYBRID_COLUMN_SYMBOL)
             return relop == EQ ? safeLong(s) : new ConditionVal(relop, safeLong(s));
         Boolean pos = s.contains("+") ? Boolean.TRUE : s.contains("-") ? Boolean.FALSE : null;
         if (// if we have a basic binary restriction (i.e., without +/- k)
-        pos == null)
+                pos == null)
             return new ConditionPar1(relop, new XParameter(safeInt(safeLong(s.substring(1)))));
         // it is either + or -
         String[] t = s.split(pos ? "\\+" : "\\-");
@@ -816,7 +816,7 @@ public class XParser {
         if (s.charAt(0) != '(') {
             // necessarily a unary constraint if '(' not present as first character
             if (// case SYMBOLIC, so we return an array of string
-            primitive == null)
+                    primitive == null)
                 return Stream.of(s.split("\\s+")).filter(tok -> doms == null || ((DomSymbolic) doms[0]).contains(tok)).toArray(String[]::new);
             else
                 return primitive.parseSeq(s, doms == null ? null : (Dom) doms[0]);
@@ -832,7 +832,7 @@ public class XParser {
         long[] tmp = new long[tok.split("\\s*,\\s*").length];
         while (tok != null) {
             if (// if not filtered-out parsed tuple
-            primitive.parseOrdinaryTuple(tok, tmp, doms, ab))
+                    primitive.parseOrdinaryTuple(tok, tmp, doms, ab))
                 if (primitive == TypePrimitive.BYTE) {
                     byte[] t = new byte[tmp.length];
                     for (int i = 0; i < t.length; i++) t[i] = (byte) tmp[i];
@@ -1100,7 +1100,7 @@ public class XParser {
         else
             add(index, sons[0]);
         if (// if (lastSon == 2)
-        isTag(sons[1], coeffs))
+                isTag(sons[1], coeffs))
             add(coeffs, sons[1]);
         add(condition, sons[lastSon]);
     }
@@ -1636,10 +1636,10 @@ public class XParser {
         if (entry instanceof XCtr) {
             if (((XCtr) entry).type != TypeCtr.adhoc)
                 for (int i = 0; i <= lastSon; i++) // we copy the attributes for each parameter of the constraint
-                ((XCtr) entry).childs[i].copyAttributesOf(sons[i]);
+                    ((XCtr) entry).childs[i].copyAttributesOf(sons[i]);
         } else if (entry instanceof XSlide)
             for (int i = 0; i < lastSon; i++) // we copy the attributes for the list(s) involved
-            ((XSlide) entry).lists[i].copyAttributesOf(sons[i]);
+                ((XSlide) entry).lists[i].copyAttributesOf(sons[i]);
         // in slide
         // Note that for seqbin and logic entries, no need to copy any attributes at this place
         if (entry instanceof CEntryReifiable) {

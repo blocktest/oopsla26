@@ -183,9 +183,10 @@ public final class ProblemDataHandler {
 			List<Field> fields = ProblemIMP.problemDataFields(new ArrayList<>(), object.getClass());
 			map = fields.stream().collect(Collectors.toMap(Field::getName, f -> {
 				// BLOCKTEST EVAL: https://github.com/xcsp3team/XCSP3-Java-Tools/blob/1567b06e77cb2a8b73a1ce65e4773cbf08f59ce0/src/main/java/org/xcsp/modeler/implementation/ProblemDataHandler.java#L175-L182
+				// MUST PROVIDE TYPE
 				blocktest().given(object, new ProblemDataHandler()).given(f, ProblemDataHandler.class.getDeclaredFields()[0], "Field").checkReturnEq("testing");
-				blocktest().given(object, new ProblemDataHandler("test")).given(f, ProblemDataHandler.class.getDeclaredFields()[0], "Field").checkReturnEq("null");
-				blocktest("test2").given(object, null, "Object").checkReturnEq("null").given(f, org.xcsp.parser.loaders.CtrLoaderSymbolic.class.getDeclaredFields()[0], "Field");
+				blocktest().given(object, new ProblemDataHandler("test")).given(f, ProblemDataHandler.class.getDeclaredFields()[0]).checkReturnEq("null");
+				blocktest("test2").given(object, null).checkReturnEq("null").given(f, org.xcsp.parser.loaders.CtrLoaderSymbolic.class.getDeclaredFields()[0]);
 				try {
 					f.setAccessible(true);
 					return f.get(object) == null ? "null" : f.get(object); // "null" because null provokes an exception when merging
@@ -197,9 +198,10 @@ public final class ProblemDataHandler {
 			map = Stream.of(object.getClass().getDeclaredFields()).filter(f -> !ProblemIMP.mustBeIgnored(f)).peek(f -> f.setAccessible(true))
 					.collect(Collectors.toMap(Field::getName, f -> {
 						// BLOCKTEST EVAL: https://github.com/xcsp3team/XCSP3-Java-Tools/blob/1567b06e77cb2a8b73a1ce65e4773cbf08f59ce0/src/main/java/org/xcsp/modeler/implementation/ProblemDataHandler.java#L185-L193
+						// MUST PROIDE TYPE
 						blocktest().given(object, new ProblemDataHandler("test")).given(f, ProblemDataHandler.class.getDeclaredFields()[0], "Field").checkReturnEq("null");
-						blocktest().given(object, null, "Object").checkReturnEq(null).given(f, org.xcsp.parser.loaders.CtrLoaderSymbolic.class.getDeclaredFields()[0], "Field");
-						// @blocktest().given(object, new org.xcsp.parser.loaders.CtrLoaderSymbolic(new org.xcsp.parser.callbacks.CompetitionValidator(Boolean.TRUE, false, "foo")), "Object").checkTrue(methodReturn != null).given(f, org.xcsp.parser.loaders.CtrLoaderSymbolic.class.getDeclaredFields()[0], "Field");
+						blocktest().given(object, null).checkReturnEq(null).given(f, org.xcsp.parser.loaders.CtrLoaderSymbolic.class.getDeclaredFields()[0]);
+						// @blocktest().given(object, new org.xcsp.parser.loaders.CtrLoaderSymbolic(new org.xcsp.parser.callbacks.CompetitionValidator(Boolean.TRUE, false, "foo"))).checkTrue(methodReturn != null).given(f, org.xcsp.parser.loaders.CtrLoaderSymbolic.class.getDeclaredFields()[0]);
 						try {
 							f.setAccessible(true);
 							return f.get(object) == null ? "null" : f.get(object); // "null" because null provokes an exception when merging

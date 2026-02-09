@@ -237,8 +237,8 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                                             .anyMatch(resourceType -> resourceType.getType().equals(extendedResourceTypeString))).findFirst()
                                     .ifPresent(typeProvider -> {
                                         // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L223-L229
-                                        blocktest().given(typeProvider.getBundledRenderUnitCapability().getResourceTypes(), new HashSet<ResourceType>(Arrays.asList(ResourceType.parseResourceType("testing/1.0.0"), ResourceType.parseResourceType("testing2/2.0.1"))))
-                                                .given(properties, new Hashtable<>()).given(extendedResourceTypeString, "testing").checkEq(properties.get("sling.servlet.resourceSuperType"), "testing/1.0.0");
+                                        blocktest().given(properties, new Hashtable<>()).given(typeProvider.getBundledRenderUnitCapability().getResourceTypes(), new HashSet<ResourceType>(Arrays.asList(ResourceType.parseResourceType("testing/1.0.0"), ResourceType.parseResourceType("testing2/2.0.1"))))
+                                                .given(extendedResourceTypeString, "testing").checkEq(properties.get("sling.servlet.resourceSuperType"), "testing/1.0.0");
                                         for (ResourceType type : typeProvider.getBundledRenderUnitCapability().getResourceTypes()) {
                                             if (type.getType().equals(extendedResourceTypeString)) {
                                                 properties.put(ServletResolverConstants.SLING_SERVLET_RESOURCE_SUPER_TYPE, type.toString());
@@ -276,13 +276,13 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                                 boolean noMatch =
                                         bundledRenderUnitCapability.getResourceTypes().stream().noneMatch(resourceType -> {
                                             // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L259-L269
-                                            blocktest().given(scriptNameNoExtension, "label").given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
+                                            blocktest().given(scriptNameNoExtension, "label").given(resourceType, ResourceType.parseResourceType("testing/label")).given(executableParentPath, "testing/label2")
                                                     .checkReturnTrue();
-                                            blocktest().given(scriptNameNoExtension, "label2").given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
+                                            blocktest().given(scriptNameNoExtension, "label2").given(resourceType, ResourceType.parseResourceType("testing/label")).given(executableParentPath, "testing/label2")
                                                     .checkReturnFalse();
-                                            blocktest().given(scriptNameNoExtension, "testing").given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
+                                            blocktest().given(scriptNameNoExtension, "testing").given(resourceType, ResourceType.parseResourceType("testing")).given(executableParentPath, "testing")
                                                     .checkReturnTrue();
-                                            blocktest().given(scriptNameNoExtension, "testing2").given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
+                                            blocktest().given(scriptNameNoExtension, "testing2").given(resourceType, ResourceType.parseResourceType("testing")).given(executableParentPath, "testing")
                                                     .checkReturnFalse();
                                             String resourceTypePath = resourceType.toString();
                                             String label;
@@ -310,18 +310,15 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                                         if (StringUtils.isNotEmpty(executableParentPath) && executableParentPath.equals(resourceTypePath)) {
                                             paths.add(resourceTypePath + "/" + label + ".servlet");
                                         }
-                                        blocktest().given(resourceType, ResourceType.parseResourceType("testing/label/1.1.0"), "ResourceType").given(executableParentPath, "")
-                                                .given(properties, new Hashtable<>()).given(paths, new ArrayList<>())
+                                        blocktest().given(paths, new ArrayList<>()).given(resourceType, ResourceType.parseResourceType("testing/label/1.1.0")).given(executableParentPath, "")
                                                 .checkEq(resourceTypePath, "testing/label/1.1.0")
                                                 .checkEq(resourceType.getVersion().toString(), "1.1.0").checkTrue(paths.isEmpty())
                                                 .start(FIRST_BLOCK, 10);
-                                        blocktest().given(resourceType, ResourceType.parseResourceType("testing/label"), "ResourceType").given(executableParentPath, "testing/label2")
-                                                .given(properties, new Hashtable<>()).given(paths, new ArrayList<>())
+                                        blocktest().given(paths, new ArrayList<>()).given(resourceType, ResourceType.parseResourceType("testing/label")).given(executableParentPath, "testing/label2")
                                                 .checkEq(resourceTypePath, "testing/label")
                                                 .checkEq(label, "label").checkTrue(paths.isEmpty())
                                                 .start(FIRST_BLOCK, 10);
-                                        blocktest().given(resourceType, ResourceType.parseResourceType("testing"), "ResourceType").given(executableParentPath, "testing")
-                                                .given(properties, new Hashtable<>()).given(paths, new ArrayList<>())
+                                        blocktest().given(paths, new ArrayList<>()).given(resourceType, ResourceType.parseResourceType("testing")).given(executableParentPath, "testing")
                                                 .checkEq(resourceTypePath, "testing")
                                                 .checkEq(label, "testing")
                                                 .checkEq(paths.iterator().next(), "testing/testing.servlet")
@@ -345,10 +342,10 @@ public class BundledScriptTracker implements BundleTrackerCustomizer<List<Servic
                             if (!properties.containsKey(ServletResolverConstants.SLING_SERVLET_PATHS)) {
                                 bundledRenderUnitCapability.getResourceTypes().forEach(resourceType -> {
                                     // BLOCKTEST EVAL: https://github.com/apache/sling-org-apache-sling-servlets-resolver/blob/75e62e657fc0b2dbbc90287cba23a24116152fce/src/main/java/org/apache/sling/servlets/resolver/internal/bundle/BundledScriptTracker.java#L302-L306
-                                    blocktest().given(executableParentPath, "veryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun"), "ResourceType").given(executablePath, "foo").given(properties, new Hashtable<>())
-                                            .checkEq(properties.get(ServletResolverConstants.SLING_SERVLET_PATHS), "foo");
-                                    blocktest().given(executableParentPath, "NOTveryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun"), "ResourceType").given(executablePath, "foo").given(properties, new Hashtable<>())
-                                            .checkTrue(properties.isEmpty());
+                                    blocktest().given(executableParentPath, "veryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun")).given(executablePath, "foo")
+                                            .checkEq(properties.get(ServletResolverConstants.SLING_SERVLET_PATHS), "foo").given(properties, new Hashtable<>());
+                                    blocktest().given(executableParentPath, "NOTveryfun/cool").given(resourceType, ResourceType.parseResourceType("veryfun")).given(executablePath, "foo")
+                                            .checkTrue(properties.isEmpty()).given(properties, new Hashtable<>());
                                     if (StringUtils.isNotEmpty(executableParentPath) && (executableParentPath + "/").startsWith(resourceType.toString() + "/")) {
                                         properties.put(ServletResolverConstants.SLING_SERVLET_PATHS, executablePath);
                                     }

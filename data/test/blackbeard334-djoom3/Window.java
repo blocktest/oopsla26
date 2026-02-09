@@ -1704,8 +1704,8 @@ public class Window {
                                 if (children.oGet(i).drawRect.Contains(gui.CursorX(), gui.CursorY())) {
                                     // BLOCKTEST EVAL: https://github.com/blackbeard334/djoom3/blob/64362645420c99ac621b051a678de96883e2a329/src/main/java/neo/ui/Window.java#L1660C1-L1666C38
                                     if (event.evValue2 != 0) {
-                                        blocktest().given(children.oGet(i).flags, 0x00000000, "int").given(flags, 0x11111111).checkEq(flags, 286327057).checkReturnEq("childsel");
-                                        blocktest().given(children.oGet(i).flags, 0x00001000, "int").given(flags, 0x11111111).checkEq(flags, 0x11111111).checkReturnEq("NOTchildsel");
+                                        blocktest().given(children.oGet(i).flags, 0x00000000).given(flags, 0x11111111).checkEq(flags, 286327057).checkReturnEq("childsel");
+                                        blocktest().given(children.oGet(i).flags, 0x00001000).given(flags, 0x11111111).checkEq(flags, 0x11111111).checkReturnEq("NOTchildsel");
                                         children.oGet(i).flags ^= WIN_SELECTED;
                                         if ((children.oGet(i).flags & WIN_SELECTED) != 0) {
                                             flags &= ~WIN_SELECTED;

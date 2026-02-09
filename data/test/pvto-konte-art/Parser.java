@@ -650,13 +650,13 @@ public class Parser {
                     {
                         try {
                             // BLOCKTEST EVAL: https://github.com/pvto/konte-art/blob/03c969d8fd62ba3c7175a840e6a785049183f4b6/src/main/java/org/konte/parse/Parser.java#L611-L613
-                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("hello.png")).given(lineNr, 0, "int").given(caretPos, 0, "int").setup(() -> {
+                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("hello.png")).given(lineNr, 0).given(caretPos, 0).setup(() -> {
                               imgMatcher.find();
                             }).expect(ParseException.class).end(FIRST_THROW);
-                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("img/README/2015-02-23-21-57-cubes.png funny")).given(lineNr, 0, "int").given(caretPos, 0, "int").setup(() -> {
+                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("img/README/2015-02-23-21-57-cubes.png funny")).given(lineNr, 0).given(caretPos, 0).setup(() -> {
                               imgMatcher.find();
                             }).mock("getFile(workdir, imgMatcher.group(1))", new File("img/README/2015-02-23-21-57-cubes.png")).checkTrue(Model.bitmapCache.getImage("funny") != null);
-                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("img/README/2015-02-23-21-57-cubes.png funny")).given(lineNr, 0, "int").given(caretPos, 0, "int").setup(() -> {
+                            blocktest().given(imgMatcher, Pattern.compile("(.*(jpg|jpeg|png|gif|JPG|PNG|GIF))\\s*(\\w*)$").matcher("img/README/2015-02-23-21-57-cubes.png funny")).given(lineNr, 0).given(caretPos, 0).setup(() -> {
                               imgMatcher.find();
                             }).mock("getFile(workdir, imgMatcher.group(1))", new File("img/README/2015-02-23-21-57-cubes.png")).mock("Model.bitmapCache.add(fl, refName)", null).expect(ParseException.class);
                             String refName = imgMatcher.group(3);

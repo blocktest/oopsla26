@@ -206,6 +206,7 @@ public class Node {
                                             blocktest().given(n, null)
                                                     .given(hostname, "localhost").given(port, ":80")
                                                     .given(ip, "10.0.1.1")
+                                                    .given(protocol, (n instanceof TCPNeighbor) ? "tcp://" : "udp://").given(neighborIpCache, new HashMap<>())
                                                     .mock("removeNeighbor(..)").mock("newNeighbor(..)").mock("addNeighbor(..)")
                                                     .checkEq(neighborIpCache.get("localhost"), "10.0.1.1");
                                             uri(protocol + hostname + port).ifPresent(uri -> {
@@ -214,6 +215,7 @@ public class Node {
                                                 /*
                                                 @blocktest().given(n, null)
                                                         .mock("removeNeighbor(..)").mock("newNeighbor(..)").mock("addNeighbor(..)")
+                                                        .given(protocol, (n instanceof TCPNeighbor) ? "tcp://" : "udp://").given(neighborIpCache, new HashMap<>())
                                                         .given(hostname, "localhost").given(port, ":80").given(ip, "10.0.1.1")
                                                         .checkEq(neighborIpCache.get("localhost"), "10.0.1.1");
                                                  */
@@ -645,7 +647,7 @@ public class Node {
                     TransactionViewModel transactionViewModel = TransactionViewModel.fromHash(tangle, transactionPointer);
                     System.arraycopy(transactionViewModel.getBytes(), 0, tipRequestingPacket.getData(), 0, TransactionViewModel.SIZE);
                     System.arraycopy(transactionViewModel.getHash().bytes(), 0, tipRequestingPacket.getData(), TransactionViewModel.SIZE,
-                           reqHashSize);
+                            reqHashSize);
                     //Hash.SIZE_IN_BYTES);
 
                     neighbors.forEach(n -> n.send(tipRequestingPacket));
